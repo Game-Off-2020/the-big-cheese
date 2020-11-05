@@ -13,7 +13,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const targets = {
    'client': {
       entry: 'src/client/client.main.ts',
-      distDir: "dist-client",
+      distDir: "dist/client",
       output: 'main.js',
       target: "web",
       title: "Game Off 2020",
@@ -23,7 +23,7 @@ const targets = {
    },
    'server': {
       entry: 'src/server/server.main.ts',
-      distDir: "dist-server",
+      distDir: "dist/server",
       output: 'main.js',
       target: "node"
    }

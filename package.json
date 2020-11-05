@@ -7,8 +7,8 @@
       "build:prod:server": "./node_modules/.bin/webpack --mode production --projectTarget=server",
       "build:prod:client": "./node_modules/.bin/webpack --mode production --projectTarget=client",
       "start:dev:client": "./node_modules/.bin/webpack-dev-server --progress --content-base \"./\" --open-page \"index.html\" --projectTarget=client",
-      "start:dev:server": "node --inspect dist-server/main.js --trace-warnings",
-      "start:server": "node dist-server/main.js",
+      "start:dev:server": "node --inspect dist/server/main.js --trace-warnings",
+      "start:server": "node dist/server/main.js",
       "start": "npm run start:server",
       "test": "./node_modules/.bin/mocha -r ts-node/register -r tsconfig-paths/register src/**/*.spec.ts"
    },
