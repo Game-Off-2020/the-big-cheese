@@ -11,7 +11,7 @@
       "sourceMap": true,
       "mapRoot": "/",
       "sourceRoot": "/",
-      "outDir": "build",
+      "outDir": "dist",
       "alwaysStrict": true,
       "downlevelIteration": true,
       "baseUrl": "./"
