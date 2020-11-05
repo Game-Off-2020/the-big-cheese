@@ -8,6 +8,5 @@
 *.log
 *.info
 **/node_modules/
-**/dist-*
-package-lock\.json
+**/dist
 .eslintcache
