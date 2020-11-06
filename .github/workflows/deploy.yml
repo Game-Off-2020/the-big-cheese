@@ -45,9 +45,7 @@ jobs:
          - name: Clone Glitch Project
            run: git clone https://${{ secrets.GLITCH_GIT_TOKEN }}@api.glitch.com/git/game-off
          - name: Clear Repo
-           run: |
-              cd game-off
-              rm -v !(".git")
+           run: find ./game-off -mindepth 1 ! -regex '^./game-off/\.git\(/.*\)?' -delete
          - name: Download Artifact
            uses: actions/download-artifact@master
            with:
