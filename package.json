@@ -11,6 +11,7 @@
       "start:server": "node dist/server/main.js",
       "start": "npm run start:server",
       "test": "./node_modules/.bin/mocha -r ts-node/register -r tsconfig-paths/register src/**/*.spec.ts",
+      "postinstall": "npm run build:prod:server",
       "prettier": "prettier -l \"src/**/*.{ts,scss,html}\"",
       "prettier:fix": "npm run prettier -- --write",
       "lint": "eslint . --ext .ts",
