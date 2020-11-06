@@ -11,7 +11,7 @@ export class BootScene extends Scene {
       });
    }
 
-   public preload(): void {
+   preload(): void {
       const halfWidth = SceneUtil.getWidth(this) * 0.5;
       const halfHeight = SceneUtil.getHeight(this) * 0.5;
 

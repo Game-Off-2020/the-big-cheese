@@ -23,7 +23,12 @@ export class GameComponent {
             }
          },
          parent: "game",
-         backgroundColor: "#000000"
+         backgroundColor: "#000000",
+         render: { antialias: true },
+         fps: {
+            smoothStep: true,
+            target: 60
+         }
       });
    }
 

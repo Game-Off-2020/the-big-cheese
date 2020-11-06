@@ -2,9 +2,10 @@ import { SceneUtil } from "../util/scene-util";
 import { Scene } from "phaser";
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Sprite = Phaser.Physics.Arcade.Sprite;
+import Vector2 = Phaser.Math.Vector2;
 
 export class GameScene extends Scene {
-   public speed = 200;
+   private readonly speed = 200;
    private cursorKeys: CursorKeys;
    private image: Sprite;
 
@@ -16,7 +17,7 @@ export class GameScene extends Scene {
       });
    }
 
-   public create(): void {
+   create(): void {
       // TODO: Extract stuff
       // Add a player sprite that can be moved around. Place him in the middle of the screen.
       this.image = this.physics.add.sprite(SceneUtil.getWidth(this) / 2, SceneUtil.getHeight(this) / 2, "man"); // TODO: Extract key
@@ -25,26 +26,29 @@ export class GameScene extends Scene {
       this.cursorKeys = this.input.keyboard.createCursorKeys();
    }
 
-   public update(): void {
+   private readonly velocity = new Vector2();
+
+   update(): void {
       // TODO: Extract content, controller movement, etc.
       // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
-      const velocity = new Phaser.Math.Vector2(0, 0);
-
+      this.velocity.set(0, 0);
       if (this.cursorKeys.left.isDown) {
-         velocity.x -= 1;
+         this.velocity.x -= 1;
       }
       if (this.cursorKeys.right.isDown) {
-         velocity.x += 1;
+         this.velocity.x += 1;
       }
       if (this.cursorKeys.up.isDown) {
-         velocity.y -= 1;
+         this.velocity.y -= 1;
       }
       if (this.cursorKeys.down.isDown) {
-         velocity.y += 1;
+         this.velocity.y += 1;
       }
 
       // We normalize the velocity so that the player is always moving at the same speed, regardless of direction.
-      const normalizedVelocity = velocity.normalize();
-      this.image.setVelocity(normalizedVelocity.x * this.speed, normalizedVelocity.y * this.speed);
+      this.velocity.normalize();
+      this.velocity.x *= this.speed;
+      this.velocity.y *= this.speed;
+      this.image.setVelocity(this.velocity.x, this.velocity.y);
    }
 }
