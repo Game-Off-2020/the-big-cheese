@@ -24,6 +24,7 @@ jobs:
    deploy:
       name: Deploy Front-End
       needs: [build]
+      runs-on: ubuntu-latest
       steps:
          - name: Download Artifact
            uses: actions/download-artifact@master
