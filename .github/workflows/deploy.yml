@@ -42,8 +42,8 @@ jobs:
       needs: [build]
       runs-on: ubuntu-latest
       steps:
-         - name: Checkout Glitch Project
-           run: git checkout https://${{ secrets.GLITCH_GIT_TOKEN }}@api.glitch.com/git/game-off
+         - name: Clone Glitch Project
+           run: git clone https://${{ secrets.GLITCH_GIT_TOKEN }}@api.glitch.com/git/game-off
          - name: Clear Repo
            run: |
               cd game-off
