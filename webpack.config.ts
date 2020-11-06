@@ -12,6 +12,9 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 // @ts-ignore
 import ReplaceInFileWebpackPlugin from 'replace-in-file-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import GeneratePackageJsonPlugin from 'generate-package-json-webpack-plugin';
 
 interface Target {
    readonly entry: string;
@@ -113,6 +116,14 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
                base: '/',
                viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no',
                'theme-color': '#000000',
+            },
+         }),
+      );
+   } else {
+      plugins.push(
+         new GeneratePackageJsonPlugin({
+            scripts: {
+               start: 'node main.js',
             },
          }),
       );
