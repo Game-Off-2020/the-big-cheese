@@ -41,17 +41,20 @@ jobs:
       name: Deploy Back-End
       needs: [build]
       runs-on: ubuntu-latest
-      defaults:
-         run:
-            working-directory: dist/server
       steps:
+         - name: Checkout Glitch Project
+           run: git checkout https://${{ secrets.GLITCH_GIT_TOKEN }}@api.glitch.com/git/game-off
+         - name: Clear Repo
+           run: |
+              cd game-off
+              rm -v !(".git")
          - name: Download Artifact
            uses: actions/download-artifact@master
            with:
               name: dist
-              path: dist
+              path: game-off
          - name: Deploy 🚀
-           uses: kanadgupta/glitch-sync@master
-           with:
-              project-id: '${{ secrets.GLITCH_PROJECT_ID }}'
-              auth-token: '${{ secrets.GLITCH_AUTH_TOKEN }}'
+           run: |
+              cd game-off
+              git commit -m "Deploying Server"
+              git push
