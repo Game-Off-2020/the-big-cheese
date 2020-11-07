@@ -29,17 +29,17 @@ interface Target {
 
 const targets: { client: Target; server: Target } = {
    client: {
-      entry: 'src/client/client.main.ts',
+      entry: 'src/main/client/client.main.ts',
       distDir: 'dist/client',
       output: 'main.js',
       target: 'web',
       title: 'Game Off 2020',
-      assetDir: 'asset',
+      assetDir: 'src/asset',
       distAssetDir: 'asset',
       baseUrl: '.',
    },
    server: {
-      entry: 'src/server/server.main.ts',
+      entry: 'src/main/server/server.main.ts',
       distDir: 'dist/server',
       output: 'main.js',
       target: 'node',
@@ -95,13 +95,14 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
                   files: ['index.html'],
                   rules: [
                      {
+                        // Avoid caching after build
                         search: target.output,
                         replace: `${target.output}?${Date.now()}`,
                      },
-                     {
-                        search: `<meta name="base" content="${target.baseUrl}">`,
-                        replace: `<meta name="base" content="${target.baseUrl}">\n<meta http-equiv="cache-control" content="no-cache" />`,
-                     },
+                     // {
+                     //    search: `<meta name="base" content="${target.baseUrl}">`,
+                     //    replace: `<meta name="base" content="${target.baseUrl}">\n<meta http-equiv="cache-control" content="no-cache" />`
+                     // }
                   ],
                },
             ]),
@@ -236,6 +237,7 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
                         name: '[path]/[name].[ext]',
                         outputPath: (url: string, resourcePath: string, context: string) => {
                            if (isProd()) {
+                              // Remove "src/" from asset imports in prod. It is necessary only locally
                               return path.relative(context, resourcePath).replace(path.normalize('src/'), '');
                            } else {
                               return url;
