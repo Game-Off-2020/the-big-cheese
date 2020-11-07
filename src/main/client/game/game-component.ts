@@ -32,7 +32,7 @@ export class GameComponent {
       });
    }
 
-   refreshScale() {
+   refreshScale(): void {
       this.game.scale.refresh();
    }
 }
