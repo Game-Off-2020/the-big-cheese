@@ -1,5 +1,5 @@
-import * as main from "./client.main";
+import * as main from './client.main';
 
-describe("Main", () => {
+describe('Main', () => {
    main;
 });

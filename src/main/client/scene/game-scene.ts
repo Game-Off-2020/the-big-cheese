@@ -1,5 +1,5 @@
-import { SceneUtil } from "../util/scene-util";
-import { Scene } from "phaser";
+import { SceneUtil } from '../util/scene-util';
+import { Scene } from 'phaser';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Sprite = Phaser.Physics.Arcade.Sprite;
 import Vector2 = Phaser.Math.Vector2;
@@ -13,14 +13,14 @@ export class GameScene extends Scene {
       super({
          active: false,
          visible: false,
-         key: "Game" // TODO: Extract key
+         key: 'Game', // TODO: Extract key
       });
    }
 
    create(): void {
       // TODO: Extract stuff
       // Add a player sprite that can be moved around. Place him in the middle of the screen.
-      this.image = this.physics.add.sprite(SceneUtil.getWidth(this) / 2, SceneUtil.getHeight(this) / 2, "man"); // TODO: Extract key
+      this.image = this.physics.add.sprite(SceneUtil.getWidth(this) / 2, SceneUtil.getHeight(this) / 2, 'man'); // TODO: Extract key
 
       // This is a nice helper Phaser provides to create listeners for some of the most common keys.
       this.cursorKeys = this.input.keyboard.createCursorKeys();

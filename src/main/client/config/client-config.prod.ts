@@ -1,4 +1,4 @@
-import { CommonClientConfig } from "./common-client-config";
+import { CommonClientConfig } from './common-client-config';
 
 export class ClientConfig extends CommonClientConfig {
    // Don't set config properties here.

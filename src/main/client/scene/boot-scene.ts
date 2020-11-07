@@ -1,13 +1,13 @@
-import { SceneUtil } from "../util/scene-util";
-import { Scene } from "phaser";
-import { ClientConfig } from "../config/client-config";
+import { SceneUtil } from '../util/scene-util';
+import { Scene } from 'phaser';
+import { ClientConfig } from '../config/client-config';
 
 export class BootScene extends Scene {
    constructor() {
       super({
          active: false,
          visible: false,
-         key: "Boot" // TODO: Extract key
+         key: 'Boot', // TODO: Extract key
       });
    }
 
@@ -18,40 +18,34 @@ export class BootScene extends Scene {
       const progressBarHeight = 100;
       const progressBarWidth = 400;
 
-      const progressBarContainer = this.add.rectangle(
-         halfWidth,
-         halfHeight,
-         progressBarWidth,
-         progressBarHeight,
-         0x000000
-      );
+      const progressBarContainer = this.add.rectangle(halfWidth, halfHeight, progressBarWidth, progressBarHeight, 0x000000);
       const progressBar = this.add.rectangle(
          halfWidth + 20 - progressBarContainer.width * 0.5,
          halfHeight,
          10,
          progressBarHeight - 20,
-         0x888888
+         0x888888,
       );
 
-      const loadingText = this.add.text(halfWidth - 75, halfHeight - 100, "Loading...").setFontSize(24);
-      const percentText = this.add.text(halfWidth - 25, halfHeight, "0%").setFontSize(24);
-      const assetText = this.add.text(halfWidth - 25, halfHeight + 100, "").setFontSize(24);
+      const loadingText = this.add.text(halfWidth - 75, halfHeight - 100, 'Loading...').setFontSize(24);
+      const percentText = this.add.text(halfWidth - 25, halfHeight, '0%').setFontSize(24);
+      const assetText = this.add.text(halfWidth - 25, halfHeight + 100, '').setFontSize(24);
 
-      this.load.on("progress", (progress: number) => {
+      this.load.on('progress', (progress: number) => {
          progressBar.width = (progressBarWidth - 30) * progress;
 
          const percent = progress * 100;
          percentText.setText(`${percent}%`);
       });
 
-      this.load.on("complete", () => {
+      this.load.on('complete', () => {
          loadingText.destroy();
          percentText.destroy();
          assetText.destroy();
          progressBar.destroy();
          progressBarContainer.destroy();
 
-         this.scene.start("MainMenu"); // TODO: Extract key
+         this.scene.start('MainMenu'); // TODO: Extract key
       });
 
       this.loadAssets();
@@ -64,6 +58,6 @@ export class BootScene extends Scene {
     */
    private loadAssets() {
       // TODO: Extract file keys
-      this.load.image("man", ClientConfig.ASSET_FOLDER + "poc-character.png");
+      this.load.image('man', ClientConfig.ASSET_FOLDER + 'poc-character.png');
    }
 }

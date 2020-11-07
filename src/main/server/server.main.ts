@@ -1,4 +1,4 @@
-console.log("Hello server");
+console.log('Hello server');
 
 setInterval(() => {
    // Keep running

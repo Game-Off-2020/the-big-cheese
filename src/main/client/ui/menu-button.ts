@@ -15,7 +15,7 @@ export class MenuButton extends Rectangle {
       this.label = scene.add
          .text(x + this.padding, y + this.padding, text)
          .setFontSize(18)
-         .setAlign("center");
+         .setAlign('center');
 
       const labelWidth = this.label.width + this.padding;
       const labelHeight = this.label.height + this.padding;
@@ -24,30 +24,30 @@ export class MenuButton extends Rectangle {
       this.height = labelHeight >= this.minimumHeight ? labelHeight : this.minimumHeight;
 
       this.setInteractive({ useHandCursor: true })
-         .on("pointerover", this.enterMenuButtonHoverState)
-         .on("pointerout", this.enterMenuButtonRestState)
-         .on("pointerdown", this.enterMenuButtonActiveState)
-         .on("pointerup", this.enterMenuButtonHoverState);
+         .on('pointerover', this.enterMenuButtonHoverState)
+         .on('pointerout', this.enterMenuButtonRestState)
+         .on('pointerdown', this.enterMenuButtonActiveState)
+         .on('pointerup', this.enterMenuButtonHoverState);
 
       if (onClick) {
-         this.on("pointerup", onClick);
+         this.on('pointerup', onClick);
       }
 
       this.enterMenuButtonRestState();
    }
 
    private enterMenuButtonHoverState() {
-      this.label.setColor("#000000");
+      this.label.setColor('#000000');
       this.setFillStyle(0x888888);
    }
 
    private enterMenuButtonRestState() {
-      this.label.setColor("#FFFFFF");
+      this.label.setColor('#FFFFFF');
       this.setFillStyle(0x888888);
    }
 
    private enterMenuButtonActiveState() {
-      this.label.setColor("#BBBBBB");
+      this.label.setColor('#BBBBBB');
       this.setFillStyle(0x444444);
    }
 }
