@@ -15,12 +15,6 @@
       "downlevelIteration": true,
       "baseUrl": "./"
    },
-   "include": [
-      "src/**/*.ts"
-   ],
-   "exclude": [
-      "node_modules",
-      "**/*.spec.ts",
-      "**/dist**"
-   ]
+   "include": ["src/**/*.ts"],
+   "exclude": ["node_modules", "**/*.spec.ts", "**/dist**"]
 }

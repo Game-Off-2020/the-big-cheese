@@ -36,17 +36,17 @@ export class MenuButton extends Rectangle {
       this.enterMenuButtonRestState();
    }
 
-   private enterMenuButtonHoverState() {
+   private enterMenuButtonHoverState(): void {
       this.label.setColor('#000000');
       this.setFillStyle(0x888888);
    }
 
-   private enterMenuButtonRestState() {
+   private enterMenuButtonRestState(): void {
       this.label.setColor('#FFFFFF');
       this.setFillStyle(0x888888);
    }
 
-   private enterMenuButtonActiveState() {
+   private enterMenuButtonActiveState(): void {
       this.label.setColor('#BBBBBB');
       this.setFillStyle(0x444444);
    }

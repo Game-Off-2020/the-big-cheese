@@ -56,7 +56,7 @@ export class BootScene extends Scene {
     * should be added to this method. Once loaded in, the loader will keep track of them, indepedent of which scene
     * is currently active, so they can be accessed anywhere.
     */
-   private loadAssets() {
+   private loadAssets(): void {
       // TODO: Extract file keys
       this.load.image('man', ClientConfig.ASSET_FOLDER + 'poc-character.png');
    }
