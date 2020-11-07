@@ -69,7 +69,7 @@ rules:
    hex-notation: 2
    indentation:
       - 2
-      -  size: 2
+      -  size: 3
    leading-zero: 2
    max-line-length: 0
    max-file-line-count: 0
