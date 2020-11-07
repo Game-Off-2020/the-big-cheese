@@ -1,7 +1,7 @@
 {
-  "presets": [],
-  "plugins": [
-    "@babel/plugin-transform-for-of",
-    "babel-plugin-loop-optimizer"
-  ]
+   "presets": [],
+   "plugins": [
+      "@babel/plugin-transform-for-of",
+      "babel-plugin-loop-optimizer"
+   ]
 }
