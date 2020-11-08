@@ -38,11 +38,11 @@ export class GameScene extends Scene {
       // Draw triangle objects to the scene
       const terrain: Graphics = this.add.graphics();
       for (let i = 0; i < 40; i++) {
-         let angle = Phaser.Math.RND.rotation();
-         let originX = Phaser.Math.RND.integerInRange(sceneWidth / 4, (3 * sceneWidth) / 4);
-         let originY = Phaser.Math.RND.integerInRange(sceneHeight / 2, (3 * sceneHeight) / 4);
-         let width = Phaser.Math.RND.integerInRange(75, 175);
-         let triangle = Phaser.Geom.Triangle.BuildEquilateral(originX, originY, width);
+         const angle = Phaser.Math.RND.rotation();
+         const originX = Phaser.Math.RND.integerInRange(sceneWidth / 4, (3 * sceneWidth) / 4);
+         const originY = Phaser.Math.RND.integerInRange(sceneHeight / 2, (3 * sceneHeight) / 4);
+         const width = Phaser.Math.RND.integerInRange(75, 175);
+         const triangle = Phaser.Geom.Triangle.BuildEquilateral(originX, originY, width);
          Phaser.Geom.Triangle.Rotate(triangle, angle);
          terrain.fillStyle(0x00dd00, 1);
          terrain.beginPath();
