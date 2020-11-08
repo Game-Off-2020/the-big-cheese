@@ -1,13 +1,17 @@
 import { SceneUtil } from '../util/scene-util';
 import { Scene } from 'phaser';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
+import Graphics = Phaser.GameObjects.Graphics;
 import Sprite = Phaser.Physics.Arcade.Sprite;
-import Vector2 = Phaser.Math.Vector2;
 
 export class GameScene extends Scene {
-   private readonly speed = 200;
+   // private readonly velocity = new Vector2(0, 0);
+   private readonly maxHorizontalSpeed = 3;
+   private readonly characterSize = 20;
+   private readonly characterSize2 = 10;
+   private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
-   private image: Sprite;
+   private character: Sprite;
 
    constructor() {
       super({
@@ -17,38 +21,108 @@ export class GameScene extends Scene {
       });
    }
 
-   create(): void {
-      // TODO: Extract stuff
-      // Add a player sprite that can be moved around. Place him in the middle of the screen.
-      this.image = this.physics.add.sprite(SceneUtil.getWidth(this) / 2, SceneUtil.getHeight(this) / 2, 'man'); // TODO: Extract key
+   private sceneWidth: number;
+   private sceneWidth2: number;
+   private sceneHeight: number;
+   private sceneHeight2: number;
 
-      // This is a nice helper Phaser provides to create listeners for some of the most common keys.
+   create(): void {
+      const sceneWidth = (this.sceneWidth = SceneUtil.getWidth(this));
+      this.sceneWidth2 = sceneWidth / 2;
+      const sceneHeight = (this.sceneHeight = SceneUtil.getHeight(this));
+      this.sceneHeight2 = sceneHeight / 2;
+
+      this.character = this.physics.add.sprite(sceneWidth / 2, sceneHeight / 3, 'character'); // TODO: Extract key
       this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+      // Draw triangle objects to the scene
+      const terrain: Graphics = this.add.graphics();
+      for (let i = 0; i < 40; i++) {
+         let angle = Phaser.Math.RND.rotation();
+         let originX = Phaser.Math.RND.integerInRange(sceneWidth / 4, (3 * sceneWidth) / 4);
+         let originY = Phaser.Math.RND.integerInRange(sceneHeight / 2, (3 * sceneHeight) / 4);
+         let width = Phaser.Math.RND.integerInRange(75, 175);
+         let triangle = Phaser.Geom.Triangle.BuildEquilateral(originX, originY, width);
+         Phaser.Geom.Triangle.Rotate(triangle, angle);
+         terrain.fillStyle(0x00dd00, 1);
+         terrain.beginPath();
+         terrain.moveTo(triangle.x1, triangle.y1);
+         terrain.lineTo(triangle.x2, triangle.y2);
+         terrain.lineTo(triangle.x3, triangle.y3);
+         terrain.closePath();
+         terrain.fillPath();
+      }
+      terrain.generateTexture('terrain', sceneWidth, sceneHeight);
+      terrain.clear();
+      this.add.sprite(sceneWidth / 2, sceneHeight / 2, 'terrain');
    }
 
-   private readonly velocity = new Vector2();
+   private hitTestTerrain(x: number, y: number, w: number, h: number): boolean {
+      for (let i = x; i < x + w; i++) {
+         for (let j = y; j < y + h; j++) {
+            if (this.textures.getPixelAlpha(i, j, 'terrain')) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+   private jumping = false;
+   private verticalSpeed = 0;
 
    update(): void {
-      // TODO: Extract content, controller movement, etc.
-      // Every frame, we create a new velocity for the sprite based on what keys the player is holding down.
-      this.velocity.set(0, 0);
       if (this.cursorKeys.left.isDown) {
-         this.velocity.x -= 1;
-      }
-      if (this.cursorKeys.right.isDown) {
-         this.velocity.x += 1;
-      }
-      if (this.cursorKeys.up.isDown) {
-         this.velocity.y -= 1;
-      }
-      if (this.cursorKeys.down.isDown) {
-         this.velocity.y += 1;
+         for (let i = 0; i < this.maxHorizontalSpeed; i++) {
+            if (!this.hitTestTerrain(this.character.x - 1, this.character.y, 1, this.characterSize - 3)) {
+               this.character.x -= 1;
+            }
+            while (this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
+               this.character.y -= 1;
+            }
+         }
       }
 
-      // We normalize the velocity so that the player is always moving at the same speed, regardless of direction.
-      this.velocity.normalize();
-      this.velocity.x *= this.speed;
-      this.velocity.y *= this.speed;
-      this.image.setVelocity(this.velocity.x, this.velocity.y);
+      if (this.cursorKeys.right.isDown) {
+         for (let i = 0; i < this.maxHorizontalSpeed; i++) {
+            if (!this.hitTestTerrain(this.character.x + this.characterSize2, this.character.y, 1, this.characterSize - 3)) {
+               this.character.x += 1;
+            }
+            while (this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
+               this.character.y -= 1;
+            }
+         }
+      }
+
+      if (this.cursorKeys.up.isDown && !this.jumping) {
+         this.verticalSpeed = -10;
+         this.jumping = true;
+      }
+      this.verticalSpeed++;
+      this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -this.maxVerticalSpeed, this.maxVerticalSpeed);
+
+      if (this.verticalSpeed > 0) {
+         for (let i = 0; i < this.verticalSpeed; i++) {
+            if (!this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
+               // Ground
+               this.character.y += 0.5;
+               // this.velocity.y += this.gravity;
+            } else {
+               // Air
+               this.jumping = false;
+               this.verticalSpeed = 0;
+               // this.velocity.y = 0;
+            }
+         }
+      } else {
+         for (let i = 0; i < Math.abs(this.verticalSpeed); i++) {
+            if (!this.hitTestTerrain(this.character.x, this.character.y, this.characterSize2, 1)) {
+               this.character.y -= 1;
+            } else {
+               this.verticalSpeed = 0;
+            }
+         }
+      }
+      // this.character.y += this.velocity.y;
    }
 }
