@@ -147,7 +147,7 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
       }),
    ];
 
-   if (target.target === 'web') {
+   if (isProd() && target.target === 'web') {
       minimizers.push(
          new TerserPlugin({
             parallel: false,
@@ -155,9 +155,9 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
                ecma: 2015,
                keep_classnames: false,
                keep_fnames: false,
-               // compress: {
-               //     drop_console: true,
-               // }
+               compress: {
+                  drop_console: true,
+               },
             },
          }),
       );
