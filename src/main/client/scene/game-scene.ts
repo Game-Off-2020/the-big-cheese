@@ -4,6 +4,13 @@ import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Graphics = Phaser.GameObjects.Graphics;
 import Sprite = Phaser.Physics.Arcade.Sprite;
 
+interface Color {
+   readonly red: number;
+   readonly green: number;
+   readonly blue: number;
+   readonly alpha: number;
+}
+
 export class GameScene extends Scene {
    // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;
@@ -25,6 +32,7 @@ export class GameScene extends Scene {
    private sceneWidth2: number;
    private sceneHeight: number;
    private sceneHeight2: number;
+   private terrainTexture: Phaser.Textures.CanvasTexture;
 
    create(): void {
       const sceneWidth = (this.sceneWidth = SceneUtil.getWidth(this));
@@ -52,20 +60,44 @@ export class GameScene extends Scene {
          terrain.closePath();
          terrain.fillPath();
       }
-      terrain.generateTexture('terrain', sceneWidth, sceneHeight);
-      terrain.clear();
-      this.add.sprite(sceneWidth / 2, sceneHeight / 2, 'terrain');
+      this.terrainTexture = this.textures.createCanvas('terrain', sceneWidth, sceneHeight);
+      terrain.generateTexture(this.terrainTexture.getCanvas(), sceneWidth, sceneHeight);
+      this.add.sprite(0, 0, 'terrain');
    }
 
-   private hitTestTerrain(x: number, y: number, w: number, h: number): boolean {
-      for (let i = x; i < x + w; i++) {
-         for (let j = y; j < y + h; j++) {
-            if (this.textures.getPixelAlpha(i, j, 'terrain')) {
+   private hitTestTerrain(worldX: number, worldY: number, width: number, height: number): boolean {
+      const data = this.terrainTexture.getData(worldX, worldY, this.characterSize, this.characterSize2);
+      for (let i = 0; i < width; i++) {
+         for (let j = 0; j < height; j++) {
+            if (this.testCollisionWithTerrain(i, j, data)) {
                return true;
             }
          }
       }
       return false;
+   }
+
+   private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
+      const pixel = this.getPixelColor(localX, localY, canvasData);
+
+      if (pixel && pixel.alpha > 0) {
+         return true;
+      } else {
+         return false;
+      }
+   }
+
+   private getPixelColor(localX: number, localY: number, canvasData: ImageData): Color {
+      if (localX < 0 || localY < 0 || localX > canvasData.width || localY > canvasData.height) return;
+
+      const index = (localY * canvasData.width + localX) * 4;
+
+      return {
+         red: canvasData.data[index],
+         green: canvasData.data[index + 1],
+         blue: canvasData.data[index + 2],
+         alpha: canvasData.data[index + 3],
+      };
    }
 
    private jumping = false;
@@ -95,7 +127,7 @@ export class GameScene extends Scene {
       }
 
       if (this.cursorKeys.up.isDown && !this.jumping) {
-         this.verticalSpeed = -10;
+         this.verticalSpeed = -40;
          this.jumping = true;
       }
       this.verticalSpeed++;
