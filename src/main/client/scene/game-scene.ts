@@ -90,16 +90,13 @@ export class GameScene extends Scene {
    private getPixelColor(localX: number, localY: number, canvasData: ImageData): Color {
       if (localX < 0 || localY < 0 || localX > canvasData.width || localY > canvasData.height) return;
 
-      const r = (localY * canvasData.width + localX) * 4;
-      const g = (localY * canvasData.width + localX) * 4 + 1;
-      const b = (localY * canvasData.width + localX) * 4 + 2;
-      const a = (localY * canvasData.width + localX) * 4 + 3;
+      const index = (localY * canvasData.width + localX) * 4;
 
       return {
-         red: canvasData.data[r],
-         green: canvasData.data[g],
-         blue: canvasData.data[b],
-         alpha: canvasData.data[a],
+         red: canvasData.data[index],
+         green: canvasData.data[index + 1],
+         blue: canvasData.data[index + 2],
+         alpha: canvasData.data[index + 3],
       };
    }
 
