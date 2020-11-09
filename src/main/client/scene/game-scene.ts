@@ -70,7 +70,7 @@ export class GameScene extends Scene {
       for (let i = 0; i < width; i++) {
          for (let j = 0; j < height; j++) {
             const pixel = this.getPixel(i, j, data);
-            if (pixel && pixel.green > 0) {
+            if (pixel && pixel.alpha > 0) {
                return true;
             }
          }
