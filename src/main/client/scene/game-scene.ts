@@ -69,8 +69,7 @@ export class GameScene extends Scene {
       const data = this.terrainTexture.getData(worldX, worldY, this.characterSize, this.characterSize2);
       for (let i = 0; i < width; i++) {
          for (let j = 0; j < height; j++) {
-            const pixel = this.getPixel(i, j, data);
-            if (pixel && pixel.alpha > 0) {
+            if (this.testCollisionWithTerrain(i, j, data)) {
                return true;
             }
          }
@@ -78,7 +77,17 @@ export class GameScene extends Scene {
       return false;
    }
 
-   private getPixel(localX: number, localY: number, canvasData: ImageData): Color {
+   private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
+      const pixel = this.getPixelColor(localX, localY, canvasData);
+
+      if (pixel && pixel.alpha > 0) {
+         return true;
+      } else {
+         return false;
+      }
+   }
+
+   private getPixelColor(localX: number, localY: number, canvasData: ImageData): Color {
       if (localX < 0 || localY < 0 || localX > canvasData.width || localY > canvasData.height) return;
 
       const r = (localY * canvasData.width + localX) * 4;
