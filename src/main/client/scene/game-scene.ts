@@ -44,7 +44,7 @@ export class GameScene extends Scene {
       this.cursorKeys = this.input.keyboard.createCursorKeys();
 
       // Draw triangle objects to the scene
-      const terrain: Graphics = this.add.graphics();
+      const graphics: Graphics = this.add.graphics();
       for (let i = 0; i < 40; i++) {
          const angle = Phaser.Math.RND.rotation();
          const originX = Phaser.Math.RND.integerInRange(sceneWidth / 4, (3 * sceneWidth) / 4);
@@ -52,16 +52,16 @@ export class GameScene extends Scene {
          const width = Phaser.Math.RND.integerInRange(75, 175);
          const triangle = Phaser.Geom.Triangle.BuildEquilateral(originX, originY, width);
          Phaser.Geom.Triangle.Rotate(triangle, angle);
-         terrain.fillStyle(0x00dd00, 1);
-         terrain.beginPath();
-         terrain.moveTo(triangle.x1, triangle.y1);
-         terrain.lineTo(triangle.x2, triangle.y2);
-         terrain.lineTo(triangle.x3, triangle.y3);
-         terrain.closePath();
-         terrain.fillPath();
+         graphics.fillStyle(0x00dd00, 1);
+         graphics.beginPath();
+         graphics.moveTo(triangle.x1, triangle.y1);
+         graphics.lineTo(triangle.x2, triangle.y2);
+         graphics.lineTo(triangle.x3, triangle.y3);
+         graphics.closePath();
+         graphics.fillPath();
       }
       this.terrainTexture = this.textures.createCanvas('terrain', sceneWidth, sceneHeight);
-      terrain.generateTexture(this.terrainTexture.getCanvas(), sceneWidth, sceneHeight);
+      graphics.generateTexture(this.terrainTexture.getCanvas(), sceneWidth, sceneHeight);
       this.add.sprite(0, 0, 'terrain');
    }
 
