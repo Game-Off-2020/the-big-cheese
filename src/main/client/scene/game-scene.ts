@@ -63,6 +63,8 @@ export class GameScene extends Scene {
       this.terrainTexture = this.textures.createCanvas('terrain', sceneWidth, sceneHeight);
       graphics.generateTexture(this.terrainTexture.getCanvas(), sceneWidth, sceneHeight);
       this.add.sprite(0, 0, 'terrain');
+
+      this.cameras.main.startFollow(this.character);
    }
 
    private hitTestTerrain(worldX: number, worldY: number, width: number, height: number): boolean {
