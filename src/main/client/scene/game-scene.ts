@@ -99,11 +99,34 @@ export class GameScene extends Scene {
          alpha: canvasData.data[index + 3],
       };
    }
+   private createHole(worldX: number, worldY: number): void {
+      this.terrainTexture.context.globalCompositeOperation = 'destination-out';
+      this.terrainTexture.context.beginPath();
+      this.terrainTexture.context.arc(worldX, worldY, 30, 0, Math.PI * 2, true);
+      this.terrainTexture.context.fill();
+
+      const newCanvasData = this.terrainTexture.context.getImageData(
+         0,
+         0,
+         this.terrainTexture.getSourceImage().width,
+         this.terrainTexture.getSourceImage().height,
+      );
+
+      this.terrainTexture.imageData = newCanvasData;
+      this.terrainTexture.context.putImageData(newCanvasData, 0, 0);
+      this.terrainTexture.refresh();
+   }
 
    private jumping = false;
    private verticalSpeed = 0;
 
    update(): void {
+      if (this.input.activePointer.isDown) {
+         const touchX = this.input.activePointer.x;
+         const touchY = this.input.activePointer.y;
+         this.createHole(touchX, touchY);
+      }
+
       if (this.cursorKeys.left.isDown) {
          for (let i = 0; i < this.maxHorizontalSpeed; i++) {
             if (!this.hitTestTerrain(this.character.x - 1, this.character.y, 1, this.characterSize - 3)) {
