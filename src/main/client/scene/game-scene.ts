@@ -1,4 +1,3 @@
-import { SceneUtil } from '../util/scene-util';
 import * as Phaser from 'phaser';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Sprite = Phaser.Physics.Arcade.Sprite;
@@ -13,7 +12,6 @@ interface Color {
 const radius = 200;
 
 export class GameScene extends Phaser.Scene {
-   // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;
    private readonly characterSize = 20;
    private readonly characterSize2 = 10;
@@ -29,18 +27,9 @@ export class GameScene extends Phaser.Scene {
       });
    }
 
-   private sceneWidth: number;
-   private sceneWidth2: number;
-   private sceneHeight: number;
-   private sceneHeight2: number;
    private terrainTexture: Phaser.Textures.CanvasTexture;
 
    create(): void {
-      const sceneWidth = (this.sceneWidth = SceneUtil.getWidth(this));
-      this.sceneWidth2 = sceneWidth / 2;
-      const sceneHeight = (this.sceneHeight = SceneUtil.getHeight(this));
-      this.sceneHeight2 = sceneHeight / 2;
-
       this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
       this.cursorKeys = this.input.keyboard.createCursorKeys();
 
@@ -162,12 +151,10 @@ export class GameScene extends Phaser.Scene {
             if (!this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
                // Ground
                this.character.y += 0.5;
-               // this.velocity.y += this.gravity;
             } else {
                // Air
                this.jumping = false;
                this.verticalSpeed = 0;
-               // this.velocity.y = 0;
             }
          }
       } else {
@@ -179,6 +166,5 @@ export class GameScene extends Phaser.Scene {
             }
          }
       }
-      // this.character.y += this.velocity.y;
    }
 }
