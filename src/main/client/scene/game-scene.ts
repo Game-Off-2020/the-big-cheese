@@ -1,8 +1,10 @@
 import { SceneUtil } from '../util/scene-util';
 import { Scene } from 'phaser';
+import { Subject } from 'rxjs';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Graphics = Phaser.GameObjects.Graphics;
 import Sprite = Phaser.Physics.Arcade.Sprite;
+import Vector2 = Phaser.Math.Vector2;
 
 interface Color {
    readonly red: number;
@@ -12,6 +14,10 @@ interface Color {
 }
 
 export class GameScene extends Scene {
+   private playerPosition = new Vector2();
+   private playerPositionChangedSubject = new Subject<Vector2>();
+   playerPositionChanged$ = this.playerPositionChangedSubject.pipe();
+
    // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;
    private readonly characterSize = 20;
@@ -104,6 +110,7 @@ export class GameScene extends Scene {
    private verticalSpeed = 0;
 
    update(): void {
+      // TODO: We should emit an update$ event and we should handle character movement in another component
       if (this.cursorKeys.left.isDown) {
          for (let i = 0; i < this.maxHorizontalSpeed; i++) {
             if (!this.hitTestTerrain(this.character.x - 1, this.character.y, 1, this.characterSize - 3)) {
@@ -156,5 +163,9 @@ export class GameScene extends Scene {
          }
       }
       // this.character.y += this.velocity.y;
+      if (this.playerPosition.x !== this.character.x || this.playerPosition.y !== this.character.y) {
+         this.playerPosition.set(this.character.x, this.character.y);
+         this.playerPositionChangedSubject.next(this.playerPosition);
+      }
    }
 }
