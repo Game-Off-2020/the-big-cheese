@@ -1,7 +1,6 @@
 import { SceneUtil } from '../util/scene-util';
-import { Scene } from 'phaser';
+import * as Phaser from 'phaser';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
-import Graphics = Phaser.GameObjects.Graphics;
 import Sprite = Phaser.Physics.Arcade.Sprite;
 
 interface Color {
@@ -11,7 +10,9 @@ interface Color {
    readonly alpha: number;
 }
 
-export class GameScene extends Scene {
+const radius = 200;
+
+export class GameScene extends Phaser.Scene {
    // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;
    private readonly characterSize = 20;
@@ -40,35 +41,27 @@ export class GameScene extends Scene {
       const sceneHeight = (this.sceneHeight = SceneUtil.getHeight(this));
       this.sceneHeight2 = sceneHeight / 2;
 
-      this.character = this.physics.add.sprite(sceneWidth / 2, sceneHeight / 3, 'character'); // TODO: Extract key
+      this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
       this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-      // Draw triangle objects to the scene
-      const graphics: Graphics = this.add.graphics();
-      for (let i = 0; i < 40; i++) {
-         const angle = Phaser.Math.RND.rotation();
-         const originX = Phaser.Math.RND.integerInRange(sceneWidth / 4, (3 * sceneWidth) / 4);
-         const originY = Phaser.Math.RND.integerInRange(sceneHeight / 2, (3 * sceneHeight) / 4);
-         const width = Phaser.Math.RND.integerInRange(75, 175);
-         const triangle = Phaser.Geom.Triangle.BuildEquilateral(originX, originY, width);
-         Phaser.Geom.Triangle.Rotate(triangle, angle);
-         graphics.fillStyle(0x00dd00, 1);
-         graphics.beginPath();
-         graphics.moveTo(triangle.x1, triangle.y1);
-         graphics.lineTo(triangle.x2, triangle.y2);
-         graphics.lineTo(triangle.x3, triangle.y3);
-         graphics.closePath();
-         graphics.fillPath();
-      }
-      this.terrainTexture = this.textures.createCanvas('terrain', sceneWidth, sceneHeight);
-      graphics.generateTexture(this.terrainTexture.getCanvas(), sceneWidth, sceneHeight);
-      this.add.sprite(0, 0, 'terrain');
+      this.terrainTexture = this.textures.createCanvas('terrain', radius * 2, radius * 2);
+      this.terrainTexture.context.beginPath();
+      this.terrainTexture.context.fillStyle = '#00dd00';
+      this.terrainTexture.context.arc(radius, radius, radius, 0, Math.PI * 2, true);
+      this.terrainTexture.context.fill();
+      this.terrainTexture.refresh();
+      this.add.image(0, 0, 'terrain');
 
       this.cameras.main.startFollow(this.character);
    }
 
    private hitTestTerrain(worldX: number, worldY: number, width: number, height: number): boolean {
-      const data = this.terrainTexture.getData(worldX, worldY, this.characterSize, this.characterSize2);
+      const localX = worldX + radius;
+      const localY = worldY + radius;
+
+      if (localX < 0 || localY < 0 || localX > radius * 2 || localY > radius * 2) return false;
+
+      const data = this.terrainTexture.getData(localX, localY, this.characterSize, this.characterSize2);
       for (let i = 0; i < width; i++) {
          for (let j = 0; j < height; j++) {
             if (this.testCollisionWithTerrain(i, j, data)) {
@@ -114,13 +107,19 @@ export class GameScene extends Scene {
          this.terrainTexture.getSourceImage().height,
       );
 
+      this.terrainTexture.clear();
+
       this.terrainTexture.imageData = newCanvasData;
-      this.terrainTexture.context.putImageData(newCanvasData, 0, 0);
+      this.terrainTexture.putData(newCanvasData, 0, 0);
       this.terrainTexture.refresh();
    }
 
    private jumping = false;
    private verticalSpeed = 0;
+
+   private getDownwardVector(sprite: Phaser.GameObjects.Sprite): Phaser.Math.Vector2 {
+      return new Phaser.Math.Vector2({ x: -sprite.x, y: -sprite.y });
+   }
 
    update(): void {
       if (this.input.activePointer.isDown) {
