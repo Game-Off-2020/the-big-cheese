@@ -1,12 +1,13 @@
 import { Singleton } from 'typescript-ioc';
-import { NetworkEvent, NetworkMessage, NetworkMessageValue } from './network-model';
+import { NetworkEvent, NetworkMessage } from './network-model';
 import { SharedConfig } from '../../shared/config/shared-config';
 import deepmerge from 'deepmerge';
+import { IObject } from '../../shared/util/util-model';
 
 @Singleton
 export class BufferedNetworkComponent {
    private readonly bufferTimerMs = 1000 / SharedConfig.NETWORK_TICK_RATE;
-   private bufferedEventsMessages = new Map<NetworkEvent, NetworkMessageValue>();
+   private bufferedEventsMessages = new Map<NetworkEvent, IObject>();
    private lastSendTime = 0;
    private readonly bindRequestBufferTimer;
    private sending = false;
@@ -26,8 +27,8 @@ export class BufferedNetworkComponent {
       this.requestBufferTimer();
    }
 
-   send(event: NetworkEvent, value: NetworkMessageValue): void {
-      const mergedMessage = deepmerge.all([this.getEventMessage(event), value]);
+   send(event: NetworkEvent, value: IObject): void {
+      const mergedMessage = deepmerge.all([this.getEventMessage(event), value]) as IObject;
       this.bufferedEventsMessages.set(event, mergedMessage);
       this.sendBufferedEventMessagesInTime();
    }
@@ -66,7 +67,7 @@ export class BufferedNetworkComponent {
          .map(([event, value]) => ({ event, value }));
    }
 
-   private getEventMessage(event: NetworkEvent): NetworkMessageValue {
+   private getEventMessage(event: NetworkEvent): IObject {
       if (!this.bufferedEventsMessages.has(event)) {
          this.bufferedEventsMessages.set(event, {});
       }
