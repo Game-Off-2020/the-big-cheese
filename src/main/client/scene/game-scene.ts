@@ -9,12 +9,12 @@ interface Color {
    readonly alpha: number;
 }
 
-const radius = 200;
+const MOON_RADIUS = 200;
 
 export class GameScene extends Phaser.Scene {
    private readonly maxHorizontalSpeed = 3;
-   private readonly characterSize = 20;
-   private readonly characterSize2 = 10;
+   private readonly characterHeight = 20;
+   private readonly characterWidth = 10;
    private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
    private character: Sprite;
@@ -33,10 +33,10 @@ export class GameScene extends Phaser.Scene {
       this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
       this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-      this.terrainTexture = this.textures.createCanvas('terrain', radius * 2, radius * 2);
+      this.terrainTexture = this.textures.createCanvas('terrain', MOON_RADIUS * 2, MOON_RADIUS * 2);
       this.terrainTexture.context.beginPath();
       this.terrainTexture.context.fillStyle = '#00dd00';
-      this.terrainTexture.context.arc(radius, radius, radius, 0, Math.PI * 2, true);
+      this.terrainTexture.context.arc(MOON_RADIUS, MOON_RADIUS, MOON_RADIUS, 0, Math.PI * 2, true);
       this.terrainTexture.context.fill();
       this.terrainTexture.refresh();
       this.add.image(0, 0, 'terrain');
@@ -44,18 +44,18 @@ export class GameScene extends Phaser.Scene {
       this.cameras.main.startFollow(this.character);
    }
 
-   private hitTestTerrain(worldX: number, worldY: number, width: number, height: number): boolean {
-      const localX = worldX + radius;
-      const localY = worldY + radius;
+   private hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
+      const localX = worldX + MOON_RADIUS;
+      const localY = worldY + MOON_RADIUS;
 
-      if (localX < 0 || localY < 0 || localX > radius * 2 || localY > radius * 2) return false;
+      if (localX < 0 || localY < 0 || localX > MOON_RADIUS * 2 || localY > MOON_RADIUS * 2) return false;
 
-      const data = this.terrainTexture.getData(localX, localY, this.characterSize, this.characterSize2);
-      for (let i = 0; i < width; i++) {
-         for (let j = 0; j < height; j++) {
-            if (this.testCollisionWithTerrain(i, j, data)) {
-               return true;
-            }
+      const data = this.terrainTexture.getData(localX, localY, this.characterWidth, this.characterHeight);
+      this.add.rectangle(worldX, worldY, this.characterWidth, this.characterHeight, 0xe1eb34, 0.3);
+
+      for (const point of points) {
+         if (this.testCollisionWithTerrain(point.x, point.y, data)) {
+            return true;
          }
       }
       return false;
@@ -107,7 +107,67 @@ export class GameScene extends Phaser.Scene {
    private verticalSpeed = 0;
 
    private getDownwardVector(sprite: Phaser.GameObjects.Sprite): Phaser.Math.Vector2 {
-      return new Phaser.Math.Vector2({ x: -sprite.x, y: -sprite.y });
+      return new Phaser.Math.Vector2({ x: -sprite.x, y: -sprite.y }).normalize();
+   }
+
+   private getFloorVector(sprite: Phaser.GameObjects.Sprite): Phaser.Math.Vector2 {
+      return this.getDownwardVector(sprite).normalizeRightHand();
+   }
+
+   private applyGravity(sprite: Phaser.GameObjects.Sprite): void {
+      const vector = this.getDownwardVector(sprite).scale(-1);
+      this.moveByVector(sprite, vector);
+   }
+
+   private applyGroundReactionForce(sprite: Phaser.GameObjects.Sprite): void {
+      const vector = this.getDownwardVector(sprite).scale(0.5);
+      this.moveByVector(sprite, vector);
+   }
+
+   private moveByVector(sprite: Phaser.GameObjects.Sprite, vector: Phaser.Math.Vector2): void {
+      sprite.x += vector.x;
+      sprite.y += vector.y;
+   }
+
+   private createLocalWall(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
+      const downVector = this.getDownwardVector(sprite);
+
+      const f = this.createCollisionLine(downVector, length);
+      this.add.line(sprite.x, sprite.y, f[0].x, f[0].y, f[f.length - 1].x, f[f.length - 1].y, 0x00ff00, 0.3);
+
+      return f;
+   }
+
+   private createLocalFloor(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
+      const floorVector = this.getFloorVector(sprite);
+
+      const f = this.createCollisionLine(floorVector, length);
+      this.add.line(sprite.x, sprite.y, f[0].x, f[0].y, f[f.length - 1].x, f[f.length - 1].y, 0xff0000, 0.3);
+
+      return f;
+   }
+
+   private createCollisionLine(vector: Phaser.Math.Vector2, length: number): Phaser.Geom.Point[] {
+      return [...Array(length).keys()].map((i) => {
+         const newDownVector = vector.clone().scale(i);
+         return new Phaser.Geom.Point(newDownVector.x, newDownVector.y);
+      });
+   }
+
+   private stickToGround(sprite: Phaser.GameObjects.Sprite): void {
+      while (this.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10, null))) {
+         this.applyGravity(sprite);
+      }
+   }
+
+   private moveLeft(sprite: Phaser.GameObjects.Sprite): void {
+      const floorVector = this.getFloorVector(sprite);
+      this.moveByVector(sprite, floorVector);
+   }
+
+   private moveRight(sprite: Phaser.GameObjects.Sprite): void {
+      const floorVector = this.getFloorVector(sprite).scale(-1);
+      this.moveByVector(sprite, floorVector);
    }
 
    update(): void {
@@ -118,24 +178,26 @@ export class GameScene extends Phaser.Scene {
       }
 
       if (this.cursorKeys.left.isDown) {
-         for (let i = 0; i < this.maxHorizontalSpeed; i++) {
-            if (!this.hitTestTerrain(this.character.x - 1, this.character.y, 1, this.characterSize - 3)) {
-               this.character.x -= 1;
+         for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
+            if (!this.hitTestTerrain(this.character.x - 1, this.character.y, this.createLocalWall(this.character, 10, null))) {
+               this.moveLeft(this.character);
             }
-            while (this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
-               this.character.y -= 1;
-            }
+            this.stickToGround(this.character);
          }
       }
 
       if (this.cursorKeys.right.isDown) {
-         for (let i = 0; i < this.maxHorizontalSpeed; i++) {
-            if (!this.hitTestTerrain(this.character.x + this.characterSize2, this.character.y, 1, this.characterSize - 3)) {
-               this.character.x += 1;
+         for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
+            if (
+               !this.hitTestTerrain(
+                  this.character.x + this.characterWidth,
+                  this.character.y,
+                  this.createLocalWall(this.character, 10, null),
+               )
+            ) {
+               this.moveRight(this.character);
             }
-            while (this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
-               this.character.y -= 1;
-            }
+            this.stickToGround(this.character);
          }
       }
 
@@ -147,10 +209,16 @@ export class GameScene extends Phaser.Scene {
       this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -this.maxVerticalSpeed, this.maxVerticalSpeed);
 
       if (this.verticalSpeed > 0) {
-         for (let i = 0; i < this.verticalSpeed; i++) {
-            if (!this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
+         for (let _ = 0; _ < this.verticalSpeed; _++) {
+            if (
+               !this.hitTestTerrain(
+                  this.character.x,
+                  this.character.y + this.characterHeight,
+                  this.createLocalFloor(this.character, 10, null),
+               )
+            ) {
                // Ground
-               this.character.y += 0.5;
+               this.applyGroundReactionForce(this.character);
             } else {
                // Air
                this.jumping = false;
@@ -158,12 +226,9 @@ export class GameScene extends Phaser.Scene {
             }
          }
       } else {
-         for (let i = 0; i < Math.abs(this.verticalSpeed); i++) {
-            if (!this.hitTestTerrain(this.character.x, this.character.y, this.characterSize2, 1)) {
-               this.character.y -= 1;
-            } else {
-               this.verticalSpeed = 0;
-            }
+         // Jumping
+         for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
+            this.stickToGround(this.character);
          }
       }
    }
