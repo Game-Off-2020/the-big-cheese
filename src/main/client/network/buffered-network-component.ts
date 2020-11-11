@@ -1,6 +1,7 @@
 import { Singleton } from 'typescript-ioc';
-import { NetworkEvent, NetworkMessage } from './network-model';
+import { NetworkEvent, NetworkMessage, NetworkMessageValue } from './network-model';
 import { SharedConfig } from '../../shared/config/shared-config';
+import deepmerge from 'deepmerge';
 
 @Singleton
 export class BufferedNetworkComponent {
@@ -25,6 +26,12 @@ export class BufferedNetworkComponent {
       this.requestBufferTimer();
    }
 
+   send(event: NetworkEvent, value: NetworkMessageValue): void {
+      const mergedMessage = deepmerge.all([this.getEventMessage(event), value]);
+      this.bufferedEventsMessages.set(event, mergedMessage);
+      this.sendBufferedEventMessagesInTime();
+   }
+
    private requestBufferTimer(): void {
       this.sendBufferedEventMessagesInTime();
       requestAnimationFrame(this.bindRequestBufferTimer);
@@ -45,6 +52,7 @@ export class BufferedNetworkComponent {
       const messages = this.getBufferedEventMessages();
       this.bufferedEventsMessages.clear();
       this.lastSendTime = Date.now();
+      console.log('Client sending messages:', messages);
       //messages.forEach(async (message) => await this.network.send(message));
       //} else {
       //   console.log("Cannot send network message, connection is not ready yet.");
@@ -53,17 +61,16 @@ export class BufferedNetworkComponent {
    }
 
    private getBufferedEventMessages(): NetworkMessage[] {
-      const messages: NetworkMessage[] = [];
-      for (let [event, value] of this.bufferedEventsMessages.entries()) {
-         //if (!Utils.isDefined(value) || Object.keys(value).length === 0) {
-         //   continue;
-         //}
-         messages.push({
-            event,
-            value,
-         });
+      return Array.from(this.bufferedEventsMessages.entries())
+         .filter((entry) => Object.keys(entry).length)
+         .map(([event, value]) => ({ event, value }));
+   }
+
+   private getEventMessage(event: NetworkEvent): any {
+      if (!this.bufferedEventsMessages.has(event)) {
+         this.bufferedEventsMessages.set(event, {});
       }
-      return messages;
+      return this.bufferedEventsMessages.get(event);
    }
 
    //private onMessage(message: NetworkMessage) {

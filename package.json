@@ -74,6 +74,7 @@
    },
    "dependencies": {
       "threads": "1.6.3",
-      "phaser": "3.24.1"
+      "phaser": "3.24.1",
+      "deepmerge": "^4.2.2"
    }
 }

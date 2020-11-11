@@ -1,5 +1,7 @@
 export enum NetworkEvent {
-   SYNC_OBJECT,
+   // Player data, chat messages, bullets game status and maybe plane data also should be sent using StoreService automatically.
+   // We can send other data, though, adding new event like PING or something else as needed but trying to be generic.
+   DATA_STORE,
 }
 
 export interface NetworkMessage {
@@ -8,3 +10,10 @@ export interface NetworkMessage {
 }
 
 export interface NetworkMessageValue {}
+
+export interface DataStoreNetworkMessageValue {
+   [key: string]: {
+      id: string;
+      entity: object;
+   };
+}

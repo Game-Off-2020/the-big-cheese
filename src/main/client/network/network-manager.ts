@@ -1,20 +1,15 @@
 import { Inject, Singleton } from 'typescript-ioc';
-import { GameStateComponent } from '../game-state/game-state-component';
-import { GameComponent } from '../game/game-component';
 import { NetworkComponent } from './network-component';
+import { PlayerComponent } from '../player/player-component';
+import { PlayerStore } from '../../shared/player/player-store';
 
 @Singleton
 export class NetworkManager {
    constructor(
       @Inject private readonly component: NetworkComponent,
-      @Inject private readonly gameState: GameStateComponent,
-      @Inject private readonly game: GameComponent,
+      @Inject private readonly player: PlayerComponent,
+      @Inject private readonly playerStore: PlayerStore,
    ) {
-      gameState.gameStarted$.subscribe(() => {
-         const scene = game.getGameScene();
-         scene.playerPositionChanged$.subscribe((position) => {
-            console.log(position);
-         });
-      });
+      player.clientInit$.subscribe((player) => component.subscribeStoreOnCommit(playerStore, player.id));
    }
 }

@@ -116,7 +116,9 @@ export class GameScene extends Scene {
             if (!this.hitTestTerrain(this.character.x - 1, this.character.y, 1, this.characterSize - 3)) {
                this.character.x -= 1;
             }
-            while (this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
+            while (
+               this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)
+            ) {
                this.character.y -= 1;
             }
          }
@@ -124,10 +126,14 @@ export class GameScene extends Scene {
 
       if (this.cursorKeys.right.isDown) {
          for (let i = 0; i < this.maxHorizontalSpeed; i++) {
-            if (!this.hitTestTerrain(this.character.x + this.characterSize2, this.character.y, 1, this.characterSize - 3)) {
+            if (
+               !this.hitTestTerrain(this.character.x + this.characterSize2, this.character.y, 1, this.characterSize - 3)
+            ) {
                this.character.x += 1;
             }
-            while (this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)) {
+            while (
+               this.hitTestTerrain(this.character.x, this.character.y + this.characterSize, this.characterSize2, 1)
+            ) {
                this.character.y -= 1;
             }
          }
