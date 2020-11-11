@@ -28,6 +28,7 @@ export class GameScene extends Phaser.Scene {
    }
 
    private terrainTexture: Phaser.Textures.CanvasTexture;
+   private s: Phaser.Textures.CanvasTexture;
 
    create(): void {
       this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
@@ -43,6 +44,9 @@ export class GameScene extends Phaser.Scene {
       this.add.image(0, 0, 'terrain');
 
       this.cameras.main.startFollow(this.character);
+
+      this.s = this.textures.createCanvas('s', this.characterWidth, this.characterHeight);
+      this.add.image(-300, -300, 's');
    }
 
    private hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -52,6 +56,9 @@ export class GameScene extends Phaser.Scene {
       if (localX < 0 || localY < 0 || localX > MOON_RADIUS * 2 || localY > MOON_RADIUS * 2) return false;
 
       const data = this.terrainTexture.getData(localX, localY, this.characterWidth, this.characterHeight);
+      this.s.putData(data, 0, 0);
+      this.s.refresh();
+
       this.add.rectangle(worldX, worldY, this.characterWidth, this.characterHeight, 0xe1eb34, 0.3);
 
       for (const point of points) {
