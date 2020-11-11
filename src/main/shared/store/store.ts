@@ -3,8 +3,9 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import * as deepmerge from 'deepmerge';
 import { filter, map } from 'rxjs/operators';
 import { Utils } from '../util/utils';
+import { IObject } from '../util/util-model';
 
-export abstract class Store<T extends object> {
+export abstract class Store<T extends IObject> {
    private readonly dataSubject = new BehaviorSubject<StoreData<T>>({});
    private readonly addedSubject = new Subject<StoreData<T>>();
    private readonly removedSubject = new Subject<string>();

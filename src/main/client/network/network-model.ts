@@ -10,10 +10,3 @@ export interface NetworkMessage {
 }
 
 export interface NetworkMessageValue {}
-
-export interface DataStoreNetworkMessageValue {
-   [key: string]: {
-      id: string;
-      entity: object;
-   };
-}

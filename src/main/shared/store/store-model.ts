@@ -1,4 +1,6 @@
-export interface StoreData<T extends object> {
+import { IObject } from '../util/util-model';
+
+export interface StoreData<T extends IObject> {
    [key: string]: T;
 }
 
