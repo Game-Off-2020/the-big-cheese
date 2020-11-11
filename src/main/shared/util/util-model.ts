@@ -1,1 +1,3 @@
-export interface IObject extends Record<string, unknown> {}
+export interface IObject {
+   [key: string]: unknown;
+}

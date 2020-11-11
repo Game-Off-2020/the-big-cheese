@@ -6,8 +6,8 @@ import deepmerge from 'deepmerge';
 @Singleton
 export class BufferedNetworkComponent {
    private readonly bufferTimerMs = 1000 / SharedConfig.NETWORK_TICK_RATE;
-   private bufferedEventsMessages = new Map<NetworkEvent, any>();
-   private lastSendTime: number = 0;
+   private bufferedEventsMessages = new Map<NetworkEvent, NetworkMessageValue>();
+   private lastSendTime = 0;
    private readonly bindRequestBufferTimer;
    private sending = false;
 
@@ -66,7 +66,7 @@ export class BufferedNetworkComponent {
          .map(([event, value]) => ({ event, value }));
    }
 
-   private getEventMessage(event: NetworkEvent): any {
+   private getEventMessage(event: NetworkEvent): NetworkMessageValue {
       if (!this.bufferedEventsMessages.has(event)) {
          this.bufferedEventsMessages.set(event, {});
       }
