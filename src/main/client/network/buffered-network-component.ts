@@ -3,6 +3,10 @@ import { NetworkEvent, NetworkMessage } from './network-model';
 import { SharedConfig } from '../../shared/config/shared-config';
 import deepmerge from 'deepmerge';
 import { IObject } from '../../shared/util/util-model';
+import { spawn, Worker } from 'threads/dist';
+import { NetworkThread } from './network-thread/network-thread';
+import 'threads/register';
+import { Subject } from 'rxjs';
 
 @Singleton
 export class BufferedNetworkComponent {
@@ -11,19 +15,27 @@ export class BufferedNetworkComponent {
    private lastSendTime = 0;
    private readonly bindRequestBufferTimer;
    private sending = false;
+   private networkThread?: NetworkThread;
+
+   private readonly connectedSubject = new Subject<void>();
+   readonly connected$ = this.connectedSubject.pipe();
+   private readonly disconnectedSubject = new Subject<void>();
+   readonly disconnected$ = this.disconnectedSubject.pipe();
+   private readonly dataSubject = new Subject<NetworkMessage[]>();
+   readonly data$ = this.dataSubject.pipe();
 
    constructor() {
       this.bindRequestBufferTimer = this.requestBufferTimer.bind(this);
-      /*(async () => {
-         this.network = <INetwork><unknown>(await spawn(new Worker("./client-network")));
-         this.network.messageEvent().subscribe(message => this.onMessage(message));
-         this.network.connectedEvent().subscribe(() => this._connectedEvent.trigger());
-         this.network.connectionLostEvent().subscribe(() => this._connectionLostEvent.trigger());
-         this.network.init();
-         this.requestBufferTimer();
-      })();
+      this.initNetworkThread();
+   }
 
-       */
+   private async initNetworkThread(): Promise<void> {
+      this.networkThread = ((await spawn(
+         new Worker('./network-thread/network-thread', { type: 'module' }),
+      )) as unknown) as NetworkThread;
+      this.networkThread.onConnected().subscribe(() => this.connectedSubject.next());
+      this.networkThread.onDisconnected().subscribe(() => this.disconnectedSubject.next());
+      this.networkThread.onData().subscribe((data) => this.dataSubject.next(data));
       this.requestBufferTimer();
    }
 
@@ -49,15 +61,14 @@ export class BufferedNetworkComponent {
          return null;
       }
       this.sending = true;
-      //if (this.network && await this.network.isReady()) {
-      const messages = this.getBufferedEventMessages();
-      this.bufferedEventsMessages.clear();
       this.lastSendTime = Date.now();
-      console.log('Client sending messages:', messages);
-      //messages.forEach(async (message) => await this.network.send(message));
-      //} else {
-      //   console.log("Cannot send network message, connection is not ready yet.");
-      //}
+      if (this.networkThread && (await this.networkThread.isReady())) {
+         const messages = this.getBufferedEventMessages();
+         this.bufferedEventsMessages.clear();
+         await this.networkThread.send(messages);
+      } else {
+         console.log('Cannot send network message, connection is not ready yet.');
+      }
       this.sending = false;
    }
 
@@ -73,10 +84,4 @@ export class BufferedNetworkComponent {
       }
       return this.bufferedEventsMessages.get(event);
    }
-
-   //private onMessage(message: NetworkMessage) {
-   //   if (this.callbackNetworkEvents.has(message.eventId)) {
-   //       this.callbackNetworkEvents.get(message.eventId).trigger(message.value);
-   //    }
-   // }
 }

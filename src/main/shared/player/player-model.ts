@@ -1,4 +1,6 @@
-export interface Player {
+import { IObject } from '../util/util-model';
+
+export interface Player extends IObject {
    id: string;
    name: string;
    position: {

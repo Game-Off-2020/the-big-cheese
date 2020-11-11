@@ -3,4 +3,5 @@
 export class CommonClientConfig {
    static readonly ASSET_FOLDER: string = 'asset/';
    static readonly AUTO_START: boolean = false;
+   static readonly SERVER_HOST: string = 'https://game-off.glitch.me:3001';
 }
