@@ -31,6 +31,7 @@ export class GameScene extends Phaser.Scene {
 
    create(): void {
       this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
+      this.character.setOrigin(0.5, 1);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
 
       this.terrainTexture = this.textures.createCanvas('terrain', MOON_RADIUS * 2, MOON_RADIUS * 2);
@@ -171,6 +172,7 @@ export class GameScene extends Phaser.Scene {
    }
 
    update(): void {
+      this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
       if (this.input.activePointer.isDown) {
          const touchX = this.input.activePointer.x;
          const touchY = this.input.activePointer.y;
