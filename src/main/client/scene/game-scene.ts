@@ -224,13 +224,7 @@ export class GameScene extends Phaser.Scene {
 
       if (this.verticalSpeed > 0) {
          for (let _ = 0; _ < this.verticalSpeed; _++) {
-            if (
-               !this.hitTestTerrain(
-                  this.character.x,
-                  this.character.y,
-                  this.createLocalFloor(this.character, 10, null),
-               )
-            ) {
+            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))) {
                // Ground
                this.applyGroundReactionForce(this.character);
             } else {
@@ -242,7 +236,11 @@ export class GameScene extends Phaser.Scene {
       } else {
          // Jumping
          for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-            this.stickToGround(this.character);
+            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))) {
+               this.moveByVector(this.character, this.getDownwardVector(this.character).scale(-1));
+            } else {
+               this.verticalSpeed = 0;
+            }
          }
       }
    }
