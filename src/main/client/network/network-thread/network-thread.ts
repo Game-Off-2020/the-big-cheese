@@ -2,14 +2,14 @@ import { expose } from 'threads/worker';
 import { Container, Inject, Singleton } from 'typescript-ioc';
 import { MsgpackJsonEncoder } from '../../../shared/network/msgpack-json-encoder';
 import { NetworkMessage } from '../network-model';
-import { SocketIoWrapper } from './socket-io-wrapper';
+import { ClientSocketIoWrapper } from './client-socket-io-wrapper';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Singleton
 export class NetworkThread {
    constructor(
-      @Inject private readonly wrapper: SocketIoWrapper<Buffer>,
+      @Inject private readonly wrapper: ClientSocketIoWrapper<Buffer>,
       @Inject private readonly jsonEncoder: MsgpackJsonEncoder,
    ) {}
 
@@ -21,8 +21,8 @@ export class NetworkThread {
       return this.wrapper.disconnected$;
    }
 
-   onData(): Observable<NetworkMessage[]> {
-      return this.wrapper.data$.pipe(map((buffer) => this.jsonEncoder.decode(buffer) as NetworkMessage[]));
+   onData(): Observable<NetworkMessage> {
+      return this.wrapper.data$.pipe(map((buffer) => this.jsonEncoder.decode(buffer) as NetworkMessage));
    }
 
    isReady(): boolean {

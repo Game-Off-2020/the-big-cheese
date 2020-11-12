@@ -7,4 +7,8 @@ export class PlayerStore extends Store<Player> {
    getId(): string {
       return PlayerStore.name;
    }
+
+   getIds(): string[] {
+      return Object.keys(this.getData());
+   }
 }

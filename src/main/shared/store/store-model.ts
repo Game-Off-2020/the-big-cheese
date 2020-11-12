@@ -6,5 +6,5 @@ export interface StoreData<T extends IObject> {
 
 export interface StoreEntity<T> {
    id: string;
-   entity: T;
+   value: T;
 }

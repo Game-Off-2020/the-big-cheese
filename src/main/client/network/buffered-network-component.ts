@@ -21,7 +21,7 @@ export class BufferedNetworkComponent {
    readonly connected$ = this.connectedSubject.pipe();
    private readonly disconnectedSubject = new Subject<void>();
    readonly disconnected$ = this.disconnectedSubject.pipe();
-   private readonly dataSubject = new Subject<NetworkMessage[]>();
+   private readonly dataSubject = new Subject<NetworkMessage>();
    readonly data$ = this.dataSubject.pipe();
 
    constructor() {

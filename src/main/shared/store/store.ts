@@ -14,21 +14,23 @@ export abstract class Store<T extends IObject = IObject> {
    private readonly changedSubject = new Subject<StoreData<T>>();
 
    readonly data$ = this.dataSubject.pipe();
-   readonly added$ = this.mapEntity(this.addedSubject); // Returns id+entity
+   readonly added$ = this.mapEntity(this.addedSubject); // Returns id+value
+   readonly committed$ = this.mapEntity(this.committedSubject); // Returns id+value
+   readonly updated$ = this.mapEntity(this.updatedSubject); // Returns id+value
    readonly removed$ = this.removedSubject.pipe();
 
    private mapEntity(source: Observable<StoreData<T>>): Observable<StoreEntity<T>> {
       return source.pipe(
          map((data) => {
-            const [id, entity] = Object.entries(data)[0];
-            return { id, entity };
+            const [id, value] = Object.entries(data)[0];
+            return { id, value };
          }),
       );
    }
 
    abstract getId(): string;
 
-   // Returns entity
+   // Returns value
    onUpdatedId(id: string): Observable<T> {
       return this.filterDataId(this.updatedSubject, id);
    }
@@ -49,21 +51,21 @@ export abstract class Store<T extends IObject = IObject> {
    }
 
    // Change from higher-level
-   update(id: string, entity: T): void {
-      const entityData = Utils.keyValueObject(id, entity);
-      this.setEntity(id, entityData);
+   update(id: string, value: T): void {
+      const entityData = Utils.keyValueObject(id, value);
+      this.setValue(id, entityData);
       this.updatedSubject.next(entityData);
    }
 
    // Change from lower-level
-   commit(id: string, entity: T): void {
-      const entityData = Utils.keyValueObject(id, entity);
-      this.setEntity(id, entityData);
+   commit(id: string, value: T): void {
+      const entityData = Utils.keyValueObject(id, value);
+      this.setValue(id, entityData);
       this.committedSubject.next(entityData);
    }
 
    remove(id: string): void {
-      const data = this.dataSubject.getValue();
+      const data = this.getData();
       if (data[id]) {
          const mergedData = { ...data };
          delete mergedData[id];
@@ -72,8 +74,8 @@ export abstract class Store<T extends IObject = IObject> {
       }
    }
 
-   private setEntity(id: string, entityData: StoreData<T>): void {
-      const data = this.dataSubject.getValue();
+   private setValue(id: string, entityData: StoreData<T>): void {
+      const data = this.getData();
       const mergedData = deepmerge.all([data, entityData]) as StoreData<T>;
       this.dataSubject.next(mergedData);
       if (entityData[id]) {
@@ -81,5 +83,9 @@ export abstract class Store<T extends IObject = IObject> {
       } else {
          this.addedSubject.next(entityData);
       }
+   }
+
+   protected getData(): StoreData<T> {
+      return this.dataSubject.getValue();
    }
 }
