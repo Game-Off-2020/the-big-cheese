@@ -2,7 +2,7 @@ import * as SocketIO from 'socket.io-client';
 import { ClientConfig } from '../../config/client-config';
 import { fromEvent, Observable } from 'rxjs';
 
-export class SocketIoWrapper {
+export class SocketIoWrapper<T> {
    private static readonly EVENT_CONNECTED = 'connect';
    private static readonly EVENT_DISCONNECTED = 'disconnect';
    private static readonly EVENT_DATA = 'event';
@@ -10,7 +10,7 @@ export class SocketIoWrapper {
 
    readonly connected$: Observable<void>;
    readonly disconnected$: Observable<void>;
-   readonly data$: Observable<unknown>;
+   readonly data$: Observable<T>;
 
    constructor() {
       this.socket = SocketIO.io(ClientConfig.SERVER_HOST);
@@ -24,7 +24,7 @@ export class SocketIoWrapper {
       return this.socket.connected;
    }
 
-   send(data: unknown): void {
+   send(data: T): void {
       this.socket.emit(SocketIoWrapper.EVENT_DATA, data);
    }
 }

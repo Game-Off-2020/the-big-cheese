@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 @Singleton
 export class NetworkThread {
    constructor(
-      @Inject private readonly wrapper: SocketIoWrapper,
+      @Inject private readonly wrapper: SocketIoWrapper<Buffer>,
       @Inject private readonly jsonEncoder: MsgpackJsonEncoder,
    ) {}
 
@@ -22,7 +22,7 @@ export class NetworkThread {
    }
 
    onData(): Observable<NetworkMessage[]> {
-      return this.wrapper.data$.pipe(map((buffer) => this.jsonEncoder.decode(buffer as Buffer)));
+      return this.wrapper.data$.pipe(map((buffer) => this.jsonEncoder.decode(buffer) as NetworkMessage[]));
    }
 
    isReady(): boolean {
