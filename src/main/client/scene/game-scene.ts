@@ -140,7 +140,7 @@ export class GameScene extends Phaser.Scene {
    private createLocalWall(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
       const downVector = this.getDownwardVector(sprite);
 
-      const f = this.createCollisionLine(downVector, length);
+      const f = this.createCollisionLine(downVector, length, -length);
       this.add.line(sprite.x, sprite.y, f[0].x, f[0].y, f[f.length - 1].x, f[f.length - 1].y, 0x00ff00, 0.3);
 
       return f;
@@ -149,17 +149,19 @@ export class GameScene extends Phaser.Scene {
    private createLocalFloor(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
       const floorVector = this.getFloorVector(sprite);
 
-      const f = this.createCollisionLine(floorVector, length);
+      const f = this.createCollisionLine(floorVector, length, -length / 2);
       this.add.line(sprite.x, sprite.y, f[0].x, f[0].y, f[f.length - 1].x, f[f.length - 1].y, 0xff0000, 0.3);
 
       return f;
    }
 
-   private createCollisionLine(vector: Phaser.Math.Vector2, length: number): Phaser.Geom.Point[] {
-      return [...Array(length).keys()].map((i) => {
-         const newDownVector = vector.clone().scale(i);
-         return new Phaser.Geom.Point(newDownVector.x, newDownVector.y);
-      });
+   private createCollisionLine(vector: Phaser.Math.Vector2, length: number, offset: number): Phaser.Geom.Point[] {
+      return [...Array(length).keys()]
+         .map((key) => key + offset)
+         .map((i) => {
+            const newDownVector = vector.clone().scale(i);
+            return new Phaser.Geom.Point(newDownVector.x, newDownVector.y);
+         });
    }
 
    private stickToGround(sprite: Phaser.GameObjects.Sprite): void {
@@ -179,6 +181,9 @@ export class GameScene extends Phaser.Scene {
    }
 
    update(): void {
+      this.add.rectangle(this.character.x, this.character.y, 2, 2, 0xffffff, 0.3);
+      this.cameras.main.setRotation(-this.character.rotation);
+
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
       if (this.input.activePointer.isDown) {
          const touchX = this.input.activePointer.x;
@@ -222,7 +227,7 @@ export class GameScene extends Phaser.Scene {
             if (
                !this.hitTestTerrain(
                   this.character.x,
-                  this.character.y + this.characterHeight,
+                  this.character.y,
                   this.createLocalFloor(this.character, 10, null),
                )
             ) {
