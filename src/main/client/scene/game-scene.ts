@@ -28,7 +28,6 @@ export class GameScene extends Phaser.Scene {
    }
 
    private terrainTexture: Phaser.Textures.CanvasTexture;
-   private s: Phaser.Textures.CanvasTexture;
 
    create(): void {
       this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
@@ -44,9 +43,6 @@ export class GameScene extends Phaser.Scene {
       this.add.image(0, 0, 'terrain');
 
       this.cameras.main.startFollow(this.character);
-
-      this.s = this.textures.createCanvas('s', this.characterWidth, this.characterHeight);
-      this.add.image(-300, -300, 's');
    }
 
    private hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -56,10 +52,6 @@ export class GameScene extends Phaser.Scene {
       if (localX < 0 || localY < 0 || localX > MOON_RADIUS * 2 || localY > MOON_RADIUS * 2) return false;
 
       const data = this.terrainTexture.getData(localX, localY, this.characterWidth, this.characterHeight);
-      this.s.putData(data, 0, 0);
-      this.s.refresh();
-
-      this.add.rectangle(worldX, worldY, this.characterWidth, this.characterHeight, 0xe1eb34, 0.3);
 
       for (const point of points) {
          if (this.testCollisionWithTerrain(point.x, point.y, data)) {
@@ -140,19 +132,13 @@ export class GameScene extends Phaser.Scene {
    private createLocalWall(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
       const downVector = this.getDownwardVector(sprite);
 
-      const f = this.createCollisionLine(downVector, length, -length);
-      this.add.line(sprite.x, sprite.y, f[0].x, f[0].y, f[f.length - 1].x, f[f.length - 1].y, 0x00ff00, 0.3);
-
-      return f;
+      return this.createCollisionLine(downVector, length, -length);
    }
 
    private createLocalFloor(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
       const floorVector = this.getFloorVector(sprite);
 
-      const f = this.createCollisionLine(floorVector, length, -length / 2);
-      this.add.line(sprite.x, sprite.y, f[0].x, f[0].y, f[f.length - 1].x, f[f.length - 1].y, 0xff0000, 0.3);
-
-      return f;
+      return this.createCollisionLine(floorVector, length, -length / 2);
    }
 
    private createCollisionLine(vector: Phaser.Math.Vector2, length: number, offset: number): Phaser.Geom.Point[] {
@@ -181,7 +167,6 @@ export class GameScene extends Phaser.Scene {
    }
 
    update(): void {
-      this.add.rectangle(this.character.x, this.character.y, 2, 2, 0xffffff, 0.3);
       this.cameras.main.setRotation(-this.character.rotation);
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
