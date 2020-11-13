@@ -35,7 +35,7 @@ export class ClientNetworkManager {
          )
          .subscribe((storeDataEntries) => {
             storeDataEntries.forEach(([id, entity]) => {
-               console.log(`Store ${store.getId()} received entity ${id}:`, entity);
+               // console.log(`Store ${store.getId()} received entity ${id}:`, entity);
                // null values can go through the network but it means that it should be removed
                if (entity === null) {
                   store.remove(id);

@@ -13,7 +13,7 @@ export class ClientPlayerManager {
       @Inject private readonly network: ClientNetworkComponent,
    ) {
       network.loginResponse$.subscribe((response) => {
-         console.log('My id is ', response.id);
+         // console.log('My id is ', response.id);
          this.component.initClientPlayer({
             id: response.id,
             name: 'Unnamed',

@@ -11,9 +11,9 @@ export class ServerNetworkManager {
       @Inject private readonly playerStore: PlayerStore,
    ) {
       this.subscribeUpdateToStore(playerStore);
-      this.subscribeStoreOnCommit();
+      this.subscribeStoreOnCommit(this.playerStore);
+      this.subscribeStoreOnUpdateExceptEntityId(this.playerStore);
       this.subscribeSendLoginResponseOnPlayerAdded();
-      this.subscribePlayerStoreOnUpdate();
    }
 
    // Updates from the network will be merged into the store
@@ -26,7 +26,7 @@ export class ServerNetworkManager {
          )
          .subscribe((storeDataEntries) => {
             storeDataEntries.forEach(([id, value]) => {
-               console.log(`Store ${store.getId()} received entity ${id}:`, value);
+               // console.log(`Store ${store.getId()} received entity ${id}:`, value);
                if (value !== null) {
                   store.update(id, value);
                }
@@ -35,9 +35,21 @@ export class ServerNetworkManager {
    }
 
    // Changes in the store will be send out everyone
-   private subscribeStoreOnCommit(): void {
-      this.playerStore.committed$.subscribe((entity) => {
-         this.component.sendDataStore(this.playerStore.getIds(), this.playerStore.getId(), entity.id, entity.value);
+   private subscribeStoreOnCommit(store: Store): void {
+      store.committed$.subscribe((entity) => {
+         this.component.sendDataStore(this.playerStore.getIds(), store.getId(), entity.id, entity.value);
+      });
+   }
+
+   // Changes in the store will be send out everyone except the entity id (the user who made the change)
+   private subscribeStoreOnUpdateExceptEntityId(store: Store): void {
+      store.updated$.subscribe((entity) => {
+         this.component.sendDataStore(
+            this.playerStore.getIds().filter((id) => id !== entity.id),
+            store.getId(),
+            entity.id,
+            entity.value,
+         );
       });
    }
 
@@ -45,18 +57,6 @@ export class ServerNetworkManager {
    private subscribeSendLoginResponseOnPlayerAdded(): void {
       this.playerStore.added$.subscribe((entity) => {
          this.component.sendLoginResponse(entity.id, { id: entity.id });
-      });
-   }
-
-   // Changes in the store will be send out everyone except the user who made the change
-   private subscribePlayerStoreOnUpdate(): void {
-      this.playerStore.updated$.subscribe((entity) => {
-         this.component.sendDataStore(
-            this.playerStore.getIds().filter((id) => id !== entity.id),
-            this.playerStore.getId(),
-            entity.id,
-            entity.value,
-         );
       });
    }
 }
