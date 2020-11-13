@@ -1,13 +1,13 @@
 import { expose } from 'threads/worker';
 import { Container, Inject, Singleton } from 'typescript-ioc';
 import { MsgpackJsonEncoder } from '../../../shared/network/msgpack-json-encoder';
-import { NetworkMessage } from '../network-model';
+import { NetworkMessage } from '../../../shared/network/shared-network-model';
 import { ClientSocketIoWrapper } from './client-socket-io-wrapper';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Singleton
-export class NetworkThread {
+export class ClientNetworkThread {
    constructor(
       @Inject private readonly wrapper: ClientSocketIoWrapper<Buffer>,
       @Inject private readonly jsonEncoder: MsgpackJsonEncoder,
@@ -34,7 +34,7 @@ export class NetworkThread {
    }
 }
 
-const thread = Container.get(NetworkThread);
+const thread = Container.get(ClientNetworkThread);
 
 expose({
    onConnected: thread.onConnected.bind(thread),

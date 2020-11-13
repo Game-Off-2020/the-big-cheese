@@ -2,7 +2,7 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { ServerNetworkWrapper } from './server-network-wrapper';
 import { Observable } from 'rxjs';
 import { ServerNetworkMessage } from './server-network-model';
-import { LoginResponse, NetworkEvent } from '../../client/network/network-model';
+import { LoginResponse, NetworkEvent } from '../../shared/network/shared-network-model';
 import { IObject } from '../../shared/util/util-model';
 import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';

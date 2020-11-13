@@ -13,6 +13,7 @@ export class ServerNetworkManager {
    ) {
       // TODO: When the player connects we need to store it until it sends a login message with its name and settings (room etc)
       // TODO: Now we just create the player as if it had already sent this login message
+      // TODO: Move to ServerPlayerManager and here subscribe for playerStore added to send out the loginresponse with the id
       component.clientConnectedId$.subscribe((id) => {
          this.component.sendLoginResponse(id, { id });
          this.addUser(id);
@@ -22,6 +23,7 @@ export class ServerNetworkManager {
       this.subscribeStoreOnCommit(playerStore);
    }
 
+   // TODO: Move to ServerPlayerManager
    private addUser(id: string): void {
       this.playerStore.commit(id, {
          id,
@@ -34,6 +36,7 @@ export class ServerNetworkManager {
    }
 
    // Updates from the network will be merged into the store
+   // TODO: Move to ServerPlayerManager
    private subscribeUpdateToStore(store: Store): void {
       this.component.dataStore$
          .pipe(
@@ -51,7 +54,7 @@ export class ServerNetworkManager {
          });
    }
 
-   // TODO: Cleanup or extract component sendDataStore
+   // TODO: Move to ServerPlayerManager
    // Changes in the store will be send out everyone except the user who made the change
    private subscribePlayerStoreOnUpdate(store: PlayerStore): void {
       store.updated$.subscribe((entity) => {

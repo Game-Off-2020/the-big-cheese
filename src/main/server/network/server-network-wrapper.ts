@@ -5,7 +5,7 @@ import { Socket } from 'socket.io';
 import { fromEvent, Subject } from 'rxjs';
 import { ServerNetworkMessage } from './server-network-model';
 import { flatMap, map } from 'rxjs/internal/operators';
-import { NetworkMessage } from '../../client/network/network-model';
+import { NetworkMessage } from '../../shared/network/shared-network-model';
 
 @Singleton
 export class ServerNetworkWrapper {

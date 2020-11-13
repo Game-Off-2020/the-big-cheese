@@ -1,20 +1,20 @@
 import { Inject, Singleton } from 'typescript-ioc';
-import { BufferedNetworkComponent } from './buffered-network-component';
+import { ClientBufferedNetworkComponent } from './client-buffered-network-component';
 import { Observable } from 'rxjs';
-import { LoginResponse, NetworkEvent, NetworkMessage } from './network-model';
+import { LoginResponse, NetworkEvent, NetworkMessage } from '../../shared/network/shared-network-model';
 import { IObject } from '../../shared/util/util-model';
 import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 
 @Singleton
-export class NetworkComponent {
+export class ClientNetworkComponent {
    readonly connected$: Observable<void>;
    readonly disconnected$: Observable<void>;
    private event$: Observable<NetworkMessage>;
    readonly loginResponse$: Observable<LoginResponse>;
    readonly dataStore$: Observable<IObject>;
 
-   constructor(@Inject private readonly bufferedNetwork: BufferedNetworkComponent) {
+   constructor(@Inject private readonly bufferedNetwork: ClientBufferedNetworkComponent) {
       this.connected$ = bufferedNetwork.connected$;
       this.disconnected$ = bufferedNetwork.disconnected$;
       this.event$ = bufferedNetwork.data$;

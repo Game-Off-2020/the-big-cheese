@@ -1,14 +1,14 @@
 import { Inject, Singleton } from 'typescript-ioc';
-import { NetworkComponent } from './network-component';
+import { ClientNetworkComponent } from './client-network-component';
 import { PlayerComponent } from '../player/player-component';
 import { PlayerStore } from '../../shared/player/player-store';
 import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
 
 @Singleton
-export class NetworkManager {
+export class ClientNetworkManager {
    constructor(
-      @Inject private readonly component: NetworkComponent,
+      @Inject private readonly component: ClientNetworkComponent,
       @Inject private readonly player: PlayerComponent,
       @Inject private readonly playerStore: PlayerStore,
    ) {

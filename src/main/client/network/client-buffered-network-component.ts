@@ -1,21 +1,21 @@
 import { Singleton } from 'typescript-ioc';
-import { NetworkEvent, NetworkMessage } from './network-model';
+import { NetworkEvent, NetworkMessage } from '../../shared/network/shared-network-model';
 import { SharedConfig } from '../../shared/config/shared-config';
 import deepmerge from 'deepmerge';
 import { IObject } from '../../shared/util/util-model';
 import { spawn, Worker } from 'threads/dist';
-import { NetworkThread } from './network-thread/network-thread';
+import { ClientNetworkThread } from './network-thread/client-network-thread';
 import 'threads/register';
 import { Subject } from 'rxjs';
 
 @Singleton
-export class BufferedNetworkComponent {
+export class ClientBufferedNetworkComponent {
    private readonly bufferTimerMs = 1000 / SharedConfig.NETWORK_TICK_RATE;
    private bufferedEventsMessages = new Map<NetworkEvent, IObject>();
    private lastSendTime = 0;
    private readonly bindRequestBufferTimer;
    private sending = false;
-   private networkThread?: NetworkThread;
+   private networkThread?: ClientNetworkThread;
 
    private readonly connectedSubject = new Subject<void>();
    readonly connected$ = this.connectedSubject.pipe();
@@ -32,7 +32,7 @@ export class BufferedNetworkComponent {
    private async initNetworkThread(): Promise<void> {
       this.networkThread = ((await spawn(
          new Worker('./network-thread/network-thread', { type: 'module' }),
-      )) as unknown) as NetworkThread;
+      )) as unknown) as ClientNetworkThread;
       this.networkThread.onConnected().subscribe(() => this.connectedSubject.next());
       this.networkThread.onDisconnected().subscribe(() => this.disconnectedSubject.next());
       this.networkThread.onData().subscribe((data) => this.dataSubject.next(data));

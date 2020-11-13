@@ -1,4 +1,4 @@
-import { IObject } from '../../shared/util/util-model';
+import { IObject } from '../util/util-model';
 
 export enum NetworkEvent {
    // Player data, chat messages, bullets game status and maybe plane data also should be sent using StoreService automatically.
