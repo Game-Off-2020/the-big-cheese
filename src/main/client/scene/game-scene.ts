@@ -16,7 +16,7 @@ interface Color {
 export class GameScene extends Scene {
    private playerPosition = new Vector2();
    private playerPositionChangedSubject = new Subject<Vector2>();
-   playerPositionChanged$ = this.playerPositionChangedSubject.pipe();
+   readonly playerPositionChanged$ = this.playerPositionChangedSubject.pipe();
 
    // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;

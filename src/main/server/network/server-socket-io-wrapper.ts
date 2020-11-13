@@ -13,12 +13,8 @@ export class ServerSocketIoWrapper extends SharedSocketIoWrapper {
 
    constructor() {
       super();
-      // TODO: Enable cors from github pages
       this.httpServer = Http.createServer();
       this.socketServer = new Server(this.httpServer, {
-         // 'eiows' is a replacement module for deprecatod 'ws' which allows, but doesn't guarantee,
-         // significant performance and memory-usage improvements.
-         // wsEngine: 'eiows',
          cors: true,
       });
       fromEvent(this.socketServer, ServerSocketIoWrapper.EVENT_CONNECTED).subscribe((socket: Socket) => {
