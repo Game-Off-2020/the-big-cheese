@@ -1,6 +1,6 @@
 import { Inject, Singleton } from 'typescript-ioc';
 import { ClientNetworkComponent } from './client-network-component';
-import { PlayerComponent } from '../player/player-component';
+import { ClientPlayerComponent } from '../player/client-player-component';
 import { PlayerStore } from '../../shared/player/player-store';
 import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { filter, map } from 'rxjs/operators';
 export class ClientNetworkManager {
    constructor(
       @Inject private readonly component: ClientNetworkComponent,
-      @Inject private readonly player: PlayerComponent,
+      @Inject private readonly player: ClientPlayerComponent,
       @Inject private readonly playerStore: PlayerStore,
    ) {
       player.clientInit$.subscribe((player) => {

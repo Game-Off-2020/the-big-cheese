@@ -1,13 +1,13 @@
 import { Inject, Singleton } from 'typescript-ioc';
-import { PlayerComponent } from './player-component';
+import { ClientPlayerComponent } from './client-player-component';
 import { GameStateComponent } from '../game-state/game-state-component';
 import { GameComponent } from '../game/game-component';
 import { ClientNetworkComponent } from '../network/client-network-component';
 
 @Singleton
-export class PlayerManager {
+export class ClientPlayerManager {
    constructor(
-      @Inject private readonly component: PlayerComponent,
+      @Inject private readonly component: ClientPlayerComponent,
       @Inject private readonly gameState: GameStateComponent,
       @Inject private readonly game: GameComponent,
       @Inject private readonly network: ClientNetworkComponent,

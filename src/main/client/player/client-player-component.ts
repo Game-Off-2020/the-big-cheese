@@ -4,7 +4,7 @@ import { Player } from '../../shared/player/player-model';
 import { Subject } from 'rxjs';
 
 @Singleton
-export class PlayerComponent {
+export class ClientPlayerComponent {
    private readonly clientInitSubject = new Subject<Player>();
    readonly clientInit$ = this.clientInitSubject.pipe();
 
