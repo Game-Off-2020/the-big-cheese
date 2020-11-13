@@ -79,9 +79,6 @@ export class ClientBufferedNetworkComponent {
    }
 
    private getEventMessage(event: NetworkEvent): IObject {
-      if (!this.bufferedEventsMessages.has(event)) {
-         this.bufferedEventsMessages.set(event, {});
-      }
-      return this.bufferedEventsMessages.get(event);
+      return this.bufferedEventsMessages.get(event) ?? {};
    }
 }
