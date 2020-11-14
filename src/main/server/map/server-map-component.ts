@@ -12,6 +12,7 @@ export class ServerMapComponent extends SharedMapComponent {
 
    constructor(@Inject protected readonly store: MapStore) {
       super(store);
+      /*
       setInterval(() => {
          store.commit((Math.random() * 1000000).toFixed(0), {
             position: {
@@ -21,6 +22,7 @@ export class ServerMapComponent extends SharedMapComponent {
             radius: Math.random() * 20 + 10,
          });
       }, 1000);
+      */
    }
 
    createMap(radius: number): void {
