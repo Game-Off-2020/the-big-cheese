@@ -1,7 +1,7 @@
 import { Inject, Singleton } from 'typescript-ioc';
 import { Canvas, CanvasRenderingContext2D, createCanvas } from 'canvas';
 import { SharedMapComponent } from '../../shared/map/shared-map-component';
-import { ServerMapStore } from './server-map-store';
+import { MapStore } from '../../shared/map/map-store';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
@@ -10,7 +10,7 @@ export class ServerMapComponent extends SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
    private size: number;
 
-   constructor(@Inject protected readonly store: ServerMapStore) {
+   constructor(@Inject protected readonly store: MapStore) {
       super(store);
       setInterval(() => {
          store.commit((Math.random() * 1000000).toFixed(0), {

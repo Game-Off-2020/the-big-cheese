@@ -4,14 +4,14 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
 import { ServerMapComponent } from '../map/server-map-component';
-import { ServerMapStore } from '../map/server-map-store';
+import { MapStore } from '../../shared/map/map-store';
 
 @Singleton
 export class ServerNetworkManager {
    constructor(
       @Inject private readonly component: ServerNetworkComponent,
       @Inject private readonly playerStore: PlayerStore,
-      @Inject private readonly mapStore: ServerMapStore,
+      @Inject private readonly mapStore: MapStore,
       @Inject private readonly map: ServerMapComponent,
    ) {
       this.subscribeUpdateToStore(playerStore);
