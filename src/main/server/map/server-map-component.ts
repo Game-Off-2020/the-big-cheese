@@ -25,11 +25,11 @@ export class ServerMapComponent extends SharedMapComponent {
 
    createMap(radius: number): void {
       this.size = radius * 2;
-      this.canvas = createCanvas(radius * 2, radius * 2);
+      this.canvas = createCanvas(this.size, this.size);
       this.ctx = this.canvas.getContext('2d');
 
       this.ctx.fillStyle = ServerMapComponent.COLOR_MOON;
-      this.ctx.arc(this.size / 2, this.size / 2, radius, 0, 2 * Math.PI);
+      this.ctx.arc(radius, radius, radius, 0, 2 * Math.PI);
       this.ctx.fill();
    }
 
