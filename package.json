@@ -3,10 +3,10 @@
    "description": "",
    "license": "",
    "scripts": {
-      "build:dev:server": "webpack --projectTarget=server",
+      "build:dev:server": "webpack --mode development --projectTarget=server",
       "build:prod:server": "webpack --mode production --projectTarget=server",
       "build:prod:client": "webpack --mode production --projectTarget=client",
-      "start:dev:client": "webpack-dev-server --progress --content-base \"./\" --open-page \"index.html\" --projectTarget=client",
+      "start:dev:client": "webpack-dev-server --progress --content-base \"./\" --open-page \"index.html\" --mode development --projectTarget=client",
       "start:dev:server": "node --inspect dist/server/main.js --trace-warnings",
       "start:server": "node dist/server/main.js",
       "start": "npm run start:dev:client",
@@ -70,10 +70,20 @@
       "typescript-ioc": "3.2.2",
       "webpack": "^4.44.1",
       "webpack-cli": "^3.3.12",
-      "webpack-dev-server": "^3.11.0"
+      "webpack-dev-server": "^3.11.0",
+      "webpack-node-externals": "^2.5.2"
    },
    "dependencies": {
+      "@msgpack/msgpack": "^1.12.0",
+      "bufferutil": "^4.0.2",
+      "canvas": "^2.6.1",
+      "deepmerge": "^4.2.2",
+      "eiows": "^3.4.0",
+      "phaser": "3.24.1",
+      "socket.io": "^3.0.1",
+      "socket.io-client": "^3.0.1",
       "threads": "1.6.3",
-      "phaser": "3.24.1"
+      "utf-8-validate": "^5.0.3",
+      "zlib": "^1.0.5"
    }
 }

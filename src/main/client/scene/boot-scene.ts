@@ -18,7 +18,13 @@ export class BootScene extends Scene {
       const progressBarHeight = 100;
       const progressBarWidth = 400;
 
-      const progressBarContainer = this.add.rectangle(halfWidth, halfHeight, progressBarWidth, progressBarHeight, 0x000000);
+      const progressBarContainer = this.add.rectangle(
+         halfWidth,
+         halfHeight,
+         progressBarWidth,
+         progressBarHeight,
+         0x000000,
+      );
       const progressBar = this.add.rectangle(
          halfWidth + 20 - progressBarContainer.width * 0.5,
          halfHeight,
