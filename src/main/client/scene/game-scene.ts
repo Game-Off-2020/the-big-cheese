@@ -51,6 +51,7 @@ export class GameScene extends Scene {
    create(): void {
       this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
       this.character.setOrigin(0.5, 1);
+      this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
    }
 
