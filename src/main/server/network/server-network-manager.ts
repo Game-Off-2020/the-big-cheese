@@ -14,7 +14,7 @@ export class ServerNetworkManager {
       @Inject private readonly mapStore: MapStore,
       @Inject private readonly map: ServerMapComponent,
    ) {
-      this.subscribeUpdateToStore(playerStore);
+      this.subscribeNetworkUpdateToStore(playerStore);
       this.subscribeStoreOnUpdateExceptEntityId(this.playerStore);
       this.subscribeStoreOnCommit(playerStore);
       this.subscribeStoreOnCommit(mapStore);
@@ -22,7 +22,7 @@ export class ServerNetworkManager {
    }
 
    // Updates from the network will be merged into the store
-   private subscribeUpdateToStore(store: Store): void {
+   private subscribeNetworkUpdateToStore(store: Store): void {
       this.component.dataStore$
          .pipe(
             map((stores) => stores[store.getId()]),
