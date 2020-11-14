@@ -1,9 +1,15 @@
 import { Container, Inject, Singleton } from 'typescript-ioc';
 import { ServerNetworkManager } from './network/server-network-manager';
+import { ServerPlayerManager } from './player/server-player-manager';
+import { ServerMapManager } from './map/server-map-manager';
 
 @Singleton
 export class ServerMain {
-   constructor(@Inject private readonly network: ServerNetworkManager) {}
+   constructor(
+      @Inject private readonly network: ServerNetworkManager,
+      @Inject private readonly player: ServerPlayerManager,
+      @Inject private readonly map: ServerMapManager,
+   ) {}
 }
 
 Container.get(ServerMain);

@@ -16,4 +16,8 @@ export interface NetworkMessage {
 
 export interface LoginResponse extends IObject {
    id: string;
+   map: {
+      buffer: Buffer;
+      size: number;
+   };
 }

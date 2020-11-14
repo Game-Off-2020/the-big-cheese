@@ -3,16 +3,21 @@ import { ServerNetworkComponent } from './server-network-component';
 import { PlayerStore } from '../../shared/player/player-store';
 import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
+import { ServerMapComponent } from '../map/server-map-component';
+import { ServerMapStore } from '../map/server-map-store';
 
 @Singleton
 export class ServerNetworkManager {
    constructor(
       @Inject private readonly component: ServerNetworkComponent,
       @Inject private readonly playerStore: PlayerStore,
+      @Inject private readonly mapStore: ServerMapStore,
+      @Inject private readonly map: ServerMapComponent,
    ) {
       this.subscribeUpdateToStore(playerStore);
-      this.subscribeStoreOnCommit(this.playerStore);
       this.subscribeStoreOnUpdateExceptEntityId(this.playerStore);
+      this.subscribeStoreOnCommit(playerStore);
+      this.subscribeStoreOnCommit(mapStore);
       this.subscribeSendLoginResponseOnPlayerAdded();
    }
 
@@ -56,7 +61,13 @@ export class ServerNetworkManager {
    // Send login response when player added
    private subscribeSendLoginResponseOnPlayerAdded(): void {
       this.playerStore.added$.subscribe((entity) => {
-         this.component.sendLoginResponse(entity.id, { id: entity.id });
+         this.component.sendLoginResponse(entity.id, {
+            id: entity.id,
+            map: {
+               buffer: this.map.getMap(),
+               size: this.map.getSize(),
+            },
+         });
       });
    }
 }

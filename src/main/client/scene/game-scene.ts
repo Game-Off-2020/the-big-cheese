@@ -1,8 +1,9 @@
 import { SceneUtil } from '../util/scene-util';
 import { Scene } from 'phaser';
 import { Subject } from 'rxjs';
+import { Inject } from 'typescript-ioc';
+import { ClientMapComponent } from '../map/client-map-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
-import Graphics = Phaser.GameObjects.Graphics;
 import Sprite = Phaser.Physics.Arcade.Sprite;
 import Vector2 = Phaser.Math.Vector2;
 
@@ -26,19 +27,28 @@ export class GameScene extends Scene {
    private cursorKeys: CursorKeys;
    private character: Sprite;
 
+   // TODO: It is injected just temporarily, not sure where it should be
+   @Inject
+   private readonly mapComponent: ClientMapComponent;
+
    constructor() {
       super({
          active: false,
          visible: false,
          key: 'Game', // TODO: Extract key
       });
+      this.mapComponent.mapLoaded$.subscribe((canvas) => {
+         this.terrainTexture = this.textures.addCanvas('terrain', canvas);
+         this.add.sprite(400, 400, 'terrain');
+      });
+      this.mapComponent.updated$.subscribe(() => this.terrainTexture.update());
    }
 
    private sceneWidth: number;
    private sceneWidth2: number;
    private sceneHeight: number;
    private sceneHeight2: number;
-   private terrainTexture: Phaser.Textures.CanvasTexture;
+   private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
       const sceneWidth = (this.sceneWidth = SceneUtil.getWidth(this));
@@ -48,27 +58,6 @@ export class GameScene extends Scene {
 
       this.character = this.physics.add.sprite(sceneWidth / 2, sceneHeight / 3, 'character'); // TODO: Extract key
       this.cursorKeys = this.input.keyboard.createCursorKeys();
-
-      // Draw triangle objects to the scene
-      const terrain: Graphics = this.add.graphics();
-      for (let i = 0; i < 40; i++) {
-         const angle = Phaser.Math.RND.rotation();
-         const originX = Phaser.Math.RND.integerInRange(sceneWidth / 4, (3 * sceneWidth) / 4);
-         const originY = Phaser.Math.RND.integerInRange(sceneHeight / 2, (3 * sceneHeight) / 4);
-         const width = Phaser.Math.RND.integerInRange(75, 175);
-         const triangle = Phaser.Geom.Triangle.BuildEquilateral(originX, originY, width);
-         Phaser.Geom.Triangle.Rotate(triangle, angle);
-         terrain.fillStyle(0x00dd00, 1);
-         terrain.beginPath();
-         terrain.moveTo(triangle.x1, triangle.y1);
-         terrain.lineTo(triangle.x2, triangle.y2);
-         terrain.lineTo(triangle.x3, triangle.y3);
-         terrain.closePath();
-         terrain.fillPath();
-      }
-      this.terrainTexture = this.textures.createCanvas('terrain', sceneWidth, sceneHeight);
-      terrain.generateTexture(this.terrainTexture.getCanvas(), sceneWidth, sceneHeight);
-      this.add.sprite(0, 0, 'terrain');
    }
 
    private hitTestTerrain(worldX: number, worldY: number, width: number, height: number): boolean {
@@ -110,6 +99,8 @@ export class GameScene extends Scene {
    private verticalSpeed = 0;
 
    update(): void {
+      if (!this.terrainTexture) return;
+
       // TODO: We should emit an update$ event and we should handle character movement in another component
       if (this.cursorKeys.left.isDown) {
          for (let i = 0; i < this.maxHorizontalSpeed; i++) {

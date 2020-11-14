@@ -4,6 +4,7 @@ import { ClientPlayerComponent } from '../player/client-player-component';
 import { PlayerStore } from '../../shared/player/player-store';
 import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
+import { MapStore } from '../../shared/map/map-store';
 
 @Singleton
 export class ClientNetworkManager {
@@ -11,10 +12,12 @@ export class ClientNetworkManager {
       @Inject private readonly component: ClientNetworkComponent,
       @Inject private readonly player: ClientPlayerComponent,
       @Inject private readonly playerStore: PlayerStore,
+      @Inject private readonly mapStore: MapStore,
    ) {
       player.clientInit$.subscribe((player) => {
          this.subscribeStoreOnCommit(playerStore, player.id);
-         this.subscribeStoreOnUpdate(playerStore);
+         this.subscribeNetworkUpdateStore(playerStore);
+         this.subscribeNetworkUpdateStore(mapStore);
       });
    }
 
@@ -26,7 +29,7 @@ export class ClientNetworkManager {
    }
 
    // Updates from the network will be merged into the store
-   private subscribeStoreOnUpdate(store: Store): void {
+   private subscribeNetworkUpdateStore(store: Store): void {
       this.component.dataStore$
          .pipe(
             map((stores) => stores[store.getId()]),

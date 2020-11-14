@@ -31,7 +31,7 @@ export class ClientBufferedNetworkComponent {
 
    private async initNetworkThread(): Promise<void> {
       this.networkThread = ((await spawn(
-         new Worker('./network-thread/network-thread', { type: 'module' }),
+         new Worker('./network-thread/client-network-thread', { type: 'module' }),
       )) as unknown) as ClientNetworkThread;
       this.networkThread.onConnected().subscribe(() => this.connectedSubject.next());
       this.networkThread.onDisconnected().subscribe(() => this.disconnectedSubject.next());

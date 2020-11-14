@@ -78,7 +78,7 @@ export abstract class Store<T extends IObject = IObject> {
       const data = this.getData();
       const mergedData = deepmerge.all([data, entityData]) as StoreData<T>;
       this.dataSubject.next(mergedData);
-      if (entityData[id]) {
+      if (data[id]) {
          this.changedSubject.next(entityData);
       } else {
          this.addedSubject.next(entityData);

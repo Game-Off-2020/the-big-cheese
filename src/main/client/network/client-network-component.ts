@@ -3,7 +3,7 @@ import { ClientBufferedNetworkComponent } from './client-buffered-network-compon
 import { Observable } from 'rxjs';
 import { LoginResponse, NetworkEvent, NetworkMessage } from '../../shared/network/shared-network-model';
 import { IObject } from '../../shared/util/util-model';
-import { filter, map } from 'rxjs/internal/operators';
+import { filter, map, tap } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 
 @Singleton
@@ -24,6 +24,7 @@ export class ClientNetworkComponent {
 
    private onEvent(event: NetworkEvent): Observable<IObject> {
       return this.event$.pipe(
+         tap((message) => console.log(message)),
          filter((message) => message.event === event),
          map((message) => message.value),
       );

@@ -7,6 +7,7 @@ export class ServerPlayerComponent {
    constructor(@Inject private readonly playerStore: PlayerStore) {}
 
    addUser(id: string): void {
+      console.log('addUser', id);
       this.playerStore.commit(id, {
          id,
          name: id,
