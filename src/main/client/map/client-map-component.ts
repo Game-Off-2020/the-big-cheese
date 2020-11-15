@@ -7,7 +7,6 @@ import { MapDestruction } from '../../shared/map/map-model';
 
 @Singleton
 export class ClientMapComponent extends SharedMapComponent {
-   private canvas: HTMLCanvasElement;
    protected ctx: CanvasRenderingContext2D;
 
    private readonly mapLoadedSubject = new Subject<HTMLCanvasElement>();
@@ -21,14 +20,14 @@ export class ClientMapComponent extends SharedMapComponent {
    }
 
    initMap(size: number, buffer: Buffer): void {
-      this.canvas = document.createElement('canvas') as HTMLCanvasElement;
-      this.canvas.width = size;
-      this.canvas.height = size;
-      this.ctx = this.canvas.getContext('2d');
+      const canvas = document.createElement('canvas') as HTMLCanvasElement;
+      canvas.width = size;
+      canvas.height = size;
+      this.ctx = canvas.getContext('2d');
 
       ImageUtil.createImageFromBuffer(buffer).then((image) => {
          this.ctx.drawImage(image, 0, 0);
-         this.mapLoadedSubject.next(this.canvas);
+         this.mapLoadedSubject.next(canvas);
       });
    }
 
