@@ -5,6 +5,7 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
 import { MapStore } from '../../shared/map/map-store';
+import { GameStateComponent } from '../game-state/game-state-component';
 
 @Singleton
 export class ClientNetworkManager {
@@ -13,7 +14,12 @@ export class ClientNetworkManager {
       @Inject private readonly player: ClientPlayerComponent,
       @Inject private readonly playerStore: PlayerStore,
       @Inject private readonly mapStore: MapStore,
+      @Inject private readonly gameState: GameStateComponent,
    ) {
+      gameState.joinGame$.subscribe((request) => {
+         component.connect();
+         component.sendJoinRequest(request);
+      });
       player.clientInit$.subscribe((player) => {
          this.subscribeStoreOnCommit(playerStore, player.id);
          this.subscribeNetworkUpdateStore(playerStore);

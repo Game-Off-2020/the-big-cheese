@@ -15,7 +15,7 @@ export class ClientPlayerManager {
       network.loginResponse$.subscribe((response) => {
          // console.log('My id is ', response.id);
          this.component.initClientPlayer({
-            id: response.id,
+            id: response.userId,
             name: 'Unnamed',
             position: { x: 0, y: 0 },
          });

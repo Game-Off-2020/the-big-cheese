@@ -30,7 +30,7 @@ export abstract class Store<T extends IObject = IObject> {
 
    abstract getId(): string;
 
-   // Returns value
+   // Return entity
    onUpdatedId(id: string): Observable<T> {
       return this.filterDataId(this.updatedSubject, id);
    }

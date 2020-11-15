@@ -39,6 +39,13 @@ export class ClientBufferedNetworkComponent {
       this.requestBufferTimer();
    }
 
+   connect(): void {
+      if (!this.networkThread) {
+         return console.warn('Cannot connect, network thread is not ready yet!');
+      }
+      this.networkThread.connect();
+   }
+
    send(event: NetworkEvent, value: IObject): void {
       const mergedMessage = deepmerge.all([this.getEventMessage(event), value]) as IObject;
       this.bufferedEventsMessages.set(event, mergedMessage);

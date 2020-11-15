@@ -62,7 +62,7 @@ export class ServerNetworkManager {
    private subscribeSendLoginResponseOnPlayerAdded(): void {
       this.playerStore.added$.subscribe((entity) => {
          this.component.sendLoginResponse(entity.id, {
-            id: entity.id,
+            userId: entity.id,
             map: {
                buffer: this.map.getMap(),
                size: this.map.getSize(),

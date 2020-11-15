@@ -14,7 +14,7 @@ interface Color {
    readonly alpha: number;
 }
 
-const MOON_RADIUS = 200;
+const MOON_RADIUS = 1000; // TODO: Should be set via map data (we have canvas size and size property in map component)
 
 export class GameScene extends Scene {
    private playerPosition = new Vector2();
@@ -49,7 +49,7 @@ export class GameScene extends Scene {
    private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
-      this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
+      this.character = this.physics.add.sprite(0, -1200, 'character'); // TODO: Extract key
       this.character.setOrigin(0.5, 1);
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -140,21 +140,13 @@ export class GameScene extends Scene {
       sprite.y += vector.y;
    }
 
-   private createLocalWall(
-      sprite: Phaser.GameObjects.Sprite,
-      length: number,
-      localOffset: Phaser.Geom.Point,
-   ): Phaser.Geom.Point[] {
+   private createLocalWall(sprite: Phaser.GameObjects.Sprite, length: number): Phaser.Geom.Point[] {
       const downVector = this.getDownwardVector(sprite);
 
       return this.createCollisionLine(downVector, length, -length);
    }
 
-   private createLocalFloor(
-      sprite: Phaser.GameObjects.Sprite,
-      length: number,
-      localOffset: Phaser.Geom.Point,
-   ): Phaser.Geom.Point[] {
+   private createLocalFloor(sprite: Phaser.GameObjects.Sprite, length: number): Phaser.Geom.Point[] {
       const floorVector = this.getFloorVector(sprite);
 
       return this.createCollisionLine(floorVector, length, -length / 2);
@@ -170,7 +162,7 @@ export class GameScene extends Scene {
    }
 
    private stickToGround(sprite: Phaser.GameObjects.Sprite): void {
-      while (this.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10, null))) {
+      while (this.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10))) {
          this.applyGravity(sprite);
       }
    }
@@ -199,11 +191,7 @@ export class GameScene extends Scene {
       if (this.cursorKeys.left.isDown) {
          for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
             if (
-               !this.hitTestTerrain(
-                  this.character.x - 1,
-                  this.character.y,
-                  this.createLocalWall(this.character, 10, null),
-               )
+               !this.hitTestTerrain(this.character.x - 1, this.character.y, this.createLocalWall(this.character, 10))
             ) {
                this.moveLeft(this.character);
             }
@@ -217,7 +205,7 @@ export class GameScene extends Scene {
                !this.hitTestTerrain(
                   this.character.x + this.characterWidth,
                   this.character.y,
-                  this.createLocalWall(this.character, 10, null),
+                  this.createLocalWall(this.character, 10),
                )
             ) {
                this.moveRight(this.character);
@@ -235,9 +223,7 @@ export class GameScene extends Scene {
 
       if (this.verticalSpeed > 0) {
          for (let _ = 0; _ < this.verticalSpeed; _++) {
-            if (
-               !this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))
-            ) {
+            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10))) {
                // Ground
                this.applyGroundReactionForce(this.character);
             } else {
@@ -249,9 +235,7 @@ export class GameScene extends Scene {
       } else {
          // Jumping
          for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-            if (
-               !this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))
-            ) {
+            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10))) {
                this.moveByVector(this.character, this.getDownwardVector(this.character).scale(-1));
             } else {
                this.verticalSpeed = 0;
