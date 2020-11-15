@@ -7,6 +7,8 @@ import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Sprite = Phaser.Physics.Arcade.Sprite;
 import Vector2 = Phaser.Math.Vector2;
 
+import { Player } from './player';
+
 interface Color {
    readonly red: number;
    readonly green: number;
@@ -27,7 +29,7 @@ export class GameScene extends Scene {
    private readonly characterWidth = 10;
    private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
-   private character: Sprite;
+   private character: Player;
 
    // TODO: It is injected just temporarily, not sure where it should be
    @Inject
@@ -49,8 +51,7 @@ export class GameScene extends Scene {
    private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
-      this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
-      this.character.setOrigin(0.5, 1);
+      this.character = new Player({ scene: this, x: 0, y: -400 });
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
    }
