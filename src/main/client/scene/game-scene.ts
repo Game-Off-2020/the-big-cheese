@@ -123,7 +123,8 @@ export class GameScene extends Scene {
             position: charPosition,
             angle: new Vector2({ x: this.input.activePointer.x, y: this.input.activePointer.y })
                .subtract(new Vector2({ x: this.game.scale.width / 2, y: this.game.scale.height / 2 }))
-               .normalize(),
+               .normalize()
+               .rotate(this.character.rotation),
          });
       }
 
