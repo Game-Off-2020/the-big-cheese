@@ -20,8 +20,6 @@ interface Color {
 const MOON_RADIUS = 200;
 
 export class GameScene extends Scene {
-   private playerPosition = new Vector2();
-   private playerPositionChangedSubject = new Subject<Vector2>();
    readonly playerPositionChanged$ = this.playerPositionChangedSubject.pipe();
 
    // private readonly velocity = new Vector2(0, 0);
@@ -246,9 +244,7 @@ export class GameScene extends Scene {
             }
          }
       }
-      if (this.playerPosition.x !== this.character.x || this.playerPosition.y !== this.character.y) {
-         this.playerPosition.set(this.character.x, this.character.y);
-         this.playerPositionChangedSubject.next(this.playerPosition);
-      }
+
+      this.character.update();
    }
 }
