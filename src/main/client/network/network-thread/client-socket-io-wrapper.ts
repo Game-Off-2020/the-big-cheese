@@ -16,7 +16,10 @@ export class ClientSocketIoWrapper<T> extends SharedSocketIoWrapper {
       this.connected$ = fromEvent(this.socket, ClientSocketIoWrapper.EVENT_CONNECTED);
       this.disconnected$ = fromEvent(this.socket, ClientSocketIoWrapper.EVENT_DISCONNECTED);
       this.data$ = fromEvent(this.socket, ClientSocketIoWrapper.EVENT_DATA);
-      this.socket.connect(); // TODO: Connect only upon joining to a game and disconnect when left
+   }
+
+   connect(): void {
+      this.socket.connect();
    }
 
    isConnected(): boolean {

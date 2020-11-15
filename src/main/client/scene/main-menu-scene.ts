@@ -32,6 +32,6 @@ export class MainMenuScene extends Phaser.Scene {
 
    private startGame(): void {
       this.game.scene.start('Game'); // TODO: Extract key
-      this.gameState.startGame();
+      this.gameState.joinGame('Unknown');
    }
 }

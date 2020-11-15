@@ -15,6 +15,8 @@ export class ServerNetworkWrapper {
    readonly clientEvent$ = this.clientEventSubject.pipe();
    private readonly clientConnectedIdSubject = new Subject<string>();
    readonly clientConnectedId$ = this.clientConnectedIdSubject.pipe();
+   private readonly clientDisconnectedIdSubject = new Subject<string>();
+   readonly clientDisconnectedId$ = this.clientDisconnectedIdSubject.pipe();
 
    constructor(
       @Inject private readonly wrapper: ServerSocketIoWrapper,
@@ -32,6 +34,12 @@ export class ServerNetworkWrapper {
 
    private initClient(client: Socket): void {
       this.clients.set(client.id, client);
+      this.subscribeClientEvent(client);
+      this.subscribeClientDisconnect(client);
+      this.clientConnectedIdSubject.next(client.id);
+   }
+
+   private subscribeClientEvent(client: Socket): void {
       fromEvent(client, ServerSocketIoWrapper.EVENT_DATA)
          .pipe(
             map((buffer: Buffer) => this.jsonEncoder.decode(buffer) as NetworkMessage[]),
@@ -45,6 +53,12 @@ export class ServerNetworkWrapper {
             ),
          )
          .subscribe((message) => this.clientEventSubject.next(message));
-      this.clientConnectedIdSubject.next(client.id);
+   }
+
+   private subscribeClientDisconnect(client: Socket): void {
+      fromEvent(client, ServerSocketIoWrapper.EVENT_DISCONNECTED).subscribe(() => {
+         this.clients.delete(client.id);
+         this.clientDisconnectedIdSubject.next(client.id);
+      });
    }
 }

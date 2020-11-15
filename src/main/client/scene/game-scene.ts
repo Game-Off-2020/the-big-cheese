@@ -16,7 +16,7 @@ interface Color {
    readonly alpha: number;
 }
 
-const MOON_RADIUS = 200;
+const MOON_RADIUS = 1000; // TODO: Should be set via map data (we have canvas size and size property in map component)
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -44,7 +44,7 @@ export class GameScene extends Scene {
          this.terrainTexture = this.textures.addCanvas('terrain', canvas);
          this.add.sprite(0, 0, 'terrain');
       });
-      this.mapComponent.updated$.subscribe(() => this.terrainTexture.update());
+      this.mapComponent.updated$.subscribe(() => this.terrainTexture && this.terrainTexture.update());
    }
 
    private terrainTexture?: Phaser.Textures.CanvasTexture;
