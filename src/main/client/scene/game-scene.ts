@@ -8,24 +8,16 @@ import { Bullets } from './default-bullet';
 import { ClientPlayerComponent } from '../player/client-player-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Vector2 = Phaser.Math.Vector2;
-
-interface Color {
-   readonly red: number;
-   readonly green: number;
-   readonly blue: number;
-   readonly alpha: number;
-}
-
-const MOON_RADIUS = 1000; // TODO: Should be set via map data (we have canvas size and size property in map component)
+import { MapSprite } from '../map/map-sprite';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
-   private readonly characterHeight = 20;
    private readonly characterWidth = 10;
    private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
    private character: PlayerSprite;
    private bullets?: Bullets;
+   private mapSprite?: MapSprite;
 
    // TODO: It is injected just temporarily, not sure where it should be
    @Inject
@@ -41,13 +33,13 @@ export class GameScene extends Scene {
          key: 'Game', // TODO: Extract key
       });
       this.mapComponent.mapLoaded$.subscribe((canvas) => {
-         this.terrainTexture = this.textures.addCanvas('terrain', canvas);
-         this.add.sprite(0, 0, 'terrain');
+         this.mapSprite = new MapSprite({
+            scene: this,
+            canvas: canvas,
+         });
       });
-      this.mapComponent.updated$.subscribe(() => this.terrainTexture && this.terrainTexture.update());
+      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
    }
-
-   private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
       this.character = new PlayerSprite({ scene: this, x: 0, y: -400 });
@@ -55,45 +47,6 @@ export class GameScene extends Scene {
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
-   }
-
-   private hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
-      const localX = worldX + MOON_RADIUS;
-      const localY = worldY + MOON_RADIUS;
-
-      if (localX < 0 || localY < 0 || localX > MOON_RADIUS * 2 || localY > MOON_RADIUS * 2) return false;
-
-      const data = this.terrainTexture.getData(localX, localY, this.characterWidth, this.characterHeight);
-
-      for (const point of points) {
-         if (this.testCollisionWithTerrain(point.x, point.y, data)) {
-            return true;
-         }
-      }
-      return false;
-   }
-
-   private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
-      const pixel = this.getPixelColor(localX, localY, canvasData);
-
-      if (pixel && pixel.alpha > 0) {
-         return true;
-      } else {
-         return false;
-      }
-   }
-
-   private getPixelColor(localX: number, localY: number, canvasData: ImageData): Color {
-      if (localX < 0 || localY < 0 || localX > canvasData.width || localY > canvasData.height) return;
-
-      const index = (localY * canvasData.width + localX) * 4;
-
-      return {
-         red: canvasData.data[index],
-         green: canvasData.data[index + 1],
-         blue: canvasData.data[index + 2],
-         alpha: canvasData.data[index + 3],
-      };
    }
 
    private jumping = false;
@@ -144,7 +97,7 @@ export class GameScene extends Scene {
    }
 
    private stickToGround(sprite: Phaser.GameObjects.Sprite): void {
-      while (this.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10))) {
+      while (this.mapSprite.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10))) {
          this.applyGravity(sprite);
       }
    }
@@ -160,7 +113,7 @@ export class GameScene extends Scene {
    }
 
    update(): void {
-      if (!this.terrainTexture) return;
+      if (!this.mapSprite) return;
       this.cameras.main.setRotation(-this.character.rotation);
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
@@ -177,7 +130,11 @@ export class GameScene extends Scene {
       if (this.cursorKeys.left.isDown) {
          for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
             if (
-               !this.hitTestTerrain(this.character.x - 1, this.character.y, this.createLocalWall(this.character, 10))
+               !this.mapSprite.hitTestTerrain(
+                  this.character.x - 1,
+                  this.character.y,
+                  this.createLocalWall(this.character, 10),
+               )
             ) {
                this.moveLeft(this.character);
             }
@@ -188,7 +145,7 @@ export class GameScene extends Scene {
       if (this.cursorKeys.right.isDown) {
          for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
             if (
-               !this.hitTestTerrain(
+               !this.mapSprite.hitTestTerrain(
                   this.character.x + this.characterWidth,
                   this.character.y,
                   this.createLocalWall(this.character, 10),
@@ -209,7 +166,13 @@ export class GameScene extends Scene {
 
       if (this.verticalSpeed > 0) {
          for (let _ = 0; _ < this.verticalSpeed; _++) {
-            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10))) {
+            if (
+               !this.mapSprite.hitTestTerrain(
+                  this.character.x,
+                  this.character.y,
+                  this.createLocalFloor(this.character, 10),
+               )
+            ) {
                // Ground
                this.applyGroundReactionForce(this.character);
             } else {
@@ -221,7 +184,13 @@ export class GameScene extends Scene {
       } else {
          // Jumping
          for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10))) {
+            if (
+               !this.mapSprite.hitTestTerrain(
+                  this.character.x,
+                  this.character.y,
+                  this.createLocalFloor(this.character, 10),
+               )
+            ) {
                this.moveByVector(this.character, this.getDownwardVector(this.character).scale(-1));
             } else {
                this.verticalSpeed = 0;
