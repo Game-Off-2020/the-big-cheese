@@ -6,7 +6,7 @@ import { IObject } from '../../shared/util/util-model';
 import { spawn, Worker } from 'threads/dist';
 import { ClientNetworkThread } from './network-thread/client-network-thread';
 import 'threads/register';
-import { Subject } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 
 @Singleton
 export class ClientBufferedNetworkComponent {
@@ -16,6 +16,8 @@ export class ClientBufferedNetworkComponent {
    private readonly bindRequestBufferTimer;
    private sending = false;
    private networkThread?: ClientNetworkThread;
+   private initNetworkThreadSubject = new ReplaySubject<void>();
+   private readonly initNetworkThread$ = this.initNetworkThreadSubject.pipe();
 
    private readonly connectedSubject = new Subject<void>();
    readonly connected$ = this.connectedSubject.pipe();
@@ -37,9 +39,19 @@ export class ClientBufferedNetworkComponent {
       this.networkThread.onDisconnected().subscribe(() => this.disconnectedSubject.next());
       this.networkThread.onData().subscribe((data) => this.dataSubject.next(data));
       this.requestBufferTimer();
+      console.log('Network thread look ok');
+      this.initNetworkThreadSubject.next();
    }
 
-   send(event: NetworkEvent, value: IObject): void {
+   connect(): void {
+      console.log('Waiting for Network thread to be initialized..');
+      this.initNetworkThread$.subscribe(() => {
+         console.log('Calling network connect..');
+         this.networkThread.connect();
+      });
+   }
+
+   send(event: NetworkEvent, value: IObject = {}): void {
       const mergedMessage = deepmerge.all([this.getEventMessage(event), value]) as IObject;
       this.bufferedEventsMessages.set(event, mergedMessage);
       this.sendBufferedEventMessagesInTime();

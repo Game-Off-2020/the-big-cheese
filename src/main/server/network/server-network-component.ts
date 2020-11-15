@@ -2,7 +2,7 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { ServerNetworkWrapper } from './server-network-wrapper';
 import { Observable } from 'rxjs';
 import { ServerNetworkMessage } from './server-network-model';
-import { LoginResponse, NetworkEvent } from '../../shared/network/shared-network-model';
+import { JoinRequest, JoinResponse, NetworkEvent, ShootRequest } from '../../shared/network/shared-network-model';
 import { IObject } from '../../shared/util/util-model';
 import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
@@ -10,24 +10,31 @@ import { Utils } from '../../shared/util/utils';
 @Singleton
 export class ServerNetworkComponent {
    readonly clientConnectedId$: Observable<string>;
+   readonly clientDisconnectedId$: Observable<string>;
    private event$: Observable<ServerNetworkMessage>;
    readonly dataStore$: Observable<IObject>;
+   readonly joinRequest$: Observable<ServerNetworkMessage<JoinRequest>>;
+   readonly shootRequest$: Observable<ServerNetworkMessage<ShootRequest>>;
 
    constructor(@Inject private readonly wrapper: ServerNetworkWrapper) {
       this.clientConnectedId$ = wrapper.clientConnectedId$;
+      this.clientDisconnectedId$ = wrapper.clientDisconnectedId$;
       this.event$ = wrapper.clientEvent$;
       this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE) as Observable<IObject>;
+      this.joinRequest$ = this.onMessage(NetworkEvent.JOIN_REQUEST) as Observable<ServerNetworkMessage<JoinRequest>>;
+      this.shootRequest$ = this.onMessage(NetworkEvent.SHOOT_REQUEST) as Observable<ServerNetworkMessage<ShootRequest>>;
    }
 
    private onEvent(event: NetworkEvent): Observable<IObject> {
-      return this.event$.pipe(
-         filter((message) => message.event === event),
-         map((message) => message.value),
-      );
+      return this.onMessage(event).pipe(map((message) => message.value));
    }
 
-   sendLoginResponse(user: string, response: LoginResponse): void {
-      this.wrapper.send(user, { event: NetworkEvent.LOGIN_RESPONSE, value: response });
+   private onMessage(event: NetworkEvent): Observable<ServerNetworkMessage> {
+      return this.event$.pipe(filter((message) => message.event === event));
+   }
+
+   sendLoginResponse(user: string, response: JoinResponse): void {
+      this.wrapper.send(user, { event: NetworkEvent.JOIN_RESPONSE, value: response });
    }
 
    sendDataStore(users: string[], storeId: string, id: string, value: IObject): void {

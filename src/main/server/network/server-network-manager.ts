@@ -5,20 +5,23 @@ import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
 import { ServerMapComponent } from '../map/server-map-component';
 import { MapStore } from '../../shared/map/map-store';
+import { BulletStore } from '../../shared/bullet/bullet-store';
 
 @Singleton
 export class ServerNetworkManager {
    constructor(
       @Inject private readonly component: ServerNetworkComponent,
+      @Inject private readonly map: ServerMapComponent,
       @Inject private readonly playerStore: PlayerStore,
       @Inject private readonly mapStore: MapStore,
-      @Inject private readonly map: ServerMapComponent,
+      @Inject private readonly bulletStore: BulletStore,
    ) {
       this.subscribeNetworkUpdateToStore(playerStore);
-      this.subscribeStoreOnUpdateExceptEntityId(this.playerStore);
-      this.subscribeStoreOnCommit(playerStore);
-      this.subscribeStoreOnCommit(mapStore);
-      this.subscribeSendLoginResponseOnPlayerAdded();
+      this.subscribeStoreOnUpdateToNetworkExceptEntityId(this.playerStore);
+      this.subscribeStoreOnCommitToNetwork(playerStore);
+      this.subscribeStoreOnCommitToNetwork(mapStore);
+      this.subscribeStoreOnCommitToNetwork(bulletStore);
+      this.subscribeSendLoginResponseOnPlayerAddedToNetwork();
    }
 
    // Updates from the network will be merged into the store
@@ -40,14 +43,14 @@ export class ServerNetworkManager {
    }
 
    // Changes in the store will be send out everyone
-   private subscribeStoreOnCommit(store: Store): void {
+   private subscribeStoreOnCommitToNetwork(store: Store): void {
       store.committed$.subscribe((entity) => {
          this.component.sendDataStore(this.playerStore.getIds(), store.getId(), entity.id, entity.value);
       });
    }
 
    // Changes in the store will be send out everyone except the entity id (the user who made the change)
-   private subscribeStoreOnUpdateExceptEntityId(store: Store): void {
+   private subscribeStoreOnUpdateToNetworkExceptEntityId(store: Store): void {
       store.updated$.subscribe((entity) => {
          this.component.sendDataStore(
             this.playerStore.getIds().filter((id) => id !== entity.id),
@@ -59,10 +62,10 @@ export class ServerNetworkManager {
    }
 
    // Send login response when player added
-   private subscribeSendLoginResponseOnPlayerAdded(): void {
+   private subscribeSendLoginResponseOnPlayerAddedToNetwork(): void {
       this.playerStore.added$.subscribe((entity) => {
          this.component.sendLoginResponse(entity.id, {
-            id: entity.id,
+            userId: entity.id,
             map: {
                buffer: this.map.getMap(),
                size: this.map.getSize(),

@@ -38,7 +38,7 @@ export class GameScene extends Scene {
             canvas: canvas,
          });
       });
-      this.mapComponent.updated$.subscribe(() => this.mapSprite.update());
+      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
    }
 
    create(): void {

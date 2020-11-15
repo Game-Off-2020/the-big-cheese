@@ -25,6 +25,10 @@ export class ClientNetworkThread {
       return this.wrapper.data$.pipe(map((buffer) => this.jsonEncoder.decode(buffer) as NetworkMessage));
    }
 
+   connect(): void {
+      this.wrapper.connect();
+   }
+
    isReady(): boolean {
       return this.wrapper.isConnected();
    }
@@ -40,6 +44,7 @@ expose({
    onConnected: thread.onConnected.bind(thread),
    onDisconnected: thread.onDisconnected.bind(thread),
    onData: thread.onData.bind(thread),
+   connect: thread.connect.bind(thread),
    isReady: thread.isReady.bind(thread),
    send: thread.send.bind(thread),
 });
