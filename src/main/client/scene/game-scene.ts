@@ -175,14 +175,12 @@ export class GameScene extends Scene {
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
       if (this.input.activePointer.isDown) {
-         const worldX = this.input.activePointer.x;
-         const worldY = this.input.activePointer.y;
-         const charPosition = new Phaser.Math.Vector2(this.character.x, this.character.y);
-         const worldPosition = new Phaser.Math.Vector2(worldX, worldY);
-         console.log(worldPosition);
+         const charPosition = new Vector2({ x: this.character.x, y: this.character.y });
          this.bullets.fireBullet({
             position: charPosition,
-            angle: charPosition.clone().subtract(worldPosition).normalize(),
+            angle: new Vector2({ x: this.input.activePointer.x, y: this.input.activePointer.y })
+               .subtract(new Vector2({ x: this.game.scale.width / 2, y: this.game.scale.height / 2 }))
+               .normalize(),
          });
       }
 
