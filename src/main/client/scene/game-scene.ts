@@ -1,6 +1,11 @@
 import * as Phaser from 'phaser';
+import { Scene } from 'phaser';
+import { Subject } from 'rxjs';
+import { Inject } from 'typescript-ioc';
+import { ClientMapComponent } from '../map/client-map-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Sprite = Phaser.Physics.Arcade.Sprite;
+import Vector2 = Phaser.Math.Vector2;
 
 interface Color {
    readonly red: number;
@@ -11,7 +16,12 @@ interface Color {
 
 const MOON_RADIUS = 200;
 
-export class GameScene extends Phaser.Scene {
+export class GameScene extends Scene {
+   private playerPosition = new Vector2();
+   private playerPositionChangedSubject = new Subject<Vector2>();
+   readonly playerPositionChanged$ = this.playerPositionChangedSubject.pipe();
+
+   // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;
    private readonly characterHeight = 20;
    private readonly characterWidth = 10;
@@ -19,30 +29,30 @@ export class GameScene extends Phaser.Scene {
    private cursorKeys: CursorKeys;
    private character: Sprite;
 
+   // TODO: It is injected just temporarily, not sure where it should be
+   @Inject
+   private readonly mapComponent: ClientMapComponent;
+
    constructor() {
       super({
          active: false,
          visible: false,
          key: 'Game', // TODO: Extract key
       });
+      this.mapComponent.mapLoaded$.subscribe((canvas) => {
+         this.terrainTexture = this.textures.addCanvas('terrain', canvas);
+         this.add.sprite(0, 0, 'terrain');
+      });
+      this.mapComponent.updated$.subscribe(() => this.terrainTexture.update());
    }
 
-   private terrainTexture: Phaser.Textures.CanvasTexture;
+   private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
       this.character = this.physics.add.sprite(0, -400, 'character'); // TODO: Extract key
       this.character.setOrigin(0.5, 1);
-      this.cursorKeys = this.input.keyboard.createCursorKeys();
-
-      this.terrainTexture = this.textures.createCanvas('terrain', MOON_RADIUS * 2, MOON_RADIUS * 2);
-      this.terrainTexture.context.beginPath();
-      this.terrainTexture.context.fillStyle = '#00dd00';
-      this.terrainTexture.context.arc(MOON_RADIUS, MOON_RADIUS, MOON_RADIUS, 0, Math.PI * 2, true);
-      this.terrainTexture.context.fill();
-      this.terrainTexture.refresh();
-      this.add.image(0, 0, 'terrain');
-
       this.cameras.main.startFollow(this.character);
+      this.cursorKeys = this.input.keyboard.createCursorKeys();
    }
 
    private hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -83,6 +93,7 @@ export class GameScene extends Phaser.Scene {
          alpha: canvasData.data[index + 3],
       };
    }
+
    private createHole(worldX: number, worldY: number): void {
       this.terrainTexture.context.globalCompositeOperation = 'destination-out';
       this.terrainTexture.context.beginPath();
@@ -129,13 +140,21 @@ export class GameScene extends Phaser.Scene {
       sprite.y += vector.y;
    }
 
-   private createLocalWall(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
+   private createLocalWall(
+      sprite: Phaser.GameObjects.Sprite,
+      length: number,
+      localOffset: Phaser.Geom.Point,
+   ): Phaser.Geom.Point[] {
       const downVector = this.getDownwardVector(sprite);
 
       return this.createCollisionLine(downVector, length, -length);
    }
 
-   private createLocalFloor(sprite: Phaser.GameObjects.Sprite, length: number, localOffset: Phaser.Geom.Point): Phaser.Geom.Point[] {
+   private createLocalFloor(
+      sprite: Phaser.GameObjects.Sprite,
+      length: number,
+      localOffset: Phaser.Geom.Point,
+   ): Phaser.Geom.Point[] {
       const floorVector = this.getFloorVector(sprite);
 
       return this.createCollisionLine(floorVector, length, -length / 2);
@@ -167,6 +186,7 @@ export class GameScene extends Phaser.Scene {
    }
 
    update(): void {
+      if (!this.terrainTexture) return;
       this.cameras.main.setRotation(-this.character.rotation);
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
@@ -178,7 +198,13 @@ export class GameScene extends Phaser.Scene {
 
       if (this.cursorKeys.left.isDown) {
          for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
-            if (!this.hitTestTerrain(this.character.x - 1, this.character.y, this.createLocalWall(this.character, 10, null))) {
+            if (
+               !this.hitTestTerrain(
+                  this.character.x - 1,
+                  this.character.y,
+                  this.createLocalWall(this.character, 10, null),
+               )
+            ) {
                this.moveLeft(this.character);
             }
             this.stickToGround(this.character);
@@ -209,7 +235,9 @@ export class GameScene extends Phaser.Scene {
 
       if (this.verticalSpeed > 0) {
          for (let _ = 0; _ < this.verticalSpeed; _++) {
-            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))) {
+            if (
+               !this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))
+            ) {
                // Ground
                this.applyGroundReactionForce(this.character);
             } else {
@@ -221,12 +249,18 @@ export class GameScene extends Phaser.Scene {
       } else {
          // Jumping
          for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))) {
+            if (
+               !this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))
+            ) {
                this.moveByVector(this.character, this.getDownwardVector(this.character).scale(-1));
             } else {
                this.verticalSpeed = 0;
             }
          }
+      }
+      if (this.playerPosition.x !== this.character.x || this.playerPosition.y !== this.character.y) {
+         this.playerPosition.set(this.character.x, this.character.y);
+         this.playerPositionChangedSubject.next(this.playerPosition);
       }
    }
 }
