@@ -1,14 +1,13 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
-import { Subject } from 'rxjs';
 import { Inject } from 'typescript-ioc';
 import { ClientMapComponent } from '../map/client-map-component';
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
-import Sprite = Phaser.Physics.Arcade.Sprite;
-import Vector2 = Phaser.Math.Vector2;
 
-import { Player } from './player';
+import { PlayerSprite } from '../player/player-sprite';
 import { Bullets } from './default-bullet';
+import { ClientPlayerComponent } from '../player/client-player-component';
+import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
+import Vector2 = Phaser.Math.Vector2;
 
 interface Color {
    readonly red: number;
@@ -20,20 +19,20 @@ interface Color {
 const MOON_RADIUS = 200;
 
 export class GameScene extends Scene {
-   readonly playerPositionChanged$ = this.playerPositionChangedSubject.pipe();
-
-   // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;
    private readonly characterHeight = 20;
    private readonly characterWidth = 10;
    private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
-   private character: Player;
+   private character: PlayerSprite;
    private bullets?: Bullets;
 
    // TODO: It is injected just temporarily, not sure where it should be
    @Inject
    private readonly mapComponent: ClientMapComponent;
+
+   @Inject
+   private readonly playerComponent: ClientPlayerComponent;
 
    constructor() {
       super({
@@ -51,7 +50,8 @@ export class GameScene extends Scene {
    private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
-      this.character = new Player({ scene: this, x: 0, y: -400 });
+      this.character = new PlayerSprite({ scene: this, x: 0, y: -400 });
+      this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
@@ -122,21 +122,13 @@ export class GameScene extends Scene {
       sprite.y += vector.y;
    }
 
-   private createLocalWall(
-      sprite: Phaser.GameObjects.Sprite,
-      length: number,
-      localOffset: Phaser.Geom.Point,
-   ): Phaser.Geom.Point[] {
+   private createLocalWall(sprite: Phaser.GameObjects.Sprite, length: number): Phaser.Geom.Point[] {
       const downVector = this.getDownwardVector(sprite);
 
       return this.createCollisionLine(downVector, length, -length);
    }
 
-   private createLocalFloor(
-      sprite: Phaser.GameObjects.Sprite,
-      length: number,
-      localOffset: Phaser.Geom.Point,
-   ): Phaser.Geom.Point[] {
+   private createLocalFloor(sprite: Phaser.GameObjects.Sprite, length: number): Phaser.Geom.Point[] {
       const floorVector = this.getFloorVector(sprite);
 
       return this.createCollisionLine(floorVector, length, -length / 2);
@@ -152,7 +144,7 @@ export class GameScene extends Scene {
    }
 
    private stickToGround(sprite: Phaser.GameObjects.Sprite): void {
-      while (this.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10, null))) {
+      while (this.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10))) {
          this.applyGravity(sprite);
       }
    }
@@ -185,11 +177,7 @@ export class GameScene extends Scene {
       if (this.cursorKeys.left.isDown) {
          for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
             if (
-               !this.hitTestTerrain(
-                  this.character.x - 1,
-                  this.character.y,
-                  this.createLocalWall(this.character, 10, null),
-               )
+               !this.hitTestTerrain(this.character.x - 1, this.character.y, this.createLocalWall(this.character, 10))
             ) {
                this.moveLeft(this.character);
             }
@@ -203,7 +191,7 @@ export class GameScene extends Scene {
                !this.hitTestTerrain(
                   this.character.x + this.characterWidth,
                   this.character.y,
-                  this.createLocalWall(this.character, 10, null),
+                  this.createLocalWall(this.character, 10),
                )
             ) {
                this.moveRight(this.character);
@@ -221,9 +209,7 @@ export class GameScene extends Scene {
 
       if (this.verticalSpeed > 0) {
          for (let _ = 0; _ < this.verticalSpeed; _++) {
-            if (
-               !this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))
-            ) {
+            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10))) {
                // Ground
                this.applyGroundReactionForce(this.character);
             } else {
@@ -235,9 +221,7 @@ export class GameScene extends Scene {
       } else {
          // Jumping
          for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-            if (
-               !this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10, null))
-            ) {
+            if (!this.hitTestTerrain(this.character.x, this.character.y, this.createLocalFloor(this.character, 10))) {
                this.moveByVector(this.character, this.getDownwardVector(this.character).scale(-1));
             } else {
                this.verticalSpeed = 0;

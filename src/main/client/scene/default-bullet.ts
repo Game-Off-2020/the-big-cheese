@@ -16,7 +16,7 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
       super(scene, x, y, 'bullet');
    }
 
-   fire(options: BulletFireOptions) {
+   fire(options: BulletFireOptions): void {
       this.body.reset(options.position.x, options.position.y);
 
       this.setActive(true);
@@ -30,7 +30,7 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
       this.timeAlive = 0;
    }
 
-   preUpdate(time: number, delta: number) {
+   preUpdate(time: number, delta: number): void {
       super.preUpdate(time, delta);
 
       if (this.timeAlive > this.lifeTime) {
@@ -55,8 +55,8 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
       });
    }
 
-   fireBullet(options: BulletFireOptions) {
-      let bullet = this.getFirstDead(false);
+   fireBullet(options: BulletFireOptions): void {
+      const bullet = this.getFirstDead(false);
 
       if (bullet) {
          bullet.fire(options);
