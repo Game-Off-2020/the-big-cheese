@@ -74,6 +74,10 @@ export abstract class Store<T extends IObject = IObject> {
       }
    }
 
+   get(id: string): T | undefined {
+      return this.getData()[id];
+   }
+
    private setValue(id: string, entityData: StoreData<T>): void {
       const data = this.getData();
       const mergedData = deepmerge.all([data, entityData]) as StoreData<T>;

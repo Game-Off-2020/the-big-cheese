@@ -2,7 +2,7 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { ServerNetworkWrapper } from './server-network-wrapper';
 import { Observable } from 'rxjs';
 import { ServerNetworkMessage } from './server-network-model';
-import { JoinRequest, JoinResponse, NetworkEvent } from '../../shared/network/shared-network-model';
+import { JoinRequest, JoinResponse, NetworkEvent, ShootRequest } from '../../shared/network/shared-network-model';
 import { IObject } from '../../shared/util/util-model';
 import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
@@ -14,6 +14,7 @@ export class ServerNetworkComponent {
    private event$: Observable<ServerNetworkMessage>;
    readonly dataStore$: Observable<IObject>;
    readonly joinRequest$: Observable<ServerNetworkMessage<JoinRequest>>;
+   readonly shootRequest$: Observable<ServerNetworkMessage<ShootRequest>>;
 
    constructor(@Inject private readonly wrapper: ServerNetworkWrapper) {
       this.clientConnectedId$ = wrapper.clientConnectedId$;
@@ -21,6 +22,7 @@ export class ServerNetworkComponent {
       this.event$ = wrapper.clientEvent$;
       this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE) as Observable<IObject>;
       this.joinRequest$ = this.onMessage(NetworkEvent.JOIN_REQUEST) as Observable<ServerNetworkMessage<JoinRequest>>;
+      this.shootRequest$ = this.onMessage(NetworkEvent.SHOOT_REQUEST) as Observable<ServerNetworkMessage<ShootRequest>>;
    }
 
    private onEvent(event: NetworkEvent): Observable<IObject> {

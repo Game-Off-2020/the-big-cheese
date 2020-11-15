@@ -42,4 +42,8 @@ export class ClientNetworkComponent {
    sendJoinRequest(request: JoinRequest): void {
       this.bufferedNetwork.send(NetworkEvent.JOIN_REQUEST, request);
    }
+
+   sendShootRequest(): void {
+      this.bufferedNetwork.send(NetworkEvent.SHOOT_REQUEST);
+   }
 }

@@ -4,15 +4,19 @@ import { PlayerStore } from '../../shared/player/player-store';
 
 @Singleton
 export class ServerPlayerComponent {
-   constructor(@Inject private readonly playerStore: PlayerStore) {}
+   constructor(@Inject private readonly store: PlayerStore) {}
 
    addUser(id: string, name: string): void {
       // TODO: Check name availability
       console.log('addUser', id);
-      this.playerStore.commit(id, {
+      this.store.commit(id, {
          id,
          name,
          position: {
+            x: 0,
+            y: 0,
+         },
+         direction: {
             x: 0,
             y: 0,
          },
@@ -20,6 +24,10 @@ export class ServerPlayerComponent {
    }
 
    removeUser(userId: string): void {
-      this.playerStore.remove(userId);
+      this.store.remove(userId);
+   }
+
+   getPlayer(id: string): Player | undefined {
+      return this.store.get(id);
    }
 }
