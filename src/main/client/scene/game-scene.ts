@@ -8,6 +8,7 @@ import Sprite = Phaser.Physics.Arcade.Sprite;
 import Vector2 = Phaser.Math.Vector2;
 
 import { Player } from './player';
+import { Bullets } from './default-bullet';
 
 interface Color {
    readonly red: number;
@@ -30,6 +31,7 @@ export class GameScene extends Scene {
    private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
    private character: Player;
+   private bullets?: Bullets;
 
    // TODO: It is injected just temporarily, not sure where it should be
    @Inject
@@ -54,6 +56,7 @@ export class GameScene extends Scene {
       this.character = new Player({ scene: this, x: 0, y: -400 });
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
+      this.bullets = new Bullets(this);
    }
 
    private hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -93,26 +96,6 @@ export class GameScene extends Scene {
          blue: canvasData.data[index + 2],
          alpha: canvasData.data[index + 3],
       };
-   }
-
-   private createHole(worldX: number, worldY: number): void {
-      this.terrainTexture.context.globalCompositeOperation = 'destination-out';
-      this.terrainTexture.context.beginPath();
-      this.terrainTexture.context.arc(worldX, worldY, 30, 0, Math.PI * 2, true);
-      this.terrainTexture.context.fill();
-
-      const newCanvasData = this.terrainTexture.context.getImageData(
-         0,
-         0,
-         this.terrainTexture.getSourceImage().width,
-         this.terrainTexture.getSourceImage().height,
-      );
-
-      this.terrainTexture.clear();
-
-      this.terrainTexture.imageData = newCanvasData;
-      this.terrainTexture.putData(newCanvasData, 0, 0);
-      this.terrainTexture.refresh();
    }
 
    private jumping = false;
@@ -192,9 +175,15 @@ export class GameScene extends Scene {
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
       if (this.input.activePointer.isDown) {
-         const touchX = this.input.activePointer.x;
-         const touchY = this.input.activePointer.y;
-         this.createHole(touchX, touchY);
+         const worldX = this.input.activePointer.x;
+         const worldY = this.input.activePointer.y;
+         const charPosition = new Phaser.Math.Vector2(this.character.x, this.character.y);
+         const worldPosition = new Phaser.Math.Vector2(worldX, worldY);
+         console.log(worldPosition);
+         this.bullets.fireBullet({
+            position: charPosition,
+            angle: charPosition.clone().subtract(worldPosition).normalize(),
+         });
       }
 
       if (this.cursorKeys.left.isDown) {
