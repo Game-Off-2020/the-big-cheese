@@ -29,7 +29,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       options.scene.add.existing(this);
    }
 
-   public hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
+   hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
       const localX = worldX + this.radius;
       const localY = worldY + this.radius;
 
