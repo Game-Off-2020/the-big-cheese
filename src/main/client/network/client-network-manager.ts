@@ -6,36 +6,43 @@ import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
 import { MapStore } from '../../shared/map/map-store';
 import { GameStateComponent } from '../game-state/game-state-component';
+import { BulletStore } from '../../shared/bullet/bullet-store';
 
 @Singleton
 export class ClientNetworkManager {
    constructor(
       @Inject private readonly component: ClientNetworkComponent,
+      @Inject private readonly gameState: GameStateComponent,
       @Inject private readonly player: ClientPlayerComponent,
       @Inject private readonly playerStore: PlayerStore,
       @Inject private readonly mapStore: MapStore,
-      @Inject private readonly gameState: GameStateComponent,
+      @Inject private readonly bulletStore: BulletStore,
    ) {
       gameState.joinGame$.subscribe((request) => {
          component.connect();
          component.sendJoinRequest(request);
       });
       player.clientInit$.subscribe((player) => {
-         this.subscribeStoreOnCommit(playerStore, player.id);
-         this.subscribeNetworkUpdateStore(playerStore);
-         this.subscribeNetworkUpdateStore(mapStore);
+         this.subscribeStoreOnCommitToNetwork(playerStore, player.id);
+         this.subscribeNetworkUpdateToStore(playerStore);
+         this.subscribeNetworkUpdateToStore(mapStore);
+         this.subscribeNetworkUpdateToStore(bulletStore);
+
+         // TODO: Mock shooting
+         // setInterval(() => component.sendShootRequest(), 1000);
+         // bulletStore.updated$.subscribe((bullet) => console.log('bullet updated', bullet));
       });
    }
 
    // Commits to the store value will be sent to the network
-   private subscribeStoreOnCommit(store: Store, id: string): void {
+   private subscribeStoreOnCommitToNetwork(store: Store, id: string): void {
       store.onCommittedId(id).subscribe((value) => {
          this.component.sendDataStore(store.getId(), id, value);
       });
    }
 
    // Updates from the network will be merged into the store
-   private subscribeNetworkUpdateStore(store: Store): void {
+   private subscribeNetworkUpdateToStore(store: Store): void {
       this.component.dataStore$
          .pipe(
             map((stores) => stores[store.getId()]),

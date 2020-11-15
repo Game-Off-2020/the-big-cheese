@@ -6,6 +6,7 @@ export enum NetworkEvent {
    DATA_STORE,
    JOIN_REQUEST,
    JOIN_RESPONSE,
+   SHOOT_REQUEST,
 }
 
 export interface NetworkMessage<T extends IObject = IObject> {
@@ -26,4 +27,10 @@ export interface JoinResponse extends IObject {
       size: number;
    };
    // TODO: roomId: string;
+}
+
+export interface ShootRequest extends IObject {
+   // Set gun type or something.
+   // Position and direction will be calculated from the player's data on the server.
+   [key: string]: unknown;
 }

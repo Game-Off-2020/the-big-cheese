@@ -4,4 +4,8 @@ export class Utils {
       object[key] = value;
       return object;
    }
+
+   static generateId(): string {
+      return (Date.now() * Math.round(Math.random() * 1000)).toString(36);
+   }
 }

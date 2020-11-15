@@ -44,7 +44,7 @@ expose({
    onConnected: thread.onConnected.bind(thread),
    onDisconnected: thread.onDisconnected.bind(thread),
    onData: thread.onData.bind(thread),
-   connext: thread.connect.bind(thread),
+   connect: thread.connect.bind(thread),
    isReady: thread.isReady.bind(thread),
    send: thread.send.bind(thread),
 });
