@@ -1,10 +1,12 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
-import { Subject } from 'rxjs';
 import { Inject } from 'typescript-ioc';
 import { ClientMapComponent } from '../map/client-map-component';
+
+import { PlayerSprite } from '../player/player-sprite';
+import { Bullets } from './default-bullet';
+import { ClientPlayerComponent } from '../player/client-player-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
-import Sprite = Phaser.Physics.Arcade.Sprite;
 import Vector2 = Phaser.Math.Vector2;
 
 interface Color {
@@ -17,21 +19,20 @@ interface Color {
 const MOON_RADIUS = 1000; // TODO: Should be set via map data (we have canvas size and size property in map component)
 
 export class GameScene extends Scene {
-   private playerPosition = new Vector2();
-   private playerPositionChangedSubject = new Subject<Vector2>();
-   readonly playerPositionChanged$ = this.playerPositionChangedSubject.pipe();
-
-   // private readonly velocity = new Vector2(0, 0);
    private readonly maxHorizontalSpeed = 3;
    private readonly characterHeight = 20;
    private readonly characterWidth = 10;
    private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
-   private character: Sprite;
+   private character: PlayerSprite;
+   private bullets?: Bullets;
 
    // TODO: It is injected just temporarily, not sure where it should be
    @Inject
    private readonly mapComponent: ClientMapComponent;
+
+   @Inject
+   private readonly playerComponent: ClientPlayerComponent;
 
    constructor() {
       super({
@@ -49,10 +50,11 @@ export class GameScene extends Scene {
    private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
-      this.character = this.physics.add.sprite(0, -1200, 'character'); // TODO: Extract key
-      this.character.setOrigin(0.5, 1);
+      this.character = new PlayerSprite({ scene: this, x: 0, y: -400 });
+      this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
+      this.bullets = new Bullets(this);
    }
 
    private hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -92,26 +94,6 @@ export class GameScene extends Scene {
          blue: canvasData.data[index + 2],
          alpha: canvasData.data[index + 3],
       };
-   }
-
-   private createHole(worldX: number, worldY: number): void {
-      this.terrainTexture.context.globalCompositeOperation = 'destination-out';
-      this.terrainTexture.context.beginPath();
-      this.terrainTexture.context.arc(worldX, worldY, 30, 0, Math.PI * 2, true);
-      this.terrainTexture.context.fill();
-
-      const newCanvasData = this.terrainTexture.context.getImageData(
-         0,
-         0,
-         this.terrainTexture.getSourceImage().width,
-         this.terrainTexture.getSourceImage().height,
-      );
-
-      this.terrainTexture.clear();
-
-      this.terrainTexture.imageData = newCanvasData;
-      this.terrainTexture.putData(newCanvasData, 0, 0);
-      this.terrainTexture.refresh();
    }
 
    private jumping = false;
@@ -183,9 +165,13 @@ export class GameScene extends Scene {
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
       if (this.input.activePointer.isDown) {
-         const touchX = this.input.activePointer.x;
-         const touchY = this.input.activePointer.y;
-         this.createHole(touchX, touchY);
+         const charPosition = new Vector2({ x: this.character.x, y: this.character.y });
+         this.bullets.fireBullet({
+            position: charPosition,
+            angle: new Vector2({ x: this.input.activePointer.x, y: this.input.activePointer.y })
+               .subtract(new Vector2({ x: this.game.scale.width / 2, y: this.game.scale.height / 2 }))
+               .normalize(),
+         });
       }
 
       if (this.cursorKeys.left.isDown) {
@@ -242,9 +228,7 @@ export class GameScene extends Scene {
             }
          }
       }
-      if (this.playerPosition.x !== this.character.x || this.playerPosition.y !== this.character.y) {
-         this.playerPosition.set(this.character.x, this.character.y);
-         this.playerPositionChangedSubject.next(this.playerPosition);
-      }
+
+      this.character.update();
    }
 }

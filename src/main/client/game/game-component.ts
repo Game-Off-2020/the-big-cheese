@@ -38,8 +38,4 @@ export class GameComponent {
    refreshScale(): void {
       this.game.scale.refresh();
    }
-
-   getGameScene(): GameScene | null {
-      return this.game.scene.getScene('Game') as GameScene;
-   }
 }
