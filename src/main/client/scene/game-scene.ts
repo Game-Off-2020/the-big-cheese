@@ -14,7 +14,7 @@ interface Color {
    readonly alpha: number;
 }
 
-const MOON_RADIUS = 500; // TODO: Should be set via map data (we have canvas size and size property in map component)
+const MOON_RADIUS = 1000; // TODO: Should be set via map data (we have canvas size and size property in map component)
 
 export class GameScene extends Scene {
    private playerPosition = new Vector2();
@@ -49,7 +49,7 @@ export class GameScene extends Scene {
    private terrainTexture?: Phaser.Textures.CanvasTexture;
 
    create(): void {
-      this.character = this.physics.add.sprite(0, -800, 'character'); // TODO: Extract key
+      this.character = this.physics.add.sprite(0, -1200, 'character'); // TODO: Extract key
       this.character.setOrigin(0.5, 1);
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();

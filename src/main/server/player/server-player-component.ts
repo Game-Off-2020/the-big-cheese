@@ -18,4 +18,8 @@ export class ServerPlayerComponent {
          },
       } as Player);
    }
+
+   removeUser(userId: string): void {
+      this.playerStore.remove(userId);
+   }
 }

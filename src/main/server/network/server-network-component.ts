@@ -10,12 +10,14 @@ import { Utils } from '../../shared/util/utils';
 @Singleton
 export class ServerNetworkComponent {
    readonly clientConnectedId$: Observable<string>;
+   readonly clientDisconnectedId$: Observable<string>;
    private event$: Observable<ServerNetworkMessage>;
    readonly dataStore$: Observable<IObject>;
    readonly joinRequest$: Observable<ServerNetworkMessage<JoinRequest>>;
 
    constructor(@Inject private readonly wrapper: ServerNetworkWrapper) {
       this.clientConnectedId$ = wrapper.clientConnectedId$;
+      this.clientDisconnectedId$ = wrapper.clientDisconnectedId$;
       this.event$ = wrapper.clientEvent$;
       this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE) as Observable<IObject>;
       this.joinRequest$ = this.onMessage(NetworkEvent.JOIN_REQUEST) as Observable<ServerNetworkMessage<JoinRequest>>;
