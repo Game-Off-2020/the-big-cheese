@@ -6,11 +6,12 @@ import { PlayerStore } from '../../shared/player/player-store';
 export class ServerPlayerComponent {
    constructor(@Inject private readonly playerStore: PlayerStore) {}
 
-   addUser(id: string): void {
+   addUser(id: string, name: string): void {
+      // TODO: Check name availability
       console.log('addUser', id);
       this.playerStore.commit(id, {
          id,
-         name: id,
+         name,
          position: {
             x: 0,
             y: 0,

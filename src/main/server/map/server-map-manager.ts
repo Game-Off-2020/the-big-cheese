@@ -7,6 +7,6 @@ import { MapStore } from '../../shared/map/map-store';
 export class ServerMapManager extends SharedMapManager {
    constructor(@Inject protected readonly component: ServerMapComponent, @Inject protected readonly store: MapStore) {
       super(component, store);
-      component.createMap(200);
+      component.createMap(500);
    }
 }
