@@ -45,8 +45,8 @@ export abstract class Store<T extends IObject = IObject> {
 
    private filterDataId(source: Observable<StoreData<T>>, id: string): Observable<T> {
       return source.pipe(
-         filter((data) => Object.keys(data)[0] === id),
-         map((data) => Object.values(data)[0]),
+         map((data) => data[id]),
+         filter((data) => !!data),
       );
    }
 
