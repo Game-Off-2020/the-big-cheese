@@ -11,7 +11,6 @@ export class ClientPlayerManager {
       @Inject private readonly network: ClientNetworkComponent,
    ) {
       network.joinResponse$.subscribe((response) => {
-         // console.log('My id is ', response.id);
          this.component.setClientPlayer({
             id: response.userId,
             name: 'Unnamed',

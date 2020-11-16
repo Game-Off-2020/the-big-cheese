@@ -3,7 +3,7 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { Player } from '../../shared/player/player-model';
 import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { BulletFireOptions } from '../scene/default-bullet';
 
 @Singleton
@@ -22,18 +22,20 @@ export class ClientPlayerComponent {
       this.clientId = player.id;
       this.store.commit(player.id, player);
       this.clientInitSubject.next(player);
+      this.store.update(player.id, player);
+      this.subscribePlayerSpriteCommitToStore();
+      this.subscribeOnUpdateToPlayerSprite();
    }
 
    setClientPlayerSprite(player: PlayerSprite): void {
       this.clientPlayer = player;
-      this.subscribePlayerSpriteCommitToStore();
-      this.subscribeOnUpdateToPlayerSprite();
    }
 
    shoot(options: BulletFireOptions): void {
       this.clientShootingSubject.next(options);
    }
 
+   // Wire client character from sprite to store
    private subscribePlayerSpriteCommitToStore(): void {
       this.clientPlayer.positionChanged$.subscribe((position) => {
          this.store.commit(this.clientId, {
@@ -45,6 +47,7 @@ export class ClientPlayerComponent {
       });
    }
 
+   // Wire client character from store to sprite
    private subscribeOnUpdateToPlayerSprite(): void {
       this.store
          .onUpdatedId(this.clientId)
@@ -54,6 +57,7 @@ export class ClientPlayerComponent {
          )
          .subscribe((position) => {
             // TODO: Might need to calculate relative position in the client?
+            console.log('Player position updated');
             this.clientPlayer.setPosition(position.x, position.y);
          });
    }
