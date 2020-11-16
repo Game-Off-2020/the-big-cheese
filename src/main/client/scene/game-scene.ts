@@ -9,6 +9,7 @@ import { ClientPlayerComponent } from '../player/client-player-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Vector2 = Phaser.Math.Vector2;
 import { MapSprite } from '../map/map-sprite';
+import { LavaFloorSprite } from './lava-floor-sprite';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -18,6 +19,7 @@ export class GameScene extends Scene {
    private character: PlayerSprite;
    private bullets?: Bullets;
    private mapSprite?: MapSprite;
+   private lava?: LavaFloorSprite;
 
    // TODO: It is injected just temporarily, not sure where it should be
    @Inject
@@ -47,6 +49,7 @@ export class GameScene extends Scene {
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
+      this.lava = new LavaFloorSprite({ scene: this, size: 100 });
    }
 
    private jumping = false;
