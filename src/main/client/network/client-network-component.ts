@@ -5,6 +5,7 @@ import { JoinRequest, JoinResponse, NetworkEvent, NetworkMessage } from '../../s
 import { IObject } from '../../shared/util/util-model';
 import { filter, map, tap } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
+import { BulletFireOptions } from '../scene/default-bullet';
 
 @Singleton
 export class ClientNetworkComponent {
@@ -18,15 +19,15 @@ export class ClientNetworkComponent {
       this.connected$ = bufferedNetwork.connected$;
       this.disconnected$ = bufferedNetwork.disconnected$;
       this.event$ = bufferedNetwork.data$;
-      this.loginResponse$ = this.onEvent(NetworkEvent.JOIN_RESPONSE) as Observable<JoinResponse>;
-      this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE) as Observable<IObject>;
+      this.loginResponse$ = this.onEvent<JoinResponse>(NetworkEvent.JOIN_RESPONSE);
+      this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE);
    }
 
-   private onEvent(event: NetworkEvent): Observable<IObject> {
+   private onEvent<T = IObject>(event: NetworkEvent): Observable<T> {
       return this.event$.pipe(
          tap((message) => console.log(message)),
          filter((message) => message.event === event),
-         map((message) => message.value),
+         map((message) => (message.value as unknown) as T),
       );
    }
 
@@ -43,7 +44,7 @@ export class ClientNetworkComponent {
       this.bufferedNetwork.send(NetworkEvent.JOIN_REQUEST, request);
    }
 
-   sendShootRequest(): void {
-      this.bufferedNetwork.send(NetworkEvent.SHOOT_REQUEST);
+   sendShootRequest(options: BulletFireOptions): void {
+      this.bufferedNetwork.send<BulletFireOptions>(NetworkEvent.SHOOT_REQUEST, options);
    }
 }

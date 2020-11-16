@@ -17,14 +17,14 @@ export class ClientBufferedNetworkComponent {
    private sending = false;
    private networkThread?: ClientNetworkThread;
    private initNetworkThreadSubject = new ReplaySubject<void>();
-   private readonly initNetworkThread$ = this.initNetworkThreadSubject.pipe();
+   private readonly initNetworkThread$ = this.initNetworkThreadSubject.asObservable();
 
    private readonly connectedSubject = new Subject<void>();
-   readonly connected$ = this.connectedSubject.pipe();
+   readonly connected$ = this.connectedSubject.asObservable();
    private readonly disconnectedSubject = new Subject<void>();
-   readonly disconnected$ = this.disconnectedSubject.pipe();
+   readonly disconnected$ = this.disconnectedSubject.asObservable();
    private readonly dataSubject = new Subject<NetworkMessage>();
-   readonly data$ = this.dataSubject.pipe();
+   readonly data$ = this.dataSubject.asObservable();
 
    constructor() {
       this.bindRequestBufferTimer = this.requestBufferTimer.bind(this);
@@ -51,8 +51,8 @@ export class ClientBufferedNetworkComponent {
       });
    }
 
-   send(event: NetworkEvent, value: IObject = {}): void {
-      const mergedMessage = deepmerge.all([this.getEventMessage(event), value]) as IObject;
+   send<T = IObject>(event: NetworkEvent, value?: T): void {
+      const mergedMessage = deepmerge.all([this.getEventMessage(event), value ?? {}]) as IObject;
       this.bufferedEventsMessages.set(event, mergedMessage);
       this.sendBufferedEventMessagesInTime();
    }

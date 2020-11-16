@@ -4,11 +4,14 @@ import { Player } from '../../shared/player/player-model';
 import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
 import { filter, map } from 'rxjs/operators';
+import { BulletFireOptions } from '../scene/default-bullet';
 
 @Singleton
 export class ClientPlayerComponent {
    private readonly clientInitSubject = new Subject<Player>();
-   readonly clientInit$ = this.clientInitSubject.pipe();
+   readonly clientInit$ = this.clientInitSubject.asObservable();
+   private readonly clientShootingSubject = new Subject<BulletFireOptions>();
+   readonly clientShooting$ = this.clientShootingSubject.asObservable();
 
    private clientId?: string;
    private clientPlayer: PlayerSprite;
@@ -25,6 +28,10 @@ export class ClientPlayerComponent {
       this.clientPlayer = player;
       this.subscribePlayerSpriteCommitToStore();
       this.subscribeOnUpdateToPlayerSprite();
+   }
+
+   shoot(options: BulletFireOptions): void {
+      this.clientShootingSubject.next(options);
    }
 
    private subscribePlayerSpriteCommitToStore(): void {

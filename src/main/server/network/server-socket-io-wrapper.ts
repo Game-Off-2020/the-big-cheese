@@ -6,7 +6,7 @@ import { SharedSocketIoWrapper } from '../../shared/network/shared-socket-io-wra
 
 export class ServerSocketIoWrapper extends SharedSocketIoWrapper {
    private readonly connectedSubject = new Subject<Socket>();
-   readonly connected$ = this.connectedSubject.pipe();
+   readonly connected$ = this.connectedSubject.asObservable();
 
    private readonly httpServer: Http.Server;
    private readonly socketServer: Server;

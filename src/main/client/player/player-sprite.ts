@@ -11,7 +11,7 @@ interface PlayerSpriteOptions {
 export class PlayerSprite extends Phaser.GameObjects.Sprite {
    private position = new Vector2();
    private positionChangedSubject = new Subject<Vector2>();
-   readonly positionChanged$ = this.positionChangedSubject.pipe();
+   readonly positionChanged$ = this.positionChangedSubject.asObservable();
 
    constructor(private readonly options: PlayerSpriteOptions) {
       super(options.scene, options.x, options.y, 'character');

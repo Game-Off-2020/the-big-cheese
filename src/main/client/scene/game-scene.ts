@@ -44,7 +44,7 @@ export class GameScene extends Scene {
    }
 
    create(): void {
-      this.character = new PlayerSprite({ scene: this, x: 0, y: -400 });
+      this.character = new PlayerSprite({ scene: this, x: 0, y: -1100 });
       this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -122,7 +122,7 @@ export class GameScene extends Scene {
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
       if (this.input.activePointer.isDown) {
          const charPosition = new Vector2({ x: this.character.x, y: this.character.y });
-         this.bullets.fireBullet({
+         this.playerComponent.shoot({
             position: charPosition,
             angle: new Vector2({ x: this.input.activePointer.x, y: this.input.activePointer.y })
                .subtract(new Vector2({ x: this.game.scale.width / 2, y: this.game.scale.height / 2 }))
