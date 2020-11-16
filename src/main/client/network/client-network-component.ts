@@ -12,14 +12,14 @@ export class ClientNetworkComponent {
    readonly connected$: Observable<void>;
    readonly disconnected$: Observable<void>;
    private event$: Observable<NetworkMessage>;
-   readonly loginResponse$: Observable<JoinResponse>;
+   readonly joinResponse$: Observable<JoinResponse>;
    readonly dataStore$: Observable<IObject>;
 
    constructor(@Inject private readonly bufferedNetwork: ClientBufferedNetworkComponent) {
       this.connected$ = bufferedNetwork.connected$;
       this.disconnected$ = bufferedNetwork.disconnected$;
       this.event$ = bufferedNetwork.data$;
-      this.loginResponse$ = this.onEvent<JoinResponse>(NetworkEvent.JOIN_RESPONSE);
+      this.joinResponse$ = this.onEvent<JoinResponse>(NetworkEvent.JOIN_RESPONSE);
       this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE);
    }
 

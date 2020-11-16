@@ -10,12 +10,13 @@ export class ClientPlayerManager {
       @Inject private readonly gameState: GameStateComponent,
       @Inject private readonly network: ClientNetworkComponent,
    ) {
-      network.loginResponse$.subscribe((response) => {
+      network.joinResponse$.subscribe((response) => {
          // console.log('My id is ', response.id);
          this.component.setClientPlayer({
-            id: response.id,
+            id: response.userId,
             name: 'Unnamed',
             position: { x: 0, y: 0 },
+            direction: { x: 0, y: 0 },
          });
       });
    }
