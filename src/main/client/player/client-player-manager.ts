@@ -18,9 +18,5 @@ export class ClientPlayerManager {
             position: { x: 0, y: 0 },
          });
       });
-
-      component.clientShooting$.subscribe((shootingOptions) => {
-         network.sendShootRequest(shootingOptions);
-      });
    }
 }

@@ -32,6 +32,10 @@ export class ClientNetworkManager {
          // setInterval(() => component.sendShootRequest(), 1000);
          // bulletStore.updated$.subscribe((bullet) => console.log('bullet updated', bullet));
       });
+
+      player.clientShooting$.subscribe((shootingOptions) => {
+         component.sendShootRequest(shootingOptions);
+      });
    }
 
    // Commits to the store value will be sent to the network
