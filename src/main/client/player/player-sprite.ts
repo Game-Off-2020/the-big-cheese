@@ -1,21 +1,16 @@
 import * as Phaser from 'phaser';
 import { Subject } from 'rxjs';
 import Vector2 = Phaser.Math.Vector2;
-
-interface PlayerSpriteOptions {
-   readonly scene: Phaser.Scene;
-   readonly x: number;
-   readonly y: number;
-}
+import { Scene } from 'phaser';
 
 export class PlayerSprite extends Phaser.GameObjects.Sprite {
    private position = new Vector2();
    private positionChangedSubject = new Subject<Vector2>();
    readonly positionChanged$ = this.positionChangedSubject.pipe();
 
-   constructor(private readonly options: PlayerSpriteOptions) {
-      super(options.scene, options.x, options.y, 'character');
-      options.scene.add.existing(this);
+   constructor(protected readonly scene: Scene) {
+      super(scene, 0, 0, 'character');
+      scene.add.existing(this);
 
       this.setOrigin(0.5, 1);
    }
