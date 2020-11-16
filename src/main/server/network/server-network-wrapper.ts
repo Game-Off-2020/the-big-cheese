@@ -12,11 +12,11 @@ export class ServerNetworkWrapper {
    private readonly clients = new Map<string, Socket>();
 
    private readonly clientEventSubject = new Subject<ServerNetworkMessage>();
-   readonly clientEvent$ = this.clientEventSubject.pipe();
+   readonly clientEvent$ = this.clientEventSubject.asObservable();
    private readonly clientConnectedIdSubject = new Subject<string>();
-   readonly clientConnectedId$ = this.clientConnectedIdSubject.pipe();
+   readonly clientConnectedId$ = this.clientConnectedIdSubject.asObservable();
    private readonly clientDisconnectedIdSubject = new Subject<string>();
-   readonly clientDisconnectedId$ = this.clientDisconnectedIdSubject.pipe();
+   readonly clientDisconnectedId$ = this.clientDisconnectedIdSubject.asObservable();
 
    constructor(
       @Inject private readonly wrapper: ServerSocketIoWrapper,

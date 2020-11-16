@@ -10,10 +10,10 @@ export class ClientMapComponent extends SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
 
    private readonly mapLoadedSubject = new Subject<HTMLCanvasElement>();
-   readonly mapLoaded$ = this.mapLoadedSubject.pipe();
+   readonly mapLoaded$ = this.mapLoadedSubject.asObservable();
 
    private readonly updatedSubject = new Subject<void>();
-   readonly updated$ = this.updatedSubject.pipe();
+   readonly updated$ = this.updatedSubject.asObservable();
 
    constructor(@Inject protected readonly store: MapStore) {
       super(store);
