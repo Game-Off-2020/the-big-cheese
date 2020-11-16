@@ -9,9 +9,9 @@ import { BulletFireOptions } from '../scene/default-bullet';
 @Singleton
 export class ClientPlayerComponent {
    private readonly clientInitSubject = new Subject<Player>();
-   readonly clientInit$ = this.clientInitSubject.pipe();
+   readonly clientInit$ = this.clientInitSubject.asObservable();
    private readonly clientShootingSubject = new Subject<BulletFireOptions>();
-   readonly clientShooting$ = this.clientShootingSubject.pipe();
+   readonly clientShooting$ = this.clientShootingSubject.asObservable();
 
    private clientId?: string;
    private clientPlayer: PlayerSprite;
