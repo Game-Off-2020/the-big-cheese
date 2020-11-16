@@ -1,10 +1,11 @@
 import { Inject, Singleton } from 'typescript-ioc';
 import { Player } from '../../shared/player/player-model';
 import { PlayerStore } from '../../shared/player/player-store';
+import { ServerMapComponent } from '../map/server-map-component';
 
 @Singleton
 export class ServerPlayerComponent {
-   constructor(@Inject private readonly store: PlayerStore) {}
+   constructor(@Inject private readonly store: PlayerStore, @Inject private readonly map: ServerMapComponent) {}
 
    addUser(id: string, name: string): void {
       // TODO: Check name availability
@@ -14,7 +15,7 @@ export class ServerPlayerComponent {
          name,
          position: {
             x: 0,
-            y: 0,
+            y: this.map.getSize() / 2 + 30,
          },
          direction: {
             x: 0,

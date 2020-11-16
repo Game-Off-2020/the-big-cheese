@@ -44,7 +44,7 @@ export class GameScene extends Scene {
    }
 
    create(): void {
-      this.character = new PlayerSprite({ scene: this, x: 0, y: -1100 });
+      this.character = new PlayerSprite(this);
       this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
