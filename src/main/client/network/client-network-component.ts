@@ -27,7 +27,7 @@ export class ClientNetworkComponent {
       return this.event$.pipe(
          tap((message) => console.log(message)),
          filter((message) => message.event === event),
-         map((message) => message.value as unknown as T),
+         map((message) => (message.value as unknown) as T),
       );
    }
 
