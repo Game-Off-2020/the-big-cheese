@@ -19,15 +19,15 @@ export class ClientNetworkComponent {
       this.connected$ = bufferedNetwork.connected$;
       this.disconnected$ = bufferedNetwork.disconnected$;
       this.event$ = bufferedNetwork.data$;
-      this.loginResponse$ = this.onEvent(NetworkEvent.JOIN_RESPONSE) as Observable<JoinResponse>;
-      this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE) as Observable<IObject>;
+      this.loginResponse$ = this.onEvent<JoinResponse>(NetworkEvent.JOIN_RESPONSE);
+      this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE);
    }
 
-   private onEvent(event: NetworkEvent): Observable<IObject> {
+   private onEvent<T = IObject>(event: NetworkEvent): Observable<T> {
       return this.event$.pipe(
          tap((message) => console.log(message)),
          filter((message) => message.event === event),
-         map((message) => message.value),
+         map((message) => message.value as unknown as T),
       );
    }
 
