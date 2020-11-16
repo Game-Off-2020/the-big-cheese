@@ -6,7 +6,7 @@ import { Scene } from 'phaser';
 export class PlayerSprite extends Phaser.GameObjects.Sprite {
    private position = new Vector2();
    private positionChangedSubject = new Subject<Vector2>();
-   readonly positionChanged$ = this.positionChangedSubject.pipe();
+   readonly positionChanged$ = this.positionChangedSubject.asObservable();
 
    constructor(protected readonly scene: Scene) {
       super(scene, 0, 0, 'character');

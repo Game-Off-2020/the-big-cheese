@@ -5,7 +5,7 @@ import { JoinRequest } from '../../shared/network/shared-network-model';
 @Singleton
 export class GameStateComponent {
    private gameStartedSubject = new Subject<JoinRequest>();
-   readonly joinGame$ = this.gameStartedSubject.pipe();
+   readonly joinGame$ = this.gameStartedSubject.asObservable();
 
    joinGame(userName: string): void {
       this.gameStartedSubject.next({

@@ -13,11 +13,11 @@ export abstract class Store<T extends IObject = IObject> {
    private readonly committedSubject = new Subject<StoreData<T>>();
    private readonly changedSubject = new Subject<StoreData<T>>();
 
-   readonly data$ = this.dataSubject.pipe();
+   readonly data$ = this.dataSubject.asObservable();
    readonly added$ = this.mapEntity(this.addedSubject); // Returns id+value
    readonly committed$ = this.mapEntity(this.committedSubject); // Returns id+value
    readonly updated$ = this.mapEntity(this.updatedSubject); // Returns id+value
-   readonly removed$ = this.removedSubject.pipe();
+   readonly removed$ = this.removedSubject.asObservable();
 
    private mapEntity(source: Observable<StoreData<T>>): Observable<StoreEntity<T>> {
       return source.pipe(
