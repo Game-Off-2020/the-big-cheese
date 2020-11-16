@@ -3,7 +3,7 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { Player } from '../../shared/player/player-model';
 import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { BulletFireOptions } from '../scene/default-bullet';
 
 @Singleton
@@ -35,7 +35,7 @@ export class ClientPlayerComponent {
       this.clientShootingSubject.next(options);
    }
 
-   // Wire client character from sprite to store
+   // Wire client character from spriteX to store
    private subscribePlayerSpriteCommitToStore(): void {
       this.clientPlayer.positionChanged$.subscribe((position) => {
          this.store.commit(this.clientId, {
