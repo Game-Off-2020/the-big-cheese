@@ -51,7 +51,7 @@ export class ClientBufferedNetworkComponent {
       });
    }
 
-   send(event: NetworkEvent, value: IObject = {}): void {
+   send<T = IObject>(event: NetworkEvent, value: T): void {
       const mergedMessage = deepmerge.all([this.getEventMessage(event), value]) as IObject;
       this.bufferedEventsMessages.set(event, mergedMessage);
       this.sendBufferedEventMessagesInTime();

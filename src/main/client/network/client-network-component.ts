@@ -5,6 +5,7 @@ import { JoinRequest, JoinResponse, NetworkEvent, NetworkMessage } from '../../s
 import { IObject } from '../../shared/util/util-model';
 import { filter, map, tap } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
+import { BulletFireOptions } from '../scene/default-bullet';
 
 @Singleton
 export class ClientNetworkComponent {
@@ -43,7 +44,7 @@ export class ClientNetworkComponent {
       this.bufferedNetwork.send(NetworkEvent.JOIN_REQUEST, request);
    }
 
-   sendShootRequest(): void {
-      this.bufferedNetwork.send(NetworkEvent.SHOOT_REQUEST);
+   sendShootRequest(options: BulletFireOptions): void {
+      this.bufferedNetwork.send<BulletFireOptions>(NetworkEvent.SHOOT_REQUEST, options);
    }
 }

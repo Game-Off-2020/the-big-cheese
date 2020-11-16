@@ -1,7 +1,7 @@
 // Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 import * as Phaser from 'phaser';
 
-interface BulletFireOptions {
+export interface BulletFireOptions {
    readonly position: Phaser.Math.Vector2;
    readonly angle: Phaser.Math.Vector2;
 }
