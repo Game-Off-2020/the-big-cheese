@@ -1,10 +1,10 @@
-import { SimpleVector } from "../bullet/bullet-model";
+import { Vector } from '../bullet/bullet-model';
 
 export interface Player {
    id: string;
    name: string;
-   position: SimpleVector;
-   direction: SimpleVector;
+   position: Vector;
+   direction: Vector;
    //hp: number;
    // TODO: direction (left or right)
    // TODO: movement status (moving, standing or maybe jumping too)

@@ -1,10 +1,10 @@
-export interface SimpleVector {
+export interface Vector {
    readonly x: number;
    readonly y: number;
 }
 
 export interface Bullet {
    readonly playerId: string;
-   readonly position: SimpleVector;
-   readonly direction: SimpleVector;
+   readonly position: Vector;
+   readonly direction: Vector;
 }
