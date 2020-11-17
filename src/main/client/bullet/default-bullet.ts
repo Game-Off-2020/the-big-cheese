@@ -3,7 +3,7 @@ import * as Phaser from 'phaser';
 
 export interface BulletFireOptions {
    readonly position: Phaser.Math.Vector2;
-   readonly angle: Phaser.Math.Vector2;
+   readonly direction: Phaser.Math.Vector2;
 }
 
 const BULLET_SPEED = 300;
@@ -22,10 +22,10 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
       this.setActive(true);
       this.setVisible(true);
 
-      options.angle.scale(BULLET_SPEED);
+      options.direction.scale(BULLET_SPEED);
 
-      this.setVelocityY(options.angle.y);
-      this.setVelocityX(options.angle.x);
+      this.setVelocityY(options.direction.y);
+      this.setVelocityX(options.direction.x);
 
       this.timeAlive = 0;
    }

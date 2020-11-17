@@ -5,7 +5,7 @@ import { JoinRequest, JoinResponse, NetworkEvent, NetworkMessage } from '../../s
 import { IObject } from '../../shared/util/util-model';
 import { filter, map, tap } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
-import { BulletFireOptions } from '../scene/default-bullet';
+import { BulletFireOptions } from '../bullet/default-bullet';
 
 @Singleton
 export class ClientNetworkComponent {
