@@ -25,8 +25,10 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 
       this.terrainTexture = terrainTexture;
       this.radius = options.canvas.width / 2;
-
+      const moon = options.scene.textures.get('moon').getSourceImage() as HTMLImageElement;
       options.scene.add.existing(this);
+      terrainTexture.context.globalCompositeOperation = 'source-in';
+      terrainTexture.draw(0, 0, moon);
    }
 
    hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {

@@ -66,5 +66,6 @@ export class BootScene extends Scene {
       // TODO: Extract file keys
       this.load.image('character', ClientConfig.ASSET_FOLDER + 'poc-character.png');
       this.load.image('bullet', ClientConfig.ASSET_FOLDER + 'bullet.png');
+      this.load.image('moon', ClientConfig.ASSET_FOLDER + 'moon-texture.png');
    }
 }
