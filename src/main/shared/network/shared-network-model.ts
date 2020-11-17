@@ -1,3 +1,4 @@
+import { Bullet } from '../bullet/bullet-model';
 import { IObject } from '../util/util-model';
 
 export enum NetworkEvent {
@@ -14,8 +15,6 @@ export interface NetworkMessage<T = IObject> {
    value: T;
 }
 
-//
-
 export interface JoinRequest extends IObject {
    userName: string;
 }
@@ -29,8 +28,4 @@ export interface JoinResponse extends IObject {
    // TODO: roomId: string;
 }
 
-export interface ShootRequest extends IObject {
-   // Set gun type or something.
-   // Position and direction will be calculated from the player's data on the server.
-   [key: string]: unknown;
-}
+export type ShootRequest = Bullet;

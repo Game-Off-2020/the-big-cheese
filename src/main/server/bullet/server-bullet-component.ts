@@ -2,15 +2,22 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { BulletStore } from '../../shared/bullet/bullet-store';
 import { Utils } from '../../shared/util/utils';
 import { ServerPlayerComponent } from '../player/server-player-component';
+import { ShootRequest } from '../../shared/network/shared-network-model';
 
 @Singleton
 export class ServerBulletComponent {
    constructor(@Inject private readonly store: BulletStore, @Inject private readonly players: ServerPlayerComponent) {}
 
-   shoot(playerId: string): void {
+   shoot(playerId: string, shootRequest: ShootRequest): void {
       const player = this.players.getPlayer(playerId);
       if (player) {
-         this.createBullet(playerId, player.position.x, player.position.y, player.direction.x, player.direction.y);
+         this.createBullet(
+            playerId,
+            shootRequest.position.x,
+            shootRequest.position.y,
+            shootRequest.direction.x,
+            shootRequest.direction.y,
+         );
       }
    }
 
