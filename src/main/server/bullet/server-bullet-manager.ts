@@ -8,6 +8,6 @@ export class ServerBulletManager {
       @Inject private readonly component: ServerBulletComponent,
       @Inject private readonly network: ServerNetworkComponent,
    ) {
-      network.shootRequest$.subscribe((message) => component.shoot(message.user));
+      network.shootRequest$.subscribe((message) => component.shoot(message.user, message.value));
    }
 }
