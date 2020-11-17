@@ -11,7 +11,13 @@ export class ServerBulletComponent {
    shoot(playerId: string, shootRequest: ShootRequest): void {
       const player = this.players.getPlayer(playerId);
       if (player) {
-         this.createBullet(playerId, shootRequest.position.x, shootRequest.position.y, shootRequest.direction.x, shootRequest.direction.y);
+         this.createBullet(
+            playerId,
+            shootRequest.position.x,
+            shootRequest.position.y,
+            shootRequest.direction.x,
+            shootRequest.direction.y,
+         );
       }
    }
 
