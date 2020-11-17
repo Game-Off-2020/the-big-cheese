@@ -9,8 +9,9 @@ export class StarFieldSprite extends Phaser.GameObjects.Sprite {
 
    constructor(options: StarFieldOptions) {
       const canvas = document.createElement('canvas') as HTMLCanvasElement;
-      canvas.width = options.scene.game.scale.width * 2;
-      canvas.height = options.scene.game.scale.height * 2;
+      const largestSide = Math.max(options.scene.game.scale.width, options.scene.game.scale.height);
+      canvas.width = largestSide * 2;
+      canvas.height = largestSide * 2;
 
       const texture = options.scene.textures.addCanvas('star-field', canvas);
       super(options.scene, options.scene.game.scale.width / 2, options.scene.game.scale.height / 2, 'star-field');
