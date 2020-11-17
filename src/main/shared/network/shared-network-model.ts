@@ -1,5 +1,4 @@
 import { Bullet } from '../bullet/bullet-model';
-import { IObject } from '../util/util-model';
 
 export enum NetworkEvent {
    // PlayerCharacter data, chat messages, bullets game status and maybe plane data also should be sent using StoreService automatically.
@@ -10,16 +9,16 @@ export enum NetworkEvent {
    SHOOT_REQUEST,
 }
 
-export interface NetworkMessage<T = IObject> {
+export interface NetworkMessage<T = NetworkPayload> {
    event: NetworkEvent;
    value: T;
 }
 
-export interface JoinRequest extends IObject {
+export interface JoinRequest {
    userName: string;
 }
 
-export interface JoinResponse extends IObject {
+export interface JoinResponse {
    userId: string;
    map: {
       buffer: Buffer;
@@ -29,3 +28,7 @@ export interface JoinResponse extends IObject {
 }
 
 export type ShootRequest = Bullet;
+
+// {} should not be used. {} seems to have semantic meaning, a "NOOP" or "NO_DATA" of sorts? Probably best to use a NOOP constant instead.
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NetworkPayload = JoinRequest | JoinResponse | ShootRequest | {};
