@@ -21,16 +21,19 @@ export class ServerNetworkComponent {
       this.clientDisconnectedId$ = wrapper.clientDisconnectedId$;
       this.event$ = wrapper.clientEvent$;
       this.dataStore$ = this.onEvent(NetworkEvent.DATA_STORE) as Observable<IObject>;
-      this.joinRequest$ = this.onMessage(NetworkEvent.JOIN_REQUEST) as Observable<ServerNetworkMessage<JoinRequest>>;
-      this.shootRequest$ = this.onMessage(NetworkEvent.SHOOT_REQUEST) as Observable<ServerNetworkMessage<ShootRequest>>;
+      this.joinRequest$ = this.onMessage<JoinRequest>(NetworkEvent.JOIN_REQUEST);
+      this.shootRequest$ = this.onMessage<ShootRequest>(NetworkEvent.SHOOT_REQUEST);
    }
 
    private onEvent(event: NetworkEvent): Observable<IObject> {
       return this.onMessage(event).pipe(map((message) => message.value));
    }
 
-   private onMessage(event: NetworkEvent): Observable<ServerNetworkMessage> {
-      return this.event$.pipe(filter((message) => message.event === event));
+   private onMessage<T = IObject>(event: NetworkEvent): Observable<ServerNetworkMessage<T>> {
+      return this.event$.pipe(
+         filter((message) => message.event === event),
+         map((message) => (message as unknown) as ServerNetworkMessage<T>),
+      );
    }
 
    sendLoginResponse(user: string, response: JoinResponse): void {

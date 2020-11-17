@@ -4,7 +4,7 @@ import { Player } from '../../shared/player/player-model';
 import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
 import { filter, map } from 'rxjs/operators';
-import { BulletFireOptions } from '../scene/default-bullet';
+import { BulletFireOptions } from '../bullet/default-bullet';
 
 @Singleton
 export class ClientPlayerComponent {

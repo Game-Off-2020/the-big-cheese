@@ -9,7 +9,7 @@ export enum NetworkEvent {
    SHOOT_REQUEST,
 }
 
-export interface NetworkMessage<T extends IObject = IObject> {
+export interface NetworkMessage<T = IObject> {
    event: NetworkEvent;
    value: T;
 }

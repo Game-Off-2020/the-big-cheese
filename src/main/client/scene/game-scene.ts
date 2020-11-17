@@ -4,12 +4,14 @@ import { Inject } from 'typescript-ioc';
 import { ClientMapComponent } from '../map/client-map-component';
 
 import { PlayerSprite } from '../player/player-sprite';
-import { Bullets } from './default-bullet';
+import { Bullets } from '../bullet/default-bullet';
 import { ClientPlayerComponent } from '../player/client-player-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Vector2 = Phaser.Math.Vector2;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
+import { ClientBulletComponent } from '../bullet/bullet-group-component';
+import { StarFieldSprite } from './star-field-sprite';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -27,6 +29,9 @@ export class GameScene extends Scene {
 
    @Inject
    private readonly playerComponent: ClientPlayerComponent;
+
+   @Inject
+   private readonly bulletGroupComponent: ClientBulletComponent;
 
    constructor() {
       super({
@@ -49,6 +54,8 @@ export class GameScene extends Scene {
       this.cameras.main.startFollow(this.character);
       this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
+      this.bulletGroupComponent.setBulletGroup(this.bullets);
+      const starField = new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
    }
 
@@ -124,7 +131,7 @@ export class GameScene extends Scene {
          const charPosition = new Vector2({ x: this.character.x, y: this.character.y });
          this.playerComponent.shoot({
             position: charPosition,
-            angle: new Vector2({ x: this.input.activePointer.x, y: this.input.activePointer.y })
+            direction: new Vector2({ x: this.input.activePointer.x, y: this.input.activePointer.y })
                .subtract(new Vector2({ x: this.game.scale.width / 2, y: this.game.scale.height / 2 }))
                .normalize()
                .rotate(this.character.rotation),
