@@ -25,7 +25,7 @@ export class ServerNetworkManager {
    }
 
    // Updates from the network will be merged into the store
-   private subscribeNetworkUpdateToStore(store: Store): void {
+   private subscribeNetworkUpdateToStore<T>(store: Store<T>): void {
       this.component.dataStore$
          .pipe(
             map((stores) => stores[store.getId()]),
@@ -43,14 +43,14 @@ export class ServerNetworkManager {
    }
 
    // Changes in the store will be send out everyone
-   private subscribeStoreOnCommitToNetwork(store: Store): void {
+   private subscribeStoreOnCommitToNetwork<T>(store: Store<T>): void {
       store.committed$.subscribe((entity) => {
          this.component.sendDataStore(this.playerStore.getIds(), store.getId(), entity.id, entity.value);
       });
    }
 
    // Changes in the store will be send out everyone except the entity id (the user who made the change)
-   private subscribeStoreOnUpdateToNetworkExceptEntityId(store: Store): void {
+   private subscribeStoreOnUpdateToNetworkExceptEntityId<T>(store: Store<T>): void {
       store.updated$.subscribe((entity) => {
          this.component.sendDataStore(
             this.playerStore.getIds().filter((id) => id !== entity.id),

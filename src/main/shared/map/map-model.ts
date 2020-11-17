@@ -1,6 +1,4 @@
-import { IObject } from '../util/util-model';
-
-export interface MapDestruction extends IObject {
+export interface MapDestruction {
    position: {
       x: number;
       y: number;

@@ -39,14 +39,14 @@ export class ClientNetworkManager {
    }
 
    // Commits to the store value will be sent to the network
-   private subscribeStoreOnCommitToNetwork(store: Store, id: string): void {
+   private subscribeStoreOnCommitToNetwork<T>(store: Store<T>, id: string): void {
       store.onCommittedId(id).subscribe((value) => {
          this.component.sendDataStore(store.getId(), id, value);
       });
    }
 
    // Updates from the network will be merged into the store
-   private subscribeNetworkUpdateToStore(store: Store): void {
+   private subscribeNetworkUpdateToStore<T>(store: Store<T>): void {
       this.component.dataStore$
          .pipe(
             map((stores) => stores[store.getId()]),

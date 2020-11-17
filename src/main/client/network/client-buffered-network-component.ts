@@ -1,8 +1,7 @@
 import { Singleton } from 'typescript-ioc';
-import { NetworkEvent, NetworkMessage } from '../../shared/network/shared-network-model';
+import { NetworkEvent, NetworkMessage, NetworkPayload } from '../../shared/network/shared-network-model';
 import { SharedConfig } from '../../shared/config/shared-config';
 import deepmerge from 'deepmerge';
-import { IObject } from '../../shared/util/util-model';
 import { spawn, Worker } from 'threads/dist';
 import { ClientNetworkThread } from './network-thread/client-network-thread';
 import 'threads/register';
@@ -11,7 +10,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 @Singleton
 export class ClientBufferedNetworkComponent {
    private readonly bufferTimerMs = 1000 / SharedConfig.NETWORK_TICK_RATE;
-   private bufferedEventsMessages = new Map<NetworkEvent, IObject>();
+   private bufferedEventsMessages = new Map<NetworkEvent, NetworkPayload>();
    private lastSendTime = 0;
    private readonly bindRequestBufferTimer;
    private sending = false;
@@ -51,8 +50,8 @@ export class ClientBufferedNetworkComponent {
       });
    }
 
-   send<T = IObject>(event: NetworkEvent, value?: T): void {
-      const mergedMessage = deepmerge.all([this.getEventMessage(event), value ?? {}]) as IObject;
+   send<T>(event: NetworkEvent, value?: T): void {
+      const mergedMessage = deepmerge.all([this.getEventMessage(event), value ?? {}]);
       this.bufferedEventsMessages.set(event, mergedMessage);
       this.sendBufferedEventMessagesInTime();
    }
@@ -74,10 +73,10 @@ export class ClientBufferedNetworkComponent {
       }
       this.sending = true;
       this.lastSendTime = Date.now();
-      if (this.networkThread && (await this.networkThread.isReady())) {
+      if (this.networkThread && this.networkThread.isReady()) {
          const messages = this.getBufferedEventMessages();
          this.bufferedEventsMessages.clear();
-         await this.networkThread.send(messages);
+         this.networkThread.send(messages);
       } else {
          console.log('Cannot send network message, connection is not ready yet.');
       }
@@ -90,7 +89,7 @@ export class ClientBufferedNetworkComponent {
          .map(([event, value]) => ({ event, value }));
    }
 
-   private getEventMessage(event: NetworkEvent): IObject {
+   private getEventMessage(event: NetworkEvent): NetworkPayload {
       return this.bufferedEventsMessages.get(event) ?? {};
    }
 }
