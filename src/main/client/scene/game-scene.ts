@@ -11,6 +11,7 @@ import Vector2 = Phaser.Math.Vector2;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
 import { BulletGroupComponent } from '../bullet/bullet-group-component';
+import { StarFieldSprite } from './star-field-sprite';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -54,6 +55,7 @@ export class GameScene extends Scene {
       this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
+      const starField = new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
    }
 
