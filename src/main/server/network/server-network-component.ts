@@ -40,7 +40,7 @@ export class ServerNetworkComponent {
       this.wrapper.send(user, { event: NetworkEvent.JOIN_RESPONSE, value: response });
    }
 
-   sendDataStore(users: string[], storeId: string, id: string, value: IObject): void {
+   sendDataStore(users: string[], storeId: string, id: string, value: IObject | string): void {
       const data = Utils.keyValueObject(storeId, Utils.keyValueObject(id, value));
       users.forEach((user) => this.wrapper.send(user, { event: NetworkEvent.DATA_STORE, value: data }));
    }

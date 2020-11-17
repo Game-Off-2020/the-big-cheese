@@ -6,6 +6,9 @@ import { filter, map } from 'rxjs/operators';
 import { ServerMapComponent } from '../map/server-map-component';
 import { MapStore } from '../../shared/map/map-store';
 import { BulletStore } from '../../shared/bullet/bullet-store';
+import { StoreEntity } from '../../shared/store/store-model';
+import { Observable } from 'rxjs';
+import { IObject } from '../../shared/util/util-model';
 
 @Singleton
 export class ServerNetworkManager {
@@ -17,10 +20,9 @@ export class ServerNetworkManager {
       @Inject private readonly bulletStore: BulletStore,
    ) {
       this.subscribeNetworkUpdateToStore(playerStore);
-      this.subscribeStoreOnUpdateToNetworkExceptEntityId(this.playerStore);
-      this.subscribeStoreOnCommitToNetwork(playerStore);
-      this.subscribeStoreOnCommitToNetwork(mapStore);
-      this.subscribeStoreOnCommitToNetwork(bulletStore);
+      this.subscribeStoreToNetworkExceptEntity(this.playerStore, this.playerStore.updated$);
+      this.subscribeStoreToNetwork(playerStore, playerStore.committed$);
+      this.subscribeStoreToNetwork(mapStore, mapStore.committed$);
       this.subscribeSendLoginResponseOnPlayerAddedToNetwork();
    }
 
@@ -42,16 +44,18 @@ export class ServerNetworkManager {
          });
    }
 
-   // Changes in the store will be send out everyone
-   private subscribeStoreOnCommitToNetwork(store: Store): void {
-      store.committed$.subscribe((entity) => {
+   // Event in the store will be send out everyone
+   private subscribeStoreToNetwork<T extends string | IObject>(store: Store, event: Observable<StoreEntity<T>>): void {
+      event.subscribe((entity) => {
          this.component.sendDataStore(this.playerStore.getIds(), store.getId(), entity.id, entity.value);
       });
    }
-
-   // Changes in the store will be send out everyone except the entity id (the user who made the change)
-   private subscribeStoreOnUpdateToNetworkExceptEntityId(store: Store): void {
-      store.updated$.subscribe((entity) => {
+   // Event in the store will be send out everyone except entity id
+   private subscribeStoreToNetworkExceptEntity<T extends string | IObject>(
+      store: Store,
+      event: Observable<StoreEntity<T>>,
+   ): void {
+      event.subscribe((entity) => {
          this.component.sendDataStore(
             this.playerStore.getIds().filter((id) => id !== entity.id),
             store.getId(),
