@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { randomFloatFromInterval, randomIntFromInterval } from '../util/math-util';
 
 interface StarFieldOptions {
    readonly scene: Phaser.Scene;
@@ -17,9 +18,9 @@ export class StarFieldSprite extends Phaser.GameObjects.Sprite {
       super(options.scene, options.scene.game.scale.width / 2, options.scene.game.scale.height / 2, 'star-field');
 
       for (let i = 0; i < 2000; i++) {
-         const radius = Math.random() * 2 + 0.2;
-         const x = Math.floor(Math.random() * canvas.width) + 1;
-         const y = Math.floor(Math.random() * canvas.height) + 1;
+         const radius = randomFloatFromInterval(0.2, 2);
+         const x = randomIntFromInterval(1, canvas.width);
+         const y = randomIntFromInterval(1, canvas.height);
 
          this.starFieldTexture = texture;
          this.starFieldTexture.context.beginPath();

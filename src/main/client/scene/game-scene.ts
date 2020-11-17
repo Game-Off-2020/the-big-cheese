@@ -10,7 +10,7 @@ import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Vector2 = Phaser.Math.Vector2;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
-import { BulletGroupComponent } from '../bullet/bullet-group-component';
+import { ClientBulletComponent } from '../bullet/bullet-group-component';
 import { StarFieldSprite } from './star-field-sprite';
 
 export class GameScene extends Scene {
@@ -31,7 +31,7 @@ export class GameScene extends Scene {
    private readonly playerComponent: ClientPlayerComponent;
 
    @Inject
-   private readonly bulletGroupComponent: BulletGroupComponent;
+   private readonly bulletGroupComponent: ClientBulletComponent;
 
    constructor() {
       super({

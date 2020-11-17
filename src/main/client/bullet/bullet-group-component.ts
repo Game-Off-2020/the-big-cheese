@@ -7,7 +7,7 @@ import { BulletFireOptions, Bullets } from './default-bullet';
 import { BulletStore } from '../../shared/bullet/bullet-store';
 
 @Singleton
-export class BulletGroupComponent {
+export class ClientBulletComponent {
    private readonly clientInitSubject = new Subject<Player>();
    readonly clientInit$ = this.clientInitSubject.asObservable();
    private readonly clientShootingSubject = new Subject<BulletFireOptions>();
