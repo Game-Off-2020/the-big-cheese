@@ -6,6 +6,7 @@ import { ServerMapComponent } from '../map/server-map-component';
 import { ShootRequest } from '../../shared/network/shared-network-model';
 import { Bullet } from '../../shared/bullet/bullet-model';
 import { ServerConfig } from '../config/server-config';
+import { MathUtil } from '../../client/util/math-util';
 
 @Singleton
 export class ServerBulletComponent {
@@ -75,7 +76,7 @@ export class ServerBulletComponent {
                x: collision[0],
                y: collision[1],
             },
-            radius: 40,
+            radius: MathUtil.randomFloatFromInterval(10, 35),
          });
       } else {
          // We dont use store.commit here on purpose, unnecessary to sync with clients
