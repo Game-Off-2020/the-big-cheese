@@ -69,6 +69,7 @@ export abstract class Store<T> {
          delete mergedData[id];
          this.dataSubject.next(mergedData);
          this.removedSubject.next(id);
+         this.committedSubject.next(Utils.keyValueObject(id, null));
       }
    }
 
