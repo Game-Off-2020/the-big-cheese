@@ -7,7 +7,6 @@ import { PlayerSprite } from '../player/player-sprite';
 import { Bullets } from '../bullet/default-bullet';
 import { ClientPlayerComponent } from '../player/client-player-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
-import Vector2 = Phaser.Math.Vector2;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
 import { ClientBulletComponent } from '../bullet/client-bullet-component';
