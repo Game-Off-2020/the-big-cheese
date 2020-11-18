@@ -1,5 +1,5 @@
-import { NetworkMessage } from '../../shared/network/shared-network-model';
+import { NetworkMessage, NetworkPayload } from '../../shared/network/shared-network-model';
 
-export interface ServerNetworkMessage<T> extends NetworkMessage<T> {
+export interface ServerNetworkMessage<T = NetworkPayload> extends NetworkMessage<T> {
    user: string;
 }

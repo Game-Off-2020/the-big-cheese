@@ -45,14 +45,14 @@ export class ServerNetworkManager {
    }
 
    // Event in the store will be send out everyone
-   private subscribeStoreToNetwork<T>(store: Store, event: Observable<StoreEntity<T>>): void {
+   private subscribeStoreToNetwork<T>(store: Store<T>, event: Observable<StoreEntity<T>>): void {
       event.subscribe((entity) => {
          this.component.sendDataStore(this.playerStore.getIds(), store.getId(), entity.id, entity.value);
       });
    }
 
    // Event in the store will be send out everyone except entity id
-   private subscribeStoreToNetworkExceptEntity<T>(store: Store, event: Observable<StoreEntity<T>>): void {
+   private subscribeStoreToNetworkExceptEntity<T>(store: Store<T>, event: Observable<StoreEntity<T>>): void {
       event.subscribe((entity) => {
          this.component.sendDataStore(
             this.playerStore.getIds().filter((id) => id !== entity.id),
