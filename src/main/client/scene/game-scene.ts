@@ -10,7 +10,7 @@ import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import Vector2 = Phaser.Math.Vector2;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
-import { ClientBulletComponent } from '../bullet/bullet-group-component';
+import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
 

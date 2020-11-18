@@ -22,6 +22,7 @@ export class ServerNetworkManager {
       this.subscribeStoreToNetworkExceptEntity(this.playerStore, this.playerStore.updated$);
       this.subscribeStoreToNetwork(playerStore, playerStore.committed$);
       this.subscribeStoreToNetwork(mapStore, mapStore.committed$);
+      this.subscribeStoreToNetwork(bulletStore, bulletStore.committed$);
       this.subscribeSendLoginResponseOnPlayerAddedToNetwork();
    }
 
