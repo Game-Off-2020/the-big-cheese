@@ -1,12 +1,13 @@
 // Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 import * as Phaser from 'phaser';
+import { SharedConfig } from '../../shared/config/shared-config';
 
 export interface BulletFireOptions {
    readonly position: Phaser.Math.Vector2;
    readonly direction: Phaser.Math.Vector2;
 }
 
-const BULLET_SPEED = 300;
+const DEFAULT_BULLET_SPEED = 0.85; // It needs to be synced with the server
 
 class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
    private timeAlive = 0;
@@ -22,7 +23,7 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
       this.setActive(true);
       this.setVisible(true);
 
-      options.direction.scale(BULLET_SPEED);
+      options.direction.scale(DEFAULT_BULLET_SPEED * SharedConfig.BULLET_BASE_SPEED);
 
       this.setVelocityY(options.direction.y);
       this.setVelocityX(options.direction.x);
