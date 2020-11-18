@@ -68,5 +68,10 @@ export class BootScene extends Scene {
       this.load.image('bullet', ClientConfig.ASSET_FOLDER + 'bullet.png');
       this.load.image('moon', ClientConfig.ASSET_FOLDER + 'moon-texture.png');
       this.load.image('basic-gun', ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
+      this.load.spritesheet('player1', ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
+         frameWidth: 73,
+         frameHeight: 97,
+         endFrame: 16,
+      });
    }
 }

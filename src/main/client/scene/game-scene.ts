@@ -50,10 +50,50 @@ export class GameScene extends Scene {
    }
 
    create(): void {
-      this.character = new PlayerSprite(this);
+      this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+      this.character = new PlayerSprite({
+         scene: this,
+         cursorKeys: this.cursorKeys,
+         callbacks: {
+            onGoLeft: () => {
+               for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
+                  if (
+                     !this.mapSprite.hitTestTerrain(
+                        this.character.x - 1,
+                        this.character.y,
+                        this.createLocalWall(this.character, 10),
+                     )
+                  ) {
+                     this.moveLeft(this.character);
+                  }
+                  this.stickToGround(this.character);
+               }
+            },
+            onGoRight: () => {
+               for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
+                  if (
+                     !this.mapSprite.hitTestTerrain(
+                        this.character.x + this.characterWidth,
+                        this.character.y,
+                        this.createLocalWall(this.character, 10),
+                     )
+                  ) {
+                     this.moveRight(this.character);
+                  }
+                  this.stickToGround(this.character);
+               }
+            },
+            onShoot: (position) => {
+               this.playerComponent.shoot({
+                  position: position,
+                  direction: VectorUtil.getRelativeMouseDirection(this, this.character),
+               });
+            },
+         },
+      });
       this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
-      this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       const starField = new StarFieldSprite({ scene: this });
@@ -128,43 +168,6 @@ export class GameScene extends Scene {
       this.cameras.main.setRotation(-this.character.rotation);
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
-      if (this.input.activePointer.isDown) {
-         const charPosition = new Vector2({ x: this.character.x, y: this.character.y });
-         this.playerComponent.shoot({
-            position: charPosition,
-            direction: VectorUtil.getRelativeMouseDirection(this, this.character),
-         });
-      }
-
-      if (this.cursorKeys.left.isDown) {
-         for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
-            if (
-               !this.mapSprite.hitTestTerrain(
-                  this.character.x - 1,
-                  this.character.y,
-                  this.createLocalWall(this.character, 10),
-               )
-            ) {
-               this.moveLeft(this.character);
-            }
-            this.stickToGround(this.character);
-         }
-      }
-
-      if (this.cursorKeys.right.isDown) {
-         for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
-            if (
-               !this.mapSprite.hitTestTerrain(
-                  this.character.x + this.characterWidth,
-                  this.character.y,
-                  this.createLocalWall(this.character, 10),
-               )
-            ) {
-               this.moveRight(this.character);
-            }
-            this.stickToGround(this.character);
-         }
-      }
 
       if (this.cursorKeys.up.isDown && !this.jumping) {
          this.verticalSpeed = -40;
