@@ -6,7 +6,7 @@ import { Utils } from '../util/utils';
 import { IObject } from '../util/util-model';
 
 export abstract class Store<T extends IObject = IObject> {
-   private readonly dataSubject = new BehaviorSubject<StoreData<T>>({});
+   private readonly dataSubject = new BehaviorSubject<StoreData<T>>({}); // TODO: Can be simplified
    private readonly addedSubject = new Subject<StoreData<T>>();
    private readonly removedSubject = new Subject<string>();
    private readonly updatedSubject = new Subject<StoreData<T>>();
@@ -77,6 +77,10 @@ export abstract class Store<T extends IObject = IObject> {
       return this.getData()[id];
    }
 
+   getData(): StoreData<T> {
+      return this.dataSubject.getValue();
+   }
+
    private setValue(id: string, entityData: StoreData<T>): void {
       const data = this.getData();
       const mergedData = deepmerge.all([data, entityData]) as StoreData<T>;
@@ -88,7 +92,7 @@ export abstract class Store<T extends IObject = IObject> {
       }
    }
 
-   protected getData(): StoreData<T> {
-      return this.dataSubject.getValue();
+   protected reset(): void {
+      this.dataSubject.next({});
    }
 }

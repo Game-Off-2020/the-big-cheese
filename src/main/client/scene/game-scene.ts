@@ -42,10 +42,12 @@ export class GameScene extends Scene {
       this.mapComponent.mapLoaded$.subscribe((canvas) => {
          this.mapSprite = new MapSprite({
             scene: this,
-            canvas: canvas,
+            canvas,
          });
       });
-      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+      this.mapComponent.updated$.subscribe(() => {
+         this.mapSprite && this.mapSprite.update();
+      });
    }
 
    create(): void {

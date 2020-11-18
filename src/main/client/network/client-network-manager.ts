@@ -49,9 +49,8 @@ export class ClientNetworkManager {
    private subscribeNetworkUpdateToStore(store: Store): void {
       this.component.dataStore$
          .pipe(
-            map((stores) => stores[store.getId()]),
-            filter((storeData) => !!storeData),
-            map((storeData) => Array.from(Object.entries(storeData))),
+            filter((stores) => Object.keys(stores)[0] === store.getId()),
+            map((stores) => Array.from(Object.entries(stores[store.getId()]))),
          )
          .subscribe((storeDataEntries) => {
             storeDataEntries.forEach(([id, entity]) => {

@@ -47,6 +47,11 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       return false;
    }
 
+   update(): void {
+      this.terrainTexture.update();
+      super.update();
+   }
+
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
       const pixel = this.getPixelColor(localX, localY, canvasData);
 

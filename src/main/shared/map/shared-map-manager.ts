@@ -3,6 +3,6 @@ import { MapStore } from './map-store';
 
 export abstract class SharedMapManager {
    protected constructor(protected readonly component: SharedMapComponent, protected readonly store: MapStore) {
-      store.added$.subscribe((entity) => component.destruct(entity.value));
+      store.added$.subscribe((entity) => component.drawDestruction(entity.value));
    }
 }

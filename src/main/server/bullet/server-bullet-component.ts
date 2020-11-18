@@ -2,11 +2,18 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { BulletStore } from '../../shared/bullet/bullet-store';
 import { Utils } from '../../shared/util/utils';
 import { ServerPlayerComponent } from '../player/server-player-component';
+import { ServerMapComponent } from '../map/server-map-component';
 import { ShootRequest } from '../../shared/network/shared-network-model';
+import { Bullet } from '../../shared/bullet/bullet-model';
+import { ServerConfig } from '../config/server-config';
 
 @Singleton
 export class ServerBulletComponent {
-   constructor(@Inject private readonly store: BulletStore, @Inject private readonly players: ServerPlayerComponent) {}
+   constructor(
+      @Inject private readonly store: BulletStore,
+      @Inject private readonly players: ServerPlayerComponent,
+      @Inject private readonly map: ServerMapComponent,
+   ) {}
 
    shoot(playerId: string, shootRequest: ShootRequest): void {
       const player = this.players.getPlayer(playerId);
@@ -39,5 +46,41 @@ export class ServerBulletComponent {
             y: directionY,
          },
       });
+   }
+
+   private nextPosition = { x: 0, y: 0 };
+
+   stepBullets(): void {
+      this.map.updateData();
+      for (const [id, bullet] of Object.entries(this.store.getData())) {
+         this.stepBullet(id, bullet);
+      }
+   }
+
+   stepBullet(id: string, bullet: Bullet): void {
+      this.nextPosition.x = bullet.position.x + bullet.direction.x * ServerConfig.BULLET_SPEED;
+      this.nextPosition.y = bullet.position.y + bullet.direction.y * ServerConfig.BULLET_SPEED;
+
+      //  Check if it will hit a wall or player (?) using continuous collision detection
+      const collision = this.map.raycast(
+         bullet.position.x,
+         bullet.position.y,
+         this.nextPosition.x,
+         this.nextPosition.y,
+      );
+      if (collision) {
+         this.store.remove(id);
+         this.map.destruct({
+            position: {
+               x: collision[0],
+               y: collision[1],
+            },
+            radius: 40,
+         });
+      } else {
+         // We dont use store.commit here on purpose, unnecessary to sync with clients
+         bullet.position.x = this.nextPosition.x;
+         bullet.position.y = this.nextPosition.y;
+      }
    }
 }
