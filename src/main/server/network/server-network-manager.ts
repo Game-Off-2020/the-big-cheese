@@ -5,9 +5,9 @@ import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
 import { ServerMapComponent } from '../map/server-map-component';
 import { MapStore } from '../../shared/map/map-store';
-import { BulletStore } from '../../shared/bullet/bullet-store';
 import { StoreEntity } from '../../shared/store/store-model';
 import { Observable } from 'rxjs';
+import { ServerBulletStore } from '../bullet/server-bullet-store';
 
 @Singleton
 export class ServerNetworkManager {
@@ -16,7 +16,7 @@ export class ServerNetworkManager {
       @Inject private readonly map: ServerMapComponent,
       @Inject private readonly playerStore: PlayerStore,
       @Inject private readonly mapStore: MapStore,
-      @Inject private readonly bulletStore: BulletStore,
+      @Inject private readonly bulletStore: ServerBulletStore,
    ) {
       this.subscribeNetworkUpdateToStore(playerStore);
       this.subscribeStoreToNetworkExceptEntity(this.playerStore, this.playerStore.updated$);
