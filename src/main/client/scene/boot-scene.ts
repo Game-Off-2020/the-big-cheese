@@ -73,5 +73,6 @@ export class BootScene extends Scene {
          frameHeight: 97,
          endFrame: 16,
       });
+      this.load.audio('basic-gun-sound', [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
    }
 }
