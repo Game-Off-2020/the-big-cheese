@@ -30,7 +30,6 @@ export class ClientNetworkComponent {
 
    private onEvent<T>(event: NetworkEvent): Observable<T> {
       return this.event$.pipe(
-         tap((message) => console.log(message)),
          filter((message) => message.event === event),
          map((message) => (message.value as unknown) as T),
       );
