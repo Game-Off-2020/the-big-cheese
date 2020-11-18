@@ -79,7 +79,9 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
 
       if (this.scene.input.activePointer.isDown) {
-         const gunPosition = new Vector2({ x: this.x, y: this.y });
+         const gunPosition = new Vector2({ x: this.x, y: this.y }).add(
+            new Vector2({ x: this.gun.x, y: this.gun.y }).rotate(this.rotation),
+         );
          this.options.callbacks.onShoot(gunPosition);
       }
 
