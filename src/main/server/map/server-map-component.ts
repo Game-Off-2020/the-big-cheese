@@ -45,7 +45,7 @@ export class ServerMapComponent extends SharedMapComponent {
       this.store.commit(Utils.generateId(), destruction);
    }
 
-   raycast(x1: any, y1: any, x2: number, y2: number): [number, number] | null {
+   raycast(x1: number, y1: number, x2: number, y2: number): [number, number] | null {
       // Naive line drawing algorithm see
       // https://www.geeksforgeeks.org/dda-line-generation-algorithm-computer-graphics/
       const dx = x2 - x1;

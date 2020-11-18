@@ -8,7 +8,6 @@ import { MapStore } from '../../shared/map/map-store';
 import { BulletStore } from '../../shared/bullet/bullet-store';
 import { StoreEntity } from '../../shared/store/store-model';
 import { Observable } from 'rxjs';
-import { IObject } from '../../shared/util/util-model';
 
 @Singleton
 export class ServerNetworkManager {
@@ -27,7 +26,7 @@ export class ServerNetworkManager {
    }
 
    // Updates from the network will be merged into the store
-   private subscribeNetworkUpdateToStore(store: Store): void {
+   private subscribeNetworkUpdateToStore<T>(store: Store<T>): void {
       this.component.dataStore$
          .pipe(
             map((stores) => stores[store.getId()]),
@@ -38,23 +37,21 @@ export class ServerNetworkManager {
             storeDataEntries.forEach(([id, value]) => {
                // console.log(`Store ${store.getId()} received entity ${id}:`, value);
                if (value !== null) {
-                  store.update(id, value);
+                  store.update(id, value as T);
                }
             });
          });
    }
 
    // Event in the store will be send out everyone
-   private subscribeStoreToNetwork<T extends string | IObject>(store: Store, event: Observable<StoreEntity<T>>): void {
+   private subscribeStoreToNetwork<T>(store: Store, event: Observable<StoreEntity<T>>): void {
       event.subscribe((entity) => {
          this.component.sendDataStore(this.playerStore.getIds(), store.getId(), entity.id, entity.value);
       });
    }
+
    // Event in the store will be send out everyone except entity id
-   private subscribeStoreToNetworkExceptEntity<T extends string | IObject>(
-      store: Store,
-      event: Observable<StoreEntity<T>>,
-   ): void {
+   private subscribeStoreToNetworkExceptEntity<T>(store: Store, event: Observable<StoreEntity<T>>): void {
       event.subscribe((entity) => {
          this.component.sendDataStore(
             this.playerStore.getIds().filter((id) => id !== entity.id),

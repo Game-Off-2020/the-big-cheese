@@ -57,7 +57,7 @@ export class GameScene extends Scene {
       this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
-      const starField = new StarFieldSprite({ scene: this });
+      new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
    }
 

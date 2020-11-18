@@ -1,13 +1,6 @@
-import { IObject } from '../util/util-model';
-
-export interface Bullet extends IObject {
+import * as Phaser from 'phaser';
+export interface Bullet {
    playerId: string;
-   position: {
-      x: number;
-      y: number;
-   };
-   direction: {
-      x: number;
-      y: number;
-   };
+   readonly position: Phaser.Math.Vector2;
+   readonly direction: Phaser.Math.Vector2;
 }
