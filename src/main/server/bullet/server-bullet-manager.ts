@@ -13,7 +13,7 @@ export class ServerBulletManager {
       @Inject private readonly store: BulletStore,
    ) {
       network.shootRequest$.subscribe((message) => component.shoot(message.user, message.value));
-      timer.tick$.subscribe(() => component.stepBullets());
       store.added$.subscribe((entity) => component.stepBullet(entity.id, entity.value));
+      timer.tick$.subscribe(() => component.stepBullets());
    }
 }

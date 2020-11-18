@@ -70,7 +70,9 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    private getPixelAlpha(x: number, y: number): number {
-      if (Math.abs(x) >= this.size / 2 || Math.abs(y) >= this.size / 2 || x < 0 || y < 0) {
+      x = this.getLocal(x);
+      y = this.getLocal(y);
+      if (Math.abs(x) >= this.size || Math.abs(y) >= this.size || x < 0 || y < 0) {
          return 0;
       }
       const pixelValue = this.data.getUint32(4 * (x + y * this.size));
