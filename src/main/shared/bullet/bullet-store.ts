@@ -3,7 +3,7 @@ import { Bullet } from './bullet-model';
 import { Store } from '../store/store';
 
 @Singleton
-export class BulletStore extends Store<Bullet> {
+export class BulletStore<T extends Bullet = Bullet> extends Store<T> {
    constructor() {
       super();
    }

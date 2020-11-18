@@ -5,7 +5,9 @@ import { Store } from '../../shared/store/store';
 import { filter, map } from 'rxjs/operators';
 import { ServerMapComponent } from '../map/server-map-component';
 import { MapStore } from '../../shared/map/map-store';
-import { BulletStore } from '../../shared/bullet/bullet-store';
+import { StoreEntity } from '../../shared/store/store-model';
+import { Observable } from 'rxjs';
+import { ServerBulletStore } from '../bullet/server-bullet-store';
 
 @Singleton
 export class ServerNetworkManager {
@@ -14,13 +16,13 @@ export class ServerNetworkManager {
       @Inject private readonly map: ServerMapComponent,
       @Inject private readonly playerStore: PlayerStore,
       @Inject private readonly mapStore: MapStore,
-      @Inject private readonly bulletStore: BulletStore,
+      @Inject private readonly bulletStore: ServerBulletStore,
    ) {
       this.subscribeNetworkUpdateToStore(playerStore);
-      this.subscribeStoreOnUpdateToNetworkExceptEntityId(this.playerStore);
-      this.subscribeStoreOnCommitToNetwork(playerStore);
-      this.subscribeStoreOnCommitToNetwork(mapStore);
-      this.subscribeStoreOnCommitToNetwork(bulletStore);
+      this.subscribeStoreToNetworkExceptEntity(this.playerStore, this.playerStore.updated$);
+      this.subscribeStoreToNetwork(playerStore, playerStore.committed$);
+      this.subscribeStoreToNetwork(mapStore, mapStore.committed$);
+      this.subscribeStoreToNetwork(bulletStore, bulletStore.committed$);
       this.subscribeSendLoginResponseOnPlayerAddedToNetwork();
    }
 
@@ -36,22 +38,22 @@ export class ServerNetworkManager {
             storeDataEntries.forEach(([id, value]) => {
                // console.log(`Store ${store.getId()} received entity ${id}:`, value);
                if (value !== null) {
-                  store.update(id, value);
+                  store.update(id, value as T);
                }
             });
          });
    }
 
-   // Changes in the store will be send out everyone
-   private subscribeStoreOnCommitToNetwork<T>(store: Store<T>): void {
-      store.committed$.subscribe((entity) => {
+   // Event in the store will be send out everyone
+   private subscribeStoreToNetwork<T>(store: Store<T>, event: Observable<StoreEntity<T>>): void {
+      event.subscribe((entity) => {
          this.component.sendDataStore(this.playerStore.getIds(), store.getId(), entity.id, entity.value);
       });
    }
 
-   // Changes in the store will be send out everyone except the entity id (the user who made the change)
-   private subscribeStoreOnUpdateToNetworkExceptEntityId<T>(store: Store<T>): void {
-      store.updated$.subscribe((entity) => {
+   // Event in the store will be send out everyone except entity id
+   private subscribeStoreToNetworkExceptEntity<T>(store: Store<T>, event: Observable<StoreEntity<T>>): void {
+      event.subscribe((entity) => {
          this.component.sendDataStore(
             this.playerStore.getIds().filter((id) => id !== entity.id),
             store.getId(),

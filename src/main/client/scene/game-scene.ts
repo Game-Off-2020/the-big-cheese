@@ -7,10 +7,9 @@ import { PlayerSprite } from '../player/player-sprite';
 import { Bullets } from '../bullet/default-bullet';
 import { ClientPlayerComponent } from '../player/client-player-component';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
-import Vector2 = Phaser.Math.Vector2;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
-import { ClientBulletComponent } from '../bullet/bullet-group-component';
+import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
 
@@ -43,10 +42,12 @@ export class GameScene extends Scene {
       this.mapComponent.mapLoaded$.subscribe((canvas) => {
          this.mapSprite = new MapSprite({
             scene: this,
-            canvas: canvas,
+            canvas,
          });
       });
-      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+      this.mapComponent.updated$.subscribe(() => {
+         this.mapSprite && this.mapSprite.update();
+      });
    }
 
    create(): void {
@@ -96,7 +97,7 @@ export class GameScene extends Scene {
       this.cameras.main.startFollow(this.character);
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
-      const starField = new StarFieldSprite({ scene: this });
+      new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
    }
 

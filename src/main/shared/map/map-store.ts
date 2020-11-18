@@ -10,11 +10,11 @@ export class MapStore extends Store<MapDestruction> {
 
    update(id: string, value: MapDestruction): void {
       super.update(id, value);
-      this.remove(id);
+      this.reset();
    }
 
    commit(id: string, value: MapDestruction): void {
       super.commit(id, value);
-      this.remove(id);
+      this.reset();
    }
 }

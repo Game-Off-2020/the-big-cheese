@@ -5,20 +5,19 @@ import { filter, map } from 'rxjs/operators';
 import { Utils } from '../util/utils';
 
 export abstract class Store<T> {
-   private readonly dataSubject = new BehaviorSubject<StoreData<T>>({});
+   private readonly dataSubject = new BehaviorSubject<StoreData<T>>({}); // TODO: Can be simplified
    private readonly addedSubject = new Subject<StoreData<T>>();
    private readonly removedSubject = new Subject<string>();
    private readonly updatedSubject = new Subject<StoreData<T>>();
    private readonly committedSubject = new Subject<StoreData<T>>();
    private readonly changedSubject = new Subject<StoreData<T>>();
 
-   readonly data$ = this.dataSubject.asObservable();
-   readonly added$ = this.mapEntity(this.addedSubject); // Returns id+value
-   readonly committed$ = this.mapEntity(this.committedSubject); // Returns id+value
-   readonly updated$ = this.mapEntity(this.updatedSubject); // Returns id+value
+   readonly added$ = this.mapEntityWithId(this.addedSubject);
+   readonly committed$ = this.mapEntityWithId(this.committedSubject);
+   readonly updated$ = this.mapEntityWithId(this.updatedSubject);
    readonly removed$ = this.removedSubject.asObservable();
 
-   private mapEntity(source: Observable<StoreData<T>>): Observable<StoreEntity<T>> {
+   private mapEntityWithId(source: Observable<StoreData<T>>): Observable<StoreEntity<T>> {
       return source.pipe(
          map((data) => {
             const [id, value] = Object.entries(data)[0];
@@ -70,11 +69,16 @@ export abstract class Store<T> {
          delete mergedData[id];
          this.dataSubject.next(mergedData);
          this.removedSubject.next(id);
+         this.committedSubject.next(Utils.keyValueObject(id, null));
       }
    }
 
    get(id: string): T | undefined {
       return this.getData()[id];
+   }
+
+   getData(): StoreData<T> {
+      return this.dataSubject.getValue();
    }
 
    private setValue(id: string, entityData: StoreData<T>): void {
@@ -88,7 +92,7 @@ export abstract class Store<T> {
       }
    }
 
-   protected getData(): StoreData<T> {
-      return this.dataSubject.getValue();
+   protected reset(): void {
+      this.dataSubject.next({});
    }
 }
