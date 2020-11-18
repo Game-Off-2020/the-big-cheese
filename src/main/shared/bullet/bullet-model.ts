@@ -1,6 +1,6 @@
 export interface Vector {
-   readonly x: number;
-   readonly y: number;
+   x: number;
+   y: number;
 }
 
 export interface Bullet {
