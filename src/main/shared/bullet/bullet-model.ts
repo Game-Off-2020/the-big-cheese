@@ -1,4 +1,4 @@
-import { Vector } from "./vector-model";
+import { Vector } from './vector-model';
 
 export interface Bullet {
    readonly playerId: string;

@@ -14,5 +14,9 @@ export class ClientBulletComponent {
             direction: new Phaser.Math.Vector2(data.value.direction),
          });
       });
+
+      this.store.removed$.subscribe((data) => {
+         console.log('removed', data);
+      });
    }
 }

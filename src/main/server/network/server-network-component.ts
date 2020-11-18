@@ -11,13 +11,14 @@ import {
 } from '../../shared/network/shared-network-model';
 import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
+import { AllStores } from '../../shared/models/all-stores';
 
 @Singleton
 export class ServerNetworkComponent {
    readonly clientConnectedId$: Observable<string>;
    readonly clientDisconnectedId$: Observable<string>;
    private event$: Observable<ServerNetworkMessage<NetworkPayload>>;
-   readonly dataStore$: Observable<NetworkPayload>;
+   readonly dataStore$: Observable<{ [key: string]: AllStores }>;
    readonly joinRequest$: Observable<ServerNetworkMessage<JoinRequest>>;
    readonly shootRequest$: Observable<ServerNetworkMessage<ShootRequest>>;
 
