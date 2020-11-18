@@ -1,4 +1,4 @@
-import { Vector } from '../bullet/bullet-model';
+import { Vector } from "../bullet/vector-model";
 
 export interface Player {
    id: string;
