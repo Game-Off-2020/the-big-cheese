@@ -1,6 +1,10 @@
-import * as Phaser from 'phaser';
+export interface Vector {
+   x: number;
+   y: number;
+}
+
 export interface Bullet {
-   playerId: string;
-   readonly position: Phaser.Math.Vector2;
-   readonly direction: Phaser.Math.Vector2;
+   readonly playerId: string;
+   readonly position: Vector;
+   readonly direction: Vector;
 }

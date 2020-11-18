@@ -12,6 +12,7 @@ import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
 import { ClientBulletComponent } from '../bullet/bullet-group-component';
 import { StarFieldSprite } from './star-field-sprite';
+import { VectorUtil } from '../util/vector-util';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -49,10 +50,50 @@ export class GameScene extends Scene {
    }
 
    create(): void {
-      this.character = new PlayerSprite(this);
+      this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+      this.character = new PlayerSprite({
+         scene: this,
+         cursorKeys: this.cursorKeys,
+         callbacks: {
+            onGoLeft: () => {
+               for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
+                  if (
+                     !this.mapSprite.hitTestTerrain(
+                        this.character.x - 1,
+                        this.character.y,
+                        this.createLocalWall(this.character, 10),
+                     )
+                  ) {
+                     this.moveLeft(this.character);
+                  }
+                  this.stickToGround(this.character);
+               }
+            },
+            onGoRight: () => {
+               for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
+                  if (
+                     !this.mapSprite.hitTestTerrain(
+                        this.character.x + this.characterWidth,
+                        this.character.y,
+                        this.createLocalWall(this.character, 10),
+                     )
+                  ) {
+                     this.moveRight(this.character);
+                  }
+                  this.stickToGround(this.character);
+               }
+            },
+            onShoot: (position) => {
+               this.playerComponent.shoot({
+                  position: position,
+                  direction: VectorUtil.getRelativeMouseDirection(this, this.character),
+               });
+            },
+         },
+      });
       this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
-      this.cursorKeys = this.input.keyboard.createCursorKeys();
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       const starField = new StarFieldSprite({ scene: this });
@@ -62,36 +103,36 @@ export class GameScene extends Scene {
    private jumping = false;
    private verticalSpeed = 0;
 
-   private getDownwardVector(sprite: Phaser.GameObjects.Sprite): Phaser.Math.Vector2 {
+   private getDownwardVector(sprite: Phaser.GameObjects.Components.Transform): Phaser.Math.Vector2 {
       return new Phaser.Math.Vector2({ x: -sprite.x, y: -sprite.y }).normalize();
    }
 
-   private getFloorVector(sprite: Phaser.GameObjects.Sprite): Phaser.Math.Vector2 {
+   private getFloorVector(sprite: Phaser.GameObjects.Components.Transform): Phaser.Math.Vector2 {
       return this.getDownwardVector(sprite).normalizeRightHand();
    }
 
-   private applyGravity(sprite: Phaser.GameObjects.Sprite): void {
+   private applyGravity(sprite: Phaser.GameObjects.Components.Transform): void {
       const vector = this.getDownwardVector(sprite).scale(-1);
       this.moveByVector(sprite, vector);
    }
 
-   private applyGroundReactionForce(sprite: Phaser.GameObjects.Sprite): void {
+   private applyGroundReactionForce(sprite: Phaser.GameObjects.Components.Transform): void {
       const vector = this.getDownwardVector(sprite).scale(0.5);
       this.moveByVector(sprite, vector);
    }
 
-   private moveByVector(sprite: Phaser.GameObjects.Sprite, vector: Phaser.Math.Vector2): void {
+   private moveByVector(sprite: Phaser.GameObjects.Components.Transform, vector: Phaser.Math.Vector2): void {
       sprite.x += vector.x;
       sprite.y += vector.y;
    }
 
-   private createLocalWall(sprite: Phaser.GameObjects.Sprite, length: number): Phaser.Geom.Point[] {
+   private createLocalWall(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
       const downVector = this.getDownwardVector(sprite);
 
       return this.createCollisionLine(downVector, length, -length);
    }
 
-   private createLocalFloor(sprite: Phaser.GameObjects.Sprite, length: number): Phaser.Geom.Point[] {
+   private createLocalFloor(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
       const floorVector = this.getFloorVector(sprite);
 
       return this.createCollisionLine(floorVector, length, -length / 2);
@@ -106,18 +147,18 @@ export class GameScene extends Scene {
          });
    }
 
-   private stickToGround(sprite: Phaser.GameObjects.Sprite): void {
+   private stickToGround(sprite: Phaser.GameObjects.Components.Transform): void {
       while (this.mapSprite.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10))) {
          this.applyGravity(sprite);
       }
    }
 
-   private moveLeft(sprite: Phaser.GameObjects.Sprite): void {
+   private moveLeft(sprite: Phaser.GameObjects.Components.Transform): void {
       const floorVector = this.getFloorVector(sprite);
       this.moveByVector(sprite, floorVector);
    }
 
-   private moveRight(sprite: Phaser.GameObjects.Sprite): void {
+   private moveRight(sprite: Phaser.GameObjects.Components.Transform): void {
       const floorVector = this.getFloorVector(sprite).scale(-1);
       this.moveByVector(sprite, floorVector);
    }
@@ -127,46 +168,6 @@ export class GameScene extends Scene {
       this.cameras.main.setRotation(-this.character.rotation);
 
       this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
-      if (this.input.activePointer.isDown) {
-         const charPosition = new Vector2({ x: this.character.x, y: this.character.y });
-         this.playerComponent.shoot({
-            position: charPosition,
-            direction: new Vector2({ x: this.input.activePointer.x, y: this.input.activePointer.y })
-               .subtract(new Vector2({ x: this.game.scale.width / 2, y: this.game.scale.height / 2 }))
-               .normalize()
-               .rotate(this.character.rotation),
-         });
-      }
-
-      if (this.cursorKeys.left.isDown) {
-         for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
-            if (
-               !this.mapSprite.hitTestTerrain(
-                  this.character.x - 1,
-                  this.character.y,
-                  this.createLocalWall(this.character, 10),
-               )
-            ) {
-               this.moveLeft(this.character);
-            }
-            this.stickToGround(this.character);
-         }
-      }
-
-      if (this.cursorKeys.right.isDown) {
-         for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
-            if (
-               !this.mapSprite.hitTestTerrain(
-                  this.character.x + this.characterWidth,
-                  this.character.y,
-                  this.createLocalWall(this.character, 10),
-               )
-            ) {
-               this.moveRight(this.character);
-            }
-            this.stickToGround(this.character);
-         }
-      }
 
       if (this.cursorKeys.up.isDown && !this.jumping) {
          this.verticalSpeed = -40;
