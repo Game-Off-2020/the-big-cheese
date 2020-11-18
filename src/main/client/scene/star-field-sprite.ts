@@ -6,7 +6,7 @@ interface StarFieldOptions {
 }
 
 export class StarFieldSprite extends Phaser.GameObjects.Sprite {
-   private starFieldTexture;
+   private starFieldTexture: Phaser.Textures.CanvasTexture;
 
    constructor(options: StarFieldOptions) {
       const canvas = document.createElement('canvas') as HTMLCanvasElement;
@@ -31,6 +31,7 @@ export class StarFieldSprite extends Phaser.GameObjects.Sprite {
 
       this.starFieldTexture.refresh();
       this.setScrollFactor(0, 0);
+      this.setDepth(-100);
 
       options.scene.add.existing(this);
    }

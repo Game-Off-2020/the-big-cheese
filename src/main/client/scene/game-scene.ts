@@ -104,21 +104,13 @@ export class GameScene extends Scene {
    private jumping = false;
    private verticalSpeed = 0;
 
-   private getDownwardVector(sprite: Phaser.GameObjects.Components.Transform): Phaser.Math.Vector2 {
-      return new Phaser.Math.Vector2({ x: -sprite.x, y: -sprite.y }).normalize();
-   }
-
-   private getFloorVector(sprite: Phaser.GameObjects.Components.Transform): Phaser.Math.Vector2 {
-      return this.getDownwardVector(sprite).normalizeRightHand();
-   }
-
    private applyGravity(sprite: Phaser.GameObjects.Components.Transform): void {
-      const vector = this.getDownwardVector(sprite).scale(-1);
+      const vector = VectorUtil.getDownwardVector(sprite).scale(-1);
       this.moveByVector(sprite, vector);
    }
 
    private applyGroundReactionForce(sprite: Phaser.GameObjects.Components.Transform): void {
-      const vector = this.getDownwardVector(sprite).scale(0.5);
+      const vector = VectorUtil.getDownwardVector(sprite).scale(0.5);
       this.moveByVector(sprite, vector);
    }
 
@@ -128,13 +120,13 @@ export class GameScene extends Scene {
    }
 
    private createLocalWall(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
-      const downVector = this.getDownwardVector(sprite);
+      const downVector = VectorUtil.getDownwardVector(sprite);
 
       return this.createCollisionLine(downVector, length, -length);
    }
 
    private createLocalFloor(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
-      const floorVector = this.getFloorVector(sprite);
+      const floorVector = VectorUtil.getFloorVector(sprite);
 
       return this.createCollisionLine(floorVector, length, -length / 2);
    }
@@ -155,12 +147,12 @@ export class GameScene extends Scene {
    }
 
    private moveLeft(sprite: Phaser.GameObjects.Components.Transform): void {
-      const floorVector = this.getFloorVector(sprite);
+      const floorVector = VectorUtil.getFloorVector(sprite);
       this.moveByVector(sprite, floorVector);
    }
 
    private moveRight(sprite: Phaser.GameObjects.Components.Transform): void {
-      const floorVector = this.getFloorVector(sprite).scale(-1);
+      const floorVector = VectorUtil.getFloorVector(sprite).scale(-1);
       this.moveByVector(sprite, floorVector);
    }
 
@@ -168,7 +160,7 @@ export class GameScene extends Scene {
       if (!this.mapSprite) return;
       this.cameras.main.setRotation(-this.character.rotation);
 
-      this.character.setRotation(this.getFloorVector(this.character).scale(-1).angle());
+      this.character.setRotation(VectorUtil.getFloorVector(this.character).scale(-1).angle());
 
       if (this.cursorKeys.up.isDown && !this.jumping) {
          this.verticalSpeed = -40;
@@ -204,7 +196,7 @@ export class GameScene extends Scene {
                   this.createLocalFloor(this.character, 10),
                )
             ) {
-               this.moveByVector(this.character, this.getDownwardVector(this.character).scale(-1));
+               this.moveByVector(this.character, VectorUtil.getDownwardVector(this.character).scale(-1));
             } else {
                this.verticalSpeed = 0;
             }

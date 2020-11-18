@@ -1,7 +1,4 @@
-export interface Vector {
-   x: number;
-   y: number;
-}
+import { Vector } from "./vector-model";
 
 export interface Bullet {
    readonly playerId: string;
