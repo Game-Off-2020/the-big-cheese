@@ -70,10 +70,12 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    private getPixelAlpha(x: number, y: number): number {
+      x = this.getLocal(x);
+      y = this.getLocal(y);
       if (Math.abs(x) >= this.size / 2 || Math.abs(y) >= this.size / 2) {
          return 0;
       }
-      const pixelValue = this.data.getUint32(4 * (this.getLocal(x) + this.getLocal(y) * this.size));
+      const pixelValue = this.data.getUint32(4 * (x + y * this.size));
       // See other values here
       // https://stackoverflow.com/questions/17945972/converting-rgba-values-into-one-integer-in-javascript
       return ((pixelValue & 0xff000000) >>> 24) / 255;
