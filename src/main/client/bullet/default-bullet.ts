@@ -14,9 +14,26 @@ const DEFAULT_BULLET_SPEED = 0.85; // It needs to be synced with the server
 class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
    private timeAlive = 0;
    private readonly lifeTime = 1000;
+   private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
    constructor(scene: Phaser.Scene, x: number, y: number) {
       super(scene, x, y, 'bullet');
+
+      const particle = scene.add.particles('moon-dust-particle');
+      this.dustEmitter = particle.createEmitter({
+         x: this.x,
+         y: this.y,
+         speed: { min: -20, max: 20 },
+         angle: { min: 0, max: 360 },
+         scale: { start: 0, end: 0.4 },
+         alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
+         blendMode: Phaser.BlendModes.SCREEN,
+         gravityY: 0,
+         lifespan: 400,
+      });
+      this.dustEmitter.reserve(1000);
+      this.dustEmitter.stop();
+      particle.setDepth(100);
    }
 
    fire(options: BulletFireOptions): void {
@@ -42,6 +59,10 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
       } else {
          this.timeAlive += delta;
       }
+   }
+
+   emitDust(): void {
+      this.dustEmitter.explode(10, this.x, this.y);
    }
 }
 
@@ -98,6 +119,7 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
       if (bullet) {
          bullet.setActive(false);
          bullet.setVisible(false);
+         bullet.emitDust();
          this.cache[id] = undefined;
       }
    }

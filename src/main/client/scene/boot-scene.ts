@@ -64,9 +64,8 @@ export class BootScene extends Scene {
     */
    private loadAssets(): void {
       // TODO: Extract file keys
-      this.load.image('character', ClientConfig.ASSET_FOLDER + 'poc-character.png');
-      this.load.image('bullet', ClientConfig.ASSET_FOLDER + 'bullet.png');
-      this.load.image('moon', ClientConfig.ASSET_FOLDER + 'moon-texture.png');
+      this.load.image('bullet', ClientConfig.ASSET_FOLDER + 'weapons/basic-gun-bullet.png');
+      this.load.image('moon', ClientConfig.ASSET_FOLDER + 'moon/moon-texture.png');
       this.load.image('basic-gun', ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
       this.load.spritesheet('player1', ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
          frameWidth: 73,
@@ -74,5 +73,6 @@ export class BootScene extends Scene {
          endFrame: 16,
       });
       this.load.audio('basic-gun-sound', [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
+      this.load.image('moon-dust-particle', ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
    }
 }
