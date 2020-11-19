@@ -31,4 +31,8 @@ export class ServerPlayerComponent {
    getPlayer(id: string): Player | undefined {
       return this.store.get(id);
    }
+
+   getNrOfPlayers(): number {
+      return this.store.getIds().length;
+   }
 }

@@ -1,7 +1,13 @@
 import { Inject, Singleton } from 'typescript-ioc';
 import { ClientBufferedNetworkComponent } from './client-buffered-network-component';
 import { Observable } from 'rxjs';
-import { JoinRequest, JoinResponse, NetworkEvent, NetworkMessage } from '../../shared/network/shared-network-model';
+import {
+   JoinRequest,
+   JoinResponse,
+   JoinResponseStatus,
+   NetworkEvent,
+   NetworkMessage,
+} from '../../shared/network/shared-network-model';
 import { filter, map, tap } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 import { BulletFireOptions } from '../bullet/default-bullet';
@@ -12,7 +18,9 @@ export class ClientNetworkComponent {
    readonly connected$: Observable<void>;
    readonly disconnected$: Observable<void>;
    private event$: Observable<NetworkMessage>;
-   readonly joinResponse$: Observable<JoinResponse>;
+   private readonly joinResponse$: Observable<JoinResponse>;
+   readonly joined$: Observable<JoinResponse>;
+   readonly joinFailed$: Observable<JoinResponseStatus>;
    readonly dataStore$: Observable<{ [key: string]: AllStores }>;
 
    constructor(@Inject private readonly bufferedNetwork: ClientBufferedNetworkComponent) {
@@ -20,6 +28,11 @@ export class ClientNetworkComponent {
       this.disconnected$ = bufferedNetwork.disconnected$;
       this.event$ = bufferedNetwork.data$;
       this.joinResponse$ = this.onEvent<JoinResponse>(NetworkEvent.JOIN_RESPONSE);
+      this.joined$ = this.joinResponse$.pipe(filter((response) => response.status === JoinResponseStatus.JOINED));
+      this.joinFailed$ = this.joinResponse$.pipe(
+         filter((response) => response.status !== JoinResponseStatus.JOINED),
+         map((response) => response.status),
+      );
       this.dataStore$ = this.onEvent<{ [key: string]: AllStores }>(NetworkEvent.DATA_STORE);
    }
 

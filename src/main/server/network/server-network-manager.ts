@@ -8,6 +8,7 @@ import { MapStore } from '../../shared/map/map-store';
 import { StoreEntity } from '../../shared/store/store-model';
 import { Observable } from 'rxjs';
 import { ServerBulletStore } from '../bullet/server-bullet-store';
+import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 
 @Singleton
 export class ServerNetworkManager {
@@ -67,6 +68,7 @@ export class ServerNetworkManager {
    private subscribeSendLoginResponseOnPlayerAddedToNetwork(): void {
       this.playerStore.added$.subscribe((entity) => {
          this.component.sendLoginResponse(entity.id, {
+            status: JoinResponseStatus.JOINED,
             userId: entity.id,
             map: {
                buffer: this.map.getMap(),

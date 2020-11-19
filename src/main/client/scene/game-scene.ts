@@ -23,7 +23,6 @@ export class GameScene extends Scene {
    private mapSprite?: MapSprite;
    private lava?: LavaFloorSprite;
 
-   // TODO: It is injected just temporarily, not sure where it should be
    @Inject
    private readonly mapComponent: ClientMapComponent;
 
