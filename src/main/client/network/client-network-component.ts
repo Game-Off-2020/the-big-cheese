@@ -8,7 +8,7 @@ import {
    NetworkEvent,
    NetworkMessage,
 } from '../../shared/network/shared-network-model';
-import { filter, map, tap } from 'rxjs/internal/operators';
+import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 import { BulletFireOptions } from '../bullet/default-bullet';
 import { AllStores } from '../../shared/models/all-stores';
@@ -38,7 +38,7 @@ export class ClientNetworkComponent {
 
    private onEvent<T>(event: NetworkEvent): Observable<T> {
       return this.event$.pipe(
-         tap((message) => console.log(message)),
+         // tap((message) => console.log(message)),
          filter((message) => message.event === event),
          map((message) => (message.value as unknown) as T),
       );

@@ -6,12 +6,16 @@ import { ClientMapComponent } from '../map/client-map-component';
 import { PlayerSprite } from '../player/player-sprite';
 import { Bullets } from '../bullet/default-bullet';
 import { ClientPlayerComponent } from '../player/client-player-component';
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
 import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
+import { ClientOtherPlayerComponent } from '../player/client-other-player-component';
+import { OtherPlayerSprite } from '../player/other-player-sprite';
+import { BehaviorSubject, forkJoin, ReplaySubject } from 'rxjs';
+import { filter, first, share, shareReplay } from 'rxjs/operators';
+import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -30,7 +34,15 @@ export class GameScene extends Scene {
    private readonly playerComponent: ClientPlayerComponent;
 
    @Inject
+   private readonly otherPlayersComponent: ClientOtherPlayerComponent;
+
+   @Inject
    private readonly bulletGroupComponent: ClientBulletComponent;
+
+   private readonly otherPlayers = new Map<string, OtherPlayerSprite>();
+
+   private readonly createdSubject = new ReplaySubject<boolean>();
+   private readonly created$ = this.createdSubject.pipe();
 
    constructor() {
       super({
@@ -45,8 +57,22 @@ export class GameScene extends Scene {
          });
          this.mapComponent.setMapSprite(this.mapSprite);
       });
-      this.mapComponent.updated$.subscribe(() => {
-         this.mapSprite && this.mapSprite.update();
+      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+      this.created$.pipe(filter((created) => created)).subscribe((created) => console.log(1, created));
+      this.otherPlayersComponent.added$.subscribe((player) => console.log(2, player));
+      forkJoin([
+         this.created$.pipe(
+            filter((created) => created),
+            shareReplay(),
+         ),
+         this.otherPlayersComponent.added$,
+      ]).subscribe(([_, player]) => {
+         console.log(3, player);
+         const sprite = new OtherPlayerSprite(this, player);
+         this.otherPlayers.set(player.id, sprite);
+      });
+      this.otherPlayersComponent.removed$.subscribe((playerId) => {
+         this.otherPlayers.get(playerId)?.destroy();
       });
    }
 
@@ -99,6 +125,7 @@ export class GameScene extends Scene {
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
+      this.createdSubject.next(true);
    }
 
    private jumping = false;

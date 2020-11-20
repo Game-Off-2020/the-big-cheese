@@ -31,6 +31,10 @@ export class ClientPlayerComponent {
       this.clientPlayer = player;
    }
 
+   getClientId(): string | undefined {
+      return this.clientId;
+   }
+
    shoot(options: BulletFireOptions): void {
       this.clientShootingSubject.next(options);
    }
