@@ -14,7 +14,7 @@ import { VectorUtil } from '../util/vector-util';
 import { ClientOtherPlayerComponent } from '../player/client-other-player-component';
 import { OtherPlayerSprite } from '../player/other-player-sprite';
 import { BehaviorSubject, forkJoin, ReplaySubject } from 'rxjs';
-import { filter, first, share, shareReplay } from 'rxjs/operators';
+import { filter, first, share, shareReplay, switchMap } from 'rxjs/operators';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
@@ -42,7 +42,7 @@ export class GameScene extends Scene {
    private readonly otherPlayers = new Map<string, OtherPlayerSprite>();
 
    private readonly createdSubject = new ReplaySubject<boolean>();
-   private readonly created$ = this.createdSubject.pipe();
+   private readonly created$ = this.createdSubject.asObservable();
 
    constructor() {
       super({
@@ -59,18 +59,14 @@ export class GameScene extends Scene {
       });
       this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
       this.created$.pipe(filter((created) => created)).subscribe((created) => console.log(1, created));
-      this.otherPlayersComponent.added$.subscribe((player) => console.log(2, player));
-      forkJoin([
-         this.created$.pipe(
-            filter((created) => created),
-            shareReplay(),
-         ),
-         this.otherPlayersComponent.added$,
-      ]).subscribe(([_, player]) => {
+      this.otherPlayersComponent.added$.pipe(shareReplay()).subscribe((player) => console.log(2, player));
+
+      this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
          console.log(3, player);
          const sprite = new OtherPlayerSprite(this, player);
          this.otherPlayers.set(player.id, sprite);
       });
+
       this.otherPlayersComponent.removed$.subscribe((playerId) => {
          this.otherPlayers.get(playerId)?.destroy();
       });
