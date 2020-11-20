@@ -1,5 +1,7 @@
 import * as Phaser from 'phaser';
 
+import { MapDestruction } from '../../shared/map/map-model';
+
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
    readonly canvas: HTMLCanvasElement;
@@ -18,6 +20,7 @@ const CHARACTER_WIDTH = 10;
 export class MapSprite extends Phaser.GameObjects.Sprite {
    private terrainTexture: Phaser.Textures.CanvasTexture;
    private radius: number;
+   private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
    constructor(options: MapSpriteOptions) {
       const terrainTexture = options.scene.textures.addCanvas('terrain', options.canvas);
@@ -29,6 +32,22 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       options.scene.add.existing(this);
       terrainTexture.context.globalCompositeOperation = 'source-in';
       terrainTexture.draw(0, 0, moon);
+
+      const particle = options.scene.add.particles('moon-dust-particle');
+      this.dustEmitter = particle.createEmitter({
+         x: this.x,
+         y: this.y,
+         speed: { min: -20, max: 20 },
+         angle: { min: 0, max: 360 },
+         scale: { start: 0, end: 0.4 },
+         alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
+         blendMode: Phaser.BlendModes.SCREEN,
+         gravityY: 0,
+         lifespan: 400,
+      });
+      this.dustEmitter.reserve(1000);
+      this.dustEmitter.stop();
+      particle.setDepth(100);
    }
 
    hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -50,6 +69,12 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
    update(): void {
       this.terrainTexture.update();
       super.update();
+   }
+
+   emitDust(destruction: MapDestruction): void {
+      this.dustEmitter
+         .setSpeed({ min: destruction.radius, max: destruction.radius })
+         .explode(10, destruction.position.x, destruction.position.y);
    }
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {

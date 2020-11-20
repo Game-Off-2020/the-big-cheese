@@ -4,7 +4,6 @@ import { SharedConfig } from '../../shared/config/shared-config';
 import { MathUtil } from '../util/math-util';
 
 export interface BulletFireOptions {
-   readonly id: string;
    readonly position: Phaser.Math.Vector2;
    readonly direction: Phaser.Math.Vector2;
 }
@@ -83,11 +82,11 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
       ];
    }
 
-   fireBullet(options: BulletFireOptions): void {
+   fireBullet(id: string, options: BulletFireOptions): void {
       const bullet = this.getFirstDead(false);
 
       if (bullet) {
-         this.cache[options.id] = bullet;
+         this.cache[id] = bullet;
          bullet.fire(options);
          this.bulletSounds[MathUtil.randomIntFromInterval(0, this.bulletSounds.length - 1)].play();
       }

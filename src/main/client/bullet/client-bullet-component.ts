@@ -9,8 +9,7 @@ export class ClientBulletComponent {
 
    setBulletGroup(bulletGroup: Bullets): void {
       this.store.added$.subscribe((data) => {
-         bulletGroup.fireBullet({
-            id: data.id,
+         bulletGroup.fireBullet(data.id, {
             position: new Phaser.Math.Vector2(data.value.position),
             direction: new Phaser.Math.Vector2(data.value.direction),
          });
