@@ -18,13 +18,18 @@ export interface JoinRequest {
    userName: string;
 }
 
+export enum JoinResponseStatus {
+   JOINED,
+   SERVER_FULL,
+}
+
 export interface JoinResponse {
-   userId: string;
-   map: {
+   status: JoinResponseStatus;
+   userId?: string;
+   map?: {
       buffer: Buffer;
       size: number;
    };
-   // TODO: roomId: string;
 }
 
 export type ShootRequest = Bullet;

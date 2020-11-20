@@ -10,7 +10,7 @@ export class ClientPlayerManager {
       @Inject private readonly gameState: GameStateComponent,
       @Inject private readonly network: ClientNetworkComponent,
    ) {
-      network.joinResponse$.subscribe((response) => {
+      network.joined$.subscribe((response) => {
          this.component.setClientPlayer({
             id: response.userId,
             name: 'Unnamed',

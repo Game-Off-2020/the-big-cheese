@@ -8,8 +8,6 @@ export class GameStateComponent {
    readonly joinGame$ = this.gameStartedSubject.asObservable();
 
    joinGame(userName: string): void {
-      this.gameStartedSubject.next({
-         userName,
-      } as JoinRequest);
+      this.gameStartedSubject.next({ userName });
    }
 }
