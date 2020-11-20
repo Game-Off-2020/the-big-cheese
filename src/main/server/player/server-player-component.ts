@@ -8,20 +8,15 @@ export class ServerPlayerComponent {
    constructor(@Inject private readonly store: PlayerStore, @Inject private readonly map: ServerMapComponent) {}
 
    addUser(id: string, name: string): void {
-      // TODO: Check name availability
-      console.log('addUser', id);
       this.store.commit(id, {
          id,
-         name,
-         position: {
-            x: 0,
-            y: this.map.getSize() / 2 + 30,
-         },
+         name, // TODO: Check name availability and add number at the end if taken
+         position: this.map.getRandomPositionAboveSurface(30),
          direction: {
             x: 0,
             y: 0,
          },
-      } as Player);
+      });
    }
 
    removeUser(userId: string): void {

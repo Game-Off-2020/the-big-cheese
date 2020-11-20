@@ -4,6 +4,7 @@ import { SharedMapComponent } from '../../shared/map/shared-map-component';
 import { MapStore } from '../../shared/map/map-store';
 import { MapDestruction } from '../../shared/map/map-model';
 import { Utils } from '../../shared/util/utils';
+import { Vector } from '../../shared/bullet/vector-model';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
@@ -40,6 +41,15 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    //
+
+   getRandomPositionAboveSurface(elevation: number): Vector {
+      const angle = (Math.random() * Math.PI) / 2;
+      const radius = this.size / 2 + elevation;
+      return {
+         x: Math.cos(angle) * radius,
+         y: Math.sin(angle) * radius,
+      };
+   }
 
    destruct(destruction: MapDestruction): void {
       this.store.commit(Utils.generateId(), destruction);
