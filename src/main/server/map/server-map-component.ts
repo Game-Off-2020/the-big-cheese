@@ -5,10 +5,10 @@ import { MapStore } from '../../shared/map/map-store';
 import { MapDestruction } from '../../shared/map/map-model';
 import { Utils } from '../../shared/util/utils';
 import { Vector } from '../../shared/bullet/vector-model';
+import { PerlinNoise } from './perlin-noise';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
-   private static readonly COLOR_MOON: string = '#7f8c8d';
    private canvas: Canvas;
    protected ctx: CanvasRenderingContext2D;
    protected size: number;
@@ -23,9 +23,59 @@ export class ServerMapComponent extends SharedMapComponent {
       this.canvas = createCanvas(this.size, this.size);
       this.ctx = this.canvas.getContext('2d');
 
-      this.ctx.fillStyle = ServerMapComponent.COLOR_MOON;
+      // Base cirlce
+      this.ctx.fillStyle = '#ff0000';
       this.ctx.arc(radius, radius, radius, 0, 2 * Math.PI);
       this.ctx.fill();
+
+      // Perlin Noise
+      const perlinNoise = new PerlinNoise();
+      const noiseCanvas = perlinNoise.generate(this.size / 30);
+      const noiseWidth = noiseCanvas.width;
+      const noiseHeight = noiseCanvas.height;
+      const resizedNoiseCanvas = createCanvas(this.size, this.size);
+      const resizedNoiseCtx = resizedNoiseCanvas.getContext('2d');
+      resizedNoiseCtx.drawImage(
+         noiseCanvas,
+         0,
+         0,
+         noiseWidth,
+         noiseHeight,
+         0,
+         0,
+         resizedNoiseCanvas.width,
+         resizedNoiseCanvas.height,
+      );
+
+      // Mask noise canvas
+      const targetView = new DataView(this.ctx.getImageData(0, 0, this.size, this.size).data.buffer);
+      const maskView = new DataView(resizedNoiseCtx.getImageData(0, 0, this.size, this.size).data.buffer);
+
+      const MASK_THRESHOLD = 128; // 0-255
+      for (let y = 0; y < this.size; y++) {
+         for (let x = 0; x < this.size; x++) {
+            const offset = 4 * (x + y * this.size);
+            const brightness = (maskView.getUint32(offset) >> 24) & 0xff; // Red channel
+            if (brightness < MASK_THRESHOLD) {
+               targetView.setUint32(offset, 0);
+            }
+         }
+      }
+
+      // Draw masked moon
+      const imageData = this.ctx.createImageData(this.size, this.size);
+      imageData.data.set(new Uint8ClampedArray(targetView.buffer));
+      this.ctx.putImageData(imageData, 0, 0);
+
+      // Moon inner circle
+      this.ctx.closePath();
+      this.ctx.beginPath();
+      this.ctx.fillStyle = '#ff0000';
+      this.ctx.arc(radius, radius, radius / 1.5, 0, 2 * Math.PI);
+      this.ctx.fill();
+
+      // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
+      // console.log('ok');
    }
 
    getMap(): Buffer {
