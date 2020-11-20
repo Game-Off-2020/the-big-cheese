@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { ImageUtil } from '../util/image-util';
 import { SharedMapComponent } from '../../shared/map/shared-map-component';
 import { MapDestruction } from '../../shared/map/map-model';
+import { MapSprite } from './map-sprite';
 
 @Singleton
 export class ClientMapComponent extends SharedMapComponent {
@@ -15,6 +16,7 @@ export class ClientMapComponent extends SharedMapComponent {
 
    private readonly updatedSubject = new Subject<void>();
    readonly updated$ = this.updatedSubject.asObservable();
+   private mapSprite: MapSprite;
 
    constructor(@Inject protected readonly store: MapStore) {
       super(store);
@@ -33,8 +35,13 @@ export class ClientMapComponent extends SharedMapComponent {
       });
    }
 
+   setMapSprite(mapSprite: MapSprite): void {
+      this.mapSprite = mapSprite;
+   }
+
    drawDestruction(destruction: MapDestruction): void {
       super.drawDestruction(destruction);
+      this.mapSprite.emitDust(destruction);
       this.updatedSubject.next();
    }
 }
