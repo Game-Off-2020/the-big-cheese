@@ -3,7 +3,7 @@ import { ClientNetworkComponent } from './client-network-component';
 import { ClientPlayerComponent } from '../player/client-player-component';
 import { PlayerStore } from '../../shared/player/player-store';
 import { Store } from '../../shared/store/store';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { MapStore } from '../../shared/map/map-store';
 import { GameStateComponent } from '../game-state/game-state-component';
 import { BulletStore } from '../../shared/bullet/bullet-store';
