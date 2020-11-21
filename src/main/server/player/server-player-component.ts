@@ -8,11 +8,9 @@ export class ServerPlayerComponent {
    constructor(@Inject private readonly store: PlayerStore, @Inject private readonly map: ServerMapComponent) {}
 
    addUser(id: string, name: string): void {
-      // TODO: Check name availability
-      console.log('addUser', id);
       this.store.commit(id, {
          id,
-         name,
+         name: this.getUniqueName(name),
          position: {
             x: 0,
             y: this.map.getSize() / 2 + 30,
@@ -35,5 +33,23 @@ export class ServerPlayerComponent {
 
    getNrOfPlayers(): number {
       return this.store.getIds().length;
+   }
+
+   private getUniqueName(name: string): string {
+      const playerWithThisName = Array.from(Object.values(this.store.getData())).find((player) => player.name === name);
+      if (playerWithThisName) {
+         const nameSplit = name.split(' ');
+         if (nameSplit.length > 1) {
+            let nameEndingNumber = parseInt(nameSplit[nameSplit.length - 1]);
+            if (Number.isFinite(nameEndingNumber)) {
+               nameEndingNumber++;
+               nameSplit[nameSplit.length - 1] = nameEndingNumber.toString();
+               return this.getUniqueName(nameSplit.join(' '));
+            }
+         }
+         nameSplit.push('1');
+         return this.getUniqueName(nameSplit.join(' '));
+      }
+      return name;
    }
 }
