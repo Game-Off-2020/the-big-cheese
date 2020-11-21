@@ -61,7 +61,7 @@ export class ServerBulletComponent {
    }
 
    stepBullet(id: string, bullet: ServerBullet): void {
-      if (Date.now() > bullet.timestamp + ServerConfig.BULLET_MAX_AGE_MS) {
+      if (Date.now() > bullet.timestamp + SharedConfig.BULLET_MAX_AGE_MS) {
          // This bullet is too old, lets remove it
          this.store.remove(id);
          return;

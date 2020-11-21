@@ -12,7 +12,7 @@ const DEFAULT_BULLET_SPEED = 0.85; // It needs to be synced with the server
 
 class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
    private timeAlive = 0;
-   private readonly lifeTime = 1000;
+   private readonly lifeTime: number = SharedConfig.BULLET_MAX_AGE_MS;
 
    constructor(scene: Phaser.Scene, x: number, y: number) {
       super(scene, x, y, 'bullet');
