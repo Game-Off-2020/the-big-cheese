@@ -22,7 +22,7 @@ interface PlayerOptions {
 
 const MAX_HORIZONTAL_SPEED = 3;
 const MAX_VERTICAL_SPEED = 10;
-const PLAYER_HEIGHT = 20;
+const PLAYER_HEIGHT = 40;
 const PLAYER_WIDTH = 10;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
