@@ -22,28 +22,24 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    constructor(protected readonly scene: Scene, private readonly player: Player) {
       super(scene);
       this.setScale(1 / SharedConfig.MAP_OUTPUT_SCALE, 1 / SharedConfig.MAP_OUTPUT_SCALE);
-      const config = {
+      scene.anims.create({
          key: 'player-walk',
          frames: scene.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 6, 7, 8] }),
          frameRate: 10,
          repeat: -1,
-      };
-      scene.anims.create(config);
-
-      this.character = scene.make.sprite({ key: 'player' });
-      this.add(this.character);
-
-      this.gun = new GunSprite({
-         scene,
-         character: this.character,
-         x: 30,
-         y: -30,
       });
-      this.add(this.gun);
-
       scene.add.existing(this);
-
+      this.add((this.character = scene.make.sprite({ key: 'player' })));
       this.character.setOrigin(0.5, 1);
+      this.add(
+         (this.gun = new GunSprite({
+            scene,
+            character: this.character,
+            x: 30,
+            y: -30,
+         })),
+      );
+
       this.tickPosition(player.position);
       this.tickDirection(player.direction);
    }

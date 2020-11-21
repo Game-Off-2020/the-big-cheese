@@ -94,7 +94,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
                   y: this.gun.y / SharedConfig.MAP_OUTPUT_SCALE,
                }).rotate(this.rotation),
             );
-            console.log('shoot');
             this.options.callbacks.onShoot(gunPosition);
          }
       }
@@ -103,6 +102,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    }
 
    private isMoving = false;
+
    private moving(): void {
       if (!this.isMoving) {
          this.isMoving = true;
@@ -110,6 +110,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.character.anims.play('player-walk', true);
       }
    }
+
    private standing(): void {
       if (this.isMoving) {
          this.isMoving = false;
