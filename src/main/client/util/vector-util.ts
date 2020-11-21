@@ -68,13 +68,13 @@ export class VectorUtil {
    static createLocalWall(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
       const downVector = VectorUtil.getDownwardVector(sprite);
 
-      return this.createCollisionLine(downVector, length, -length);
+      return this.createCollisionLine(downVector, length, 0);
    }
 
    static createLocalFloor(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
       const floorVector = VectorUtil.getFloorVector(sprite);
 
-      return this.createCollisionLine(floorVector, length, -length / 2);
+      return this.createCollisionLine(floorVector, length, 0);
    }
 
    static createCollisionLine(vector: Phaser.Math.Vector2, length: number, offset: number): Phaser.Geom.Point[] {

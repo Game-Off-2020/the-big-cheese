@@ -15,7 +15,7 @@ interface Color {
    readonly alpha: number;
 }
 
-const CHARACTER_HEIGHT = 20;
+const CHARACTER_HEIGHT = 10;
 const CHARACTER_WIDTH = 10;
 
 export class MapSprite extends Phaser.GameObjects.Sprite {
@@ -77,6 +77,8 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter
          .setSpeed({ min: destruction.radius, max: destruction.radius })
          .explode(10, destruction.position.x, destruction.position.y);
+
+      this.scene.cameras.main.shake(100, 0.002);
    }
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {

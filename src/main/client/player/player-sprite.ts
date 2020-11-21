@@ -1,3 +1,4 @@
+// Collision based on: http://jsfiddle.net/ksmbx3fz/7/
 import * as Phaser from 'phaser';
 import { Subject } from 'rxjs';
 import { GunSprite } from './gun-sprite';
@@ -15,11 +16,12 @@ interface PlayerOptions {
       readonly leftWallCollision: (player: PlayerSprite) => boolean;
       readonly rightWallCollision: (player: PlayerSprite) => boolean;
       readonly floorCollision: (player: PlayerSprite) => boolean;
+      readonly ceilingCollision: (player: PlayerSprite) => boolean;
    };
 }
 
 const MAX_HORIZONTAL_SPEED = 3;
-const MAX_VERTICAL_SPEED = 3;
+const MAX_VERTICAL_SPEED = 10;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
@@ -82,15 +84,21 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (this.options.cursorKeys.left.isDown) {
          this.character.anims.play('player1-walk', true);
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
-            if (this.options.physics.leftWallCollision(this)) {
+            if (!this.options.physics.leftWallCollision(this)) {
                VectorUtil.moveLeft(this);
+            }
+            while (this.options.physics.floorCollision(this)) {
+               VectorUtil.applyGroundReactionForce(this);
             }
          }
       } else if (this.options.cursorKeys.right.isDown) {
          this.character.anims.play('player1-walk', true);
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
-            if (this.options.physics.rightWallCollision(this)) {
+            if (!this.options.physics.rightWallCollision(this)) {
                VectorUtil.moveRight(this);
+            }
+            while (this.options.physics.floorCollision(this)) {
+               VectorUtil.applyGroundReactionForce(this);
             }
          }
       } else {
@@ -102,47 +110,26 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.jumping = true;
       }
 
-      console.log('jump', this.jumping, this.verticalSpeed);
-
-      this.verticalSpeed += 0.1;
-      this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -MAX_VERTICAL_SPEED, MAX_VERTICAL_SPEED);
+      this.verticalSpeed += 1;
+      // this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -MAX_VERTICAL_SPEED, MAX_VERTICAL_SPEED);
 
       for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-         if (this.verticalSpeed < 0) {
-            // Jumping
-            VectorUtil.applyJump(this, this.verticalSpeed);
-         } else {
+         if (this.verticalSpeed > 0) {
+            //check ground
             if (!this.options.physics.floorCollision(this)) {
                VectorUtil.applyGravity(this);
             } else {
                this.jumping = false;
                this.verticalSpeed = 0;
+            }
+         } else {
+            if (!this.options.physics.ceilingCollision(this)) {
                VectorUtil.applyGroundReactionForce(this);
+            } else {
+               this.verticalSpeed = 0;
             }
          }
       }
-      // if (this.verticalSpeed >= 0) {
-      //    for (let _ = 0; _ < this.verticalSpeed; _++) {
-      //       if (this.options.physics.floorCollision(this)) {
-      //          // Ground
-      //          VectorUtil.applyGroundReactionForce(this.character);
-      //       } else {
-      //          // Air
-      //          this.jumping = false;
-      //          // this.verticalSpeed = 0;
-      //       }
-      //    }
-      // } else {
-      //    // Jumping
-      //    for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-      //       if (!this.options.physics.floorCollision(this)) {
-      //          console.log('raising player');
-      //          VectorUtil.moveByVector(this.character, VectorUtil.getDownwardVector(this.character).scale(-1));
-      //       } else {
-      //          // this.verticalSpeed = 0;
-      //       }
-      //    }
-      // }
 
       if (this.scene.input.activePointer.isDown) {
          if (Date.now() > this.lastShootTimestamp + ClientConfig.SHOOT_INTERVAL) {

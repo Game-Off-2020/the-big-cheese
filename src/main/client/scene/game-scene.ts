@@ -20,6 +20,7 @@ export class GameScene extends Scene {
    private bullets?: Bullets;
    private mapSprite?: MapSprite;
    private lava?: LavaFloorSprite;
+   private graphics: Phaser.GameObjects.Graphics;
 
    @Inject
    private readonly mapComponent: ClientMapComponent;
@@ -64,17 +65,44 @@ export class GameScene extends Scene {
          },
          physics: {
             leftWallCollision: (player) => {
-               return !this.mapSprite.hitTestTerrain(player.x - 1, player.y, VectorUtil.createLocalWall(player, 10));
+               const locationOfWall = new Phaser.Math.Vector2({ x: player.x, y: player.y })
+                  .subtract(VectorUtil.getFloorVector(player).scale(-5))
+                  .add(VectorUtil.getUpwardVector(player).scale(10));
+               return this.mapSprite.hitTestTerrain(
+                  locationOfWall.x,
+                  locationOfWall.y,
+                  VectorUtil.createLocalWall(player, 1),
+               );
             },
             rightWallCollision: (player) => {
-               return !this.mapSprite.hitTestTerrain(
-                  player.x + this.characterWidth,
-                  player.y,
-                  VectorUtil.createLocalWall(player, 10),
+               const locationOfWall = new Phaser.Math.Vector2({ x: player.x, y: player.y })
+                  .subtract(VectorUtil.getFloorVector(player).scale(5))
+                  .add(VectorUtil.getUpwardVector(player).scale(10));
+               return this.mapSprite.hitTestTerrain(
+                  locationOfWall.x,
+                  locationOfWall.y,
+                  VectorUtil.createLocalWall(player, 1),
                );
             },
             floorCollision: (player) => {
-               return this.mapSprite.hitTestTerrain(player.x, player.y, VectorUtil.createLocalFloor(player, 10));
+               const locationOfFloor = new Phaser.Math.Vector2({ x: player.x, y: player.y }).subtract(
+                  VectorUtil.getFloorVector(player).scale(5),
+               );
+               return this.mapSprite.hitTestTerrain(
+                  locationOfFloor.x,
+                  locationOfFloor.y,
+                  VectorUtil.createLocalFloor(player, 10),
+               );
+            },
+            ceilingCollision: (player) => {
+               const locationOfCeiling = new Phaser.Math.Vector2({ x: player.x, y: player.y })
+                  .subtract(VectorUtil.getFloorVector(player).scale(5))
+                  .add(VectorUtil.getUpwardVector(player).scale(10));
+               return this.mapSprite.hitTestTerrain(
+                  locationOfCeiling.x,
+                  locationOfCeiling.y,
+                  VectorUtil.createLocalFloor(player, 10),
+               );
             },
          },
       });
@@ -84,11 +112,66 @@ export class GameScene extends Scene {
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
+
+      this.graphics = this.add.graphics();
    }
 
    update(): void {
       if (!this.mapSprite) return;
       this.cameras.main.setRotation(-this.character.rotation);
       this.character.update();
+
+      this.graphics.clear();
+      this.graphics.lineStyle(2, 0xff0000, 1);
+
+      this.drawDebug();
+   }
+
+   private drawDebug(): void {
+      const f = VectorUtil.createLocalWall(this.character, 2);
+      const locationOfLeftWall = new Phaser.Math.Vector2({ x: this.character.x, y: this.character.y })
+         .subtract(VectorUtil.getFloorVector(this.character).scale(-5))
+         .add(VectorUtil.getUpwardVector(this.character).scale(10));
+      this.graphics.lineBetween(
+         locationOfLeftWall.x,
+         locationOfLeftWall.y,
+         locationOfLeftWall.x + f[f.length - 1].x,
+         locationOfLeftWall.y + f[f.length - 1].y,
+      );
+
+      const locationOfRightWall = new Phaser.Math.Vector2({ x: this.character.x, y: this.character.y })
+         .subtract(VectorUtil.getFloorVector(this.character).scale(5))
+         .add(VectorUtil.getUpwardVector(this.character).scale(10));
+
+      this.graphics.lineBetween(
+         locationOfRightWall.x,
+         locationOfRightWall.y,
+         locationOfRightWall.x + f[f.length - 1].x,
+         locationOfRightWall.y + f[f.length - 1].y,
+      );
+
+      const g = VectorUtil.createLocalFloor(this.character, 10);
+
+      const locationOfFloor = new Phaser.Math.Vector2({ x: this.character.x, y: this.character.y }).subtract(
+         VectorUtil.getFloorVector(this.character).scale(5),
+      );
+
+      this.graphics.lineBetween(
+         locationOfFloor.x,
+         locationOfFloor.y,
+         locationOfFloor.x + g[g.length - 1].x,
+         locationOfFloor.y + g[g.length - 1].y,
+      );
+
+      const locationOfCeiling = new Phaser.Math.Vector2({ x: this.character.x, y: this.character.y })
+         .subtract(VectorUtil.getFloorVector(this.character).scale(5))
+         .add(VectorUtil.getUpwardVector(this.character).scale(10));
+
+      this.graphics.lineBetween(
+         locationOfCeiling.x,
+         locationOfCeiling.y,
+         locationOfCeiling.x + g[g.length - 1].x,
+         locationOfCeiling.y + g[g.length - 1].y,
+      );
    }
 }
