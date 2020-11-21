@@ -68,7 +68,7 @@ export class GameScene extends Scene {
          // TODO: Cleanup
          this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
             if (updatedPlayer.position) {
-               sprite.updatePosition(updatedPlayer.position);
+               sprite.tickPosition(updatedPlayer.position);
             }
          });
       });

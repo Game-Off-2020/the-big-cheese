@@ -15,6 +15,10 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
       SharedConfig.NETWORK_TICK_RATE,
       ClientConfig.INTERPOLATION_SIZE,
    );
+   private readonly directionInterpolation = new CatmullRomInterpolation(
+      SharedConfig.NETWORK_TICK_RATE,
+      ClientConfig.INTERPOLATION_SIZE,
+   );
 
    constructor(protected readonly scene: Scene, private readonly player: Player) {
       super(scene, 0, 0);
@@ -41,18 +45,34 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
 
       scene.add.existing(this);
 
-      this.character.setOrigin(0.5, 1); // TODO: Need to move (relative v absolute)
-      this.updatePosition(player.position);
+      this.character.setOrigin(0.5, 1);
+      this.tickPosition(player.position);
+      this.tickDirection(player.direction);
    }
 
-   updatePosition(position: Vector): void {
+   tickPosition(position: Vector): void {
       this.positionInterpolation.add(position);
    }
 
+   tickDirection(direction: Vector): void {
+      this.directionInterpolation.add(direction);
+   }
+
    update(): void {
+      this.updatePosition();
+      this.updateDirection();
+      this.gun.update();
+   }
+
+   private updatePosition(): void {
       this.positionInterpolation.step();
       const position = this.positionInterpolation.get();
       this.character.setPosition(position.x, position.y);
-      this.gun.update();
+   }
+
+   private updateDirection(): void {
+      this.directionInterpolation.step();
+      const direction = this.directionInterpolation.get();
+      // TODO
    }
 }
