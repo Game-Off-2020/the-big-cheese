@@ -73,7 +73,7 @@ export class ServerMapComponent extends SharedMapComponent {
       this.ctx.closePath();
       this.ctx.beginPath();
       this.ctx.fillStyle = '#ff0000';
-      this.ctx.arc(radius, radius, radius / 1.5, 0, 2 * Math.PI);
+      this.ctx.arc(radius, radius, radius / 1.1, 0, 2 * Math.PI);
       this.ctx.fill();
 
       // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
