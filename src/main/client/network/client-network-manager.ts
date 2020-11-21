@@ -27,12 +27,7 @@ export class ClientNetworkManager {
          this.subscribeNetworkUpdateToStore(playerStore);
          this.subscribeNetworkUpdateToStore(mapStore);
          this.subscribeNetworkUpdateToStore(bulletStore);
-
-         // TODO: Mock shooting
-         // setInterval(() => component.sendShootRequest(), 1000);
-         // bulletStore.updated$.subscribe((bullet) => console.log('bullet updated', bullet));
       });
-
       player.clientShooting$.subscribe((shootingOptions) => {
          component.sendShootRequest(shootingOptions);
       });

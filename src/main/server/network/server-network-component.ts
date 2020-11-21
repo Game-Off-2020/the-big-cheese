@@ -2,22 +2,17 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { ServerNetworkWrapper } from './server-network-wrapper';
 import { Observable } from 'rxjs';
 import { ServerNetworkMessage } from './server-network-model';
-import {
-   JoinRequest,
-   JoinResponse,
-   NetworkEvent,
-   NetworkPayload,
-   ShootRequest,
-} from '../../shared/network/shared-network-model';
+import { JoinRequest, JoinResponse, NetworkEvent, ShootRequest } from '../../shared/network/shared-network-model';
 import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 import { AllStores } from '../../shared/models/all-stores';
+import { StoreData } from '../../shared/store/store-model';
 
 @Singleton
 export class ServerNetworkComponent {
    readonly clientConnectedId$: Observable<string>;
    readonly clientDisconnectedId$: Observable<string>;
-   private event$: Observable<ServerNetworkMessage<NetworkPayload>>;
+   private event$: Observable<ServerNetworkMessage>;
    readonly dataStore$: Observable<{ [key: string]: AllStores }>;
    readonly joinRequest$: Observable<ServerNetworkMessage<JoinRequest>>;
    readonly shootRequest$: Observable<ServerNetworkMessage<ShootRequest>>;
@@ -46,8 +41,16 @@ export class ServerNetworkComponent {
       this.wrapper.send(user, { event: NetworkEvent.JOIN_RESPONSE, value: response });
    }
 
-   sendDataStore<T>(users: string[], storeId: string, id: string, value: T): void {
-      const data = Utils.keyValueObject(storeId, Utils.keyValueObject(id, value));
-      users.forEach((user) => this.wrapper.send(user, { event: NetworkEvent.DATA_STORE, value: data }));
+   sendDataStoreValue<T>(users: string[], storeId: string, id: string, value: T): void {
+      this.sendDataStore(users, storeId, Utils.keyValueObject(id, value));
+   }
+
+   sendDataStore<T>(users: string[], storeId: string, data: StoreData<T>): void {
+      users.forEach((user) =>
+         this.wrapper.send(user, {
+            event: NetworkEvent.DATA_STORE,
+            value: Utils.keyValueObject(storeId, data),
+         }),
+      );
    }
 }

@@ -12,6 +12,11 @@ import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { SharedConfig } from '../../shared/config/shared-config';
+import { ClientOtherPlayerComponent } from '../player/client-other-player-component';
+import { OtherPlayerSprite } from '../player/other-player-sprite';
+import { ReplaySubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { PlayerStore } from '../../shared/player/player-store';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
@@ -31,7 +36,18 @@ export class GameScene extends Scene {
    private readonly playerComponent: ClientPlayerComponent;
 
    @Inject
+   private readonly playerStore: PlayerStore;
+
+   @Inject
+   private readonly otherPlayersComponent: ClientOtherPlayerComponent;
+
+   @Inject
    private readonly bulletGroupComponent: ClientBulletComponent;
+
+   private readonly otherPlayers = new Map<string, OtherPlayerSprite>();
+
+   private readonly createdSubject = new ReplaySubject<boolean>();
+   private readonly created$ = this.createdSubject.asObservable();
 
    constructor() {
       super({
@@ -46,8 +62,26 @@ export class GameScene extends Scene {
          });
          this.mapComponent.setMapSprite(this.mapSprite);
       });
-      this.mapComponent.updated$.subscribe(() => {
-         this.mapSprite && this.mapSprite.update();
+      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+      this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
+         const sprite = new OtherPlayerSprite(this, player);
+         this.otherPlayers.set(player.id, sprite);
+         // TODO: Cleanup
+         this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
+            if (updatedPlayer.position) {
+               sprite.tickPosition(updatedPlayer.position);
+            }
+            if (updatedPlayer.moving !== undefined) {
+               sprite.setMoving(updatedPlayer.moving);
+            }
+         });
+      });
+      this.otherPlayersComponent.removed$.subscribe((playerId) => {
+         const sprite = this.otherPlayers.get(playerId);
+         if (sprite) {
+            sprite.destroy();
+            this.otherPlayers.delete(playerId);
+         }
       });
    }
 
@@ -92,6 +126,12 @@ export class GameScene extends Scene {
                   direction: VectorUtil.getRelativeMouseDirection(this, this.character),
                });
             },
+            onStartMoving: () => {
+               this.playerComponent.setMoving(true);
+            },
+            onStartStanding: () => {
+               this.playerComponent.setMoving(false);
+            },
          },
       });
       this.playerComponent.setClientPlayerSprite(this.character);
@@ -101,6 +141,7 @@ export class GameScene extends Scene {
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
+      this.createdSubject.next(true);
    }
 
    private jumping = false;
@@ -206,5 +247,13 @@ export class GameScene extends Scene {
       }
 
       this.character.update();
+      this.updateOtherPlayers();
+   }
+
+   private updateOtherPlayers(): void {
+      for (const sprite of this.otherPlayers.values()) {
+         sprite.update();
+         sprite.setRotation(VectorUtil.getFloorVector(sprite).scale(-1).angle());
+      }
    }
 }
