@@ -26,7 +26,6 @@ export class CatmullRomInterpolation {
    }
 
    private fill(point: Vector): void {
-      console.log('fill', point);
       for (let i = 0; i < this.size; i++) {
          this.points[i] = point;
       }
