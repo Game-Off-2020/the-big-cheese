@@ -5,6 +5,7 @@ import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 import Vector2 = Phaser.Math.Vector2;
+import { HitBoxDebugger } from '../util/hitbox-debugger-util';
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -22,8 +23,8 @@ interface PlayerOptions {
 
 const MAX_HORIZONTAL_SPEED = 3;
 const MAX_VERTICAL_SPEED = 10;
-const PLAYER_HEIGHT = 40;
-const PLAYER_WIDTH = 10;
+export const PLAYER_HEIGHT = 40;
+export const PLAYER_WIDTH = 10;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
@@ -33,7 +34,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private character: Phaser.GameObjects.Sprite;
    private jumping = false;
    private verticalSpeed = 0;
-   private graphics: Phaser.GameObjects.Graphics;
+   private debugger: HitBoxDebugger;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
@@ -60,7 +61,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       options.scene.add.existing(this);
 
       this.character.setOrigin(0.5, 1);
-      this.graphics = this.scene.add.graphics();
+      this.debugger = new HitBoxDebugger({ scene: this.scene });
+      this.scene.add.existing(this.debugger);
    }
 
    private lastShootTimestamp = 0;
@@ -146,57 +148,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
 
       this.gun.update();
-      this.drawDebug();
-   }
-
-   private drawDebug(): void {
-      this.graphics.clear();
-      this.graphics.lineStyle(2, 0xff0000, 1);
-
-      const f = VectorUtil.createLocalWall(this, 2);
-      const locationOfLeftWall = new Phaser.Math.Vector2({ x: this.x, y: this.y })
-         .subtract(VectorUtil.getFloorVector(this).scale(-PLAYER_WIDTH / 2))
-         .add(VectorUtil.getUpwardVector(this).scale(PLAYER_HEIGHT));
-      this.graphics.lineBetween(
-         locationOfLeftWall.x,
-         locationOfLeftWall.y,
-         locationOfLeftWall.x + f[f.length - 1].x,
-         locationOfLeftWall.y + f[f.length - 1].y,
-      );
-
-      const locationOfRightWall = new Phaser.Math.Vector2({ x: this.x, y: this.y })
-         .subtract(VectorUtil.getFloorVector(this).scale(PLAYER_WIDTH / 2))
-         .add(VectorUtil.getUpwardVector(this).scale(PLAYER_HEIGHT));
-
-      this.graphics.lineBetween(
-         locationOfRightWall.x,
-         locationOfRightWall.y,
-         locationOfRightWall.x + f[f.length - 1].x,
-         locationOfRightWall.y + f[f.length - 1].y,
-      );
-
-      const g = VectorUtil.createLocalFloor(this, PLAYER_WIDTH);
-
-      const locationOfFloor = new Phaser.Math.Vector2({ x: this.x, y: this.y }).subtract(
-         VectorUtil.getFloorVector(this).scale(PLAYER_WIDTH / 2),
-      );
-
-      this.graphics.lineBetween(
-         locationOfFloor.x,
-         locationOfFloor.y,
-         locationOfFloor.x + g[g.length - 1].x,
-         locationOfFloor.y + g[g.length - 1].y,
-      );
-
-      const locationOfCeiling = new Phaser.Math.Vector2({ x: this.x, y: this.y })
-         .subtract(VectorUtil.getFloorVector(this).scale(PLAYER_WIDTH / 2))
-         .add(VectorUtil.getUpwardVector(this).scale(PLAYER_HEIGHT));
-
-      this.graphics.lineBetween(
-         locationOfCeiling.x,
-         locationOfCeiling.y,
-         locationOfCeiling.x + g[g.length - 1].x,
-         locationOfCeiling.y + g[g.length - 1].y,
-      );
+      this.debugger.update(this);
    }
 }
