@@ -10,7 +10,6 @@ import { ClientConfig } from '../config/client-config';
 export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    private readonly gun: GunSprite;
    private readonly character: Phaser.GameObjects.Sprite;
-   private readonly key: string;
    private readonly positionInterpolation = new CatmullRomInterpolation(
       SharedConfig.NETWORK_TICK_RATE,
       ClientConfig.INTERPOLATION_SIZE,
@@ -21,7 +20,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    );
 
    constructor(protected readonly scene: Scene, private readonly player: Player) {
-      super(scene, 0, 0);
+      super(scene);
       const config = {
          key: 'player-walk',
          frames: scene.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 6, 7, 8] }),
