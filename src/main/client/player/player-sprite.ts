@@ -94,6 +94,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
                   y: this.gun.y / SharedConfig.MAP_OUTPUT_SCALE,
                }).rotate(this.rotation),
             );
+            console.log('shoot');
             this.options.callbacks.onShoot(gunPosition);
          }
       }

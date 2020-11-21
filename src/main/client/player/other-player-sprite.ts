@@ -21,6 +21,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
 
    constructor(protected readonly scene: Scene, private readonly player: Player) {
       super(scene);
+      this.setScale(1 / SharedConfig.MAP_OUTPUT_SCALE, 1 / SharedConfig.MAP_OUTPUT_SCALE);
       const config = {
          key: 'player-walk',
          frames: scene.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 6, 7, 8] }),
