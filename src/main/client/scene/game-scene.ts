@@ -242,6 +242,7 @@ export class GameScene extends Scene {
    private updateOtherPlayers(): void {
       for (const sprite of this.otherPlayers.values()) {
          sprite.update();
+         sprite.setRotation(VectorUtil.getFloorVector(sprite).scale(-1).angle());
       }
    }
 }
