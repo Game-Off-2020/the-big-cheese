@@ -1,8 +1,9 @@
 import * as Phaser from 'phaser';
 import { Subject } from 'rxjs';
-import Vector2 = Phaser.Math.Vector2;
 import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
+import { ClientConfig } from '../config/client-config';
+import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -55,6 +56,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
 
       this.character.setOrigin(0.5, 1);
    }
+
+   private lastShootTimestamp = 0;
 
    update(): void {
       this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
@@ -142,10 +145,13 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       // }
 
       if (this.scene.input.activePointer.isDown) {
-         const gunPosition = new Vector2({ x: this.x, y: this.y }).add(
-            new Vector2({ x: this.gun.x, y: this.gun.y }).rotate(this.rotation),
-         );
-         this.options.callbacks.onShoot(gunPosition);
+         if (Date.now() > this.lastShootTimestamp + ClientConfig.SHOOT_INTERVAL) {
+            this.lastShootTimestamp = Date.now();
+            const gunPosition = new Vector2({ x: this.x, y: this.y }).add(
+               new Vector2({ x: this.gun.x, y: this.gun.y }).rotate(this.rotation),
+            );
+            this.options.callbacks.onShoot(gunPosition);
+         }
       }
 
       this.gun.update();

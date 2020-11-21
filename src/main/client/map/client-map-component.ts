@@ -9,7 +9,7 @@ import { MapSprite } from './map-sprite';
 @Singleton
 export class ClientMapComponent extends SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
-   protected size: number;
+   protected canvasSize: number;
 
    private readonly mapLoadedSubject = new Subject<HTMLCanvasElement>();
    readonly mapLoaded$ = this.mapLoadedSubject.asObservable();
@@ -23,7 +23,7 @@ export class ClientMapComponent extends SharedMapComponent {
    }
 
    initMap(size: number, buffer: Buffer): void {
-      this.size = size;
+      this.canvasSize = size;
       const canvas = document.createElement('canvas') as HTMLCanvasElement;
       canvas.width = size;
       canvas.height = size;
