@@ -1,5 +1,4 @@
 import * as Phaser from 'phaser';
-
 import { Scene } from 'phaser';
 import { VectorUtil } from '../util/vector-util';
 
@@ -13,7 +12,6 @@ interface GunOptions {
 export class GunSprite extends Phaser.GameObjects.Sprite {
    constructor(private readonly options: GunOptions) {
       super(options.scene, options.x, options.y, 'basic-gun');
-
       this.setOrigin(0.2, 0.7);
    }
 

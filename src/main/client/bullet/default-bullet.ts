@@ -83,9 +83,10 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
    }
 
    fireBullet(id: string, options: BulletFireOptions): void {
-      const bullet = this.getFirstDead(false);
+      const bullet: DefaultBullet = this.getFirstDead(false);
 
       if (bullet) {
+         bullet.setScale(1 / SharedConfig.MAP_OUTPUT_SCALE, 1 / SharedConfig.MAP_OUTPUT_SCALE);
          this.cache[id] = bullet;
          bullet.fire(options);
          this.bulletSounds[MathUtil.randomIntFromInterval(0, this.bulletSounds.length - 1)].play();

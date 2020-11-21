@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
+import { SharedConfig } from '../../shared/config/shared-config';
 import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
@@ -19,11 +20,12 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
    private positionChangedSubject = new Subject<Vector2>();
    readonly positionChanged$ = this.positionChangedSubject.asObservable();
-   private gun: GunSprite;
-   private character: Phaser.GameObjects.Sprite;
+   private readonly gun: GunSprite;
+   private readonly character: Phaser.GameObjects.Sprite;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
+      this.setScale(1 / SharedConfig.MAP_OUTPUT_SCALE, 1 / SharedConfig.MAP_OUTPUT_SCALE);
       const config = {
          key: 'player1-walk',
          frames: options.scene.anims.generateFrameNumbers('player1', { frames: [0, 1, 2, 6, 7, 8] }),
@@ -85,7 +87,10 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          if (Date.now() > this.lastShootTimestamp + ClientConfig.SHOOT_INTERVAL) {
             this.lastShootTimestamp = Date.now();
             const gunPosition = new Vector2({ x: this.x, y: this.y }).add(
-               new Vector2({ x: this.gun.x, y: this.gun.y }).rotate(this.rotation),
+               new Vector2({
+                  x: this.gun.x / SharedConfig.MAP_OUTPUT_SCALE,
+                  y: this.gun.y / SharedConfig.MAP_OUTPUT_SCALE,
+               }).rotate(this.rotation),
             );
             this.options.callbacks.onShoot(gunPosition);
          }

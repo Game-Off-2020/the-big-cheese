@@ -12,7 +12,6 @@ import { SharedConfig } from '../../shared/config/shared-config';
 export class ServerMapComponent extends SharedMapComponent {
    private canvas: Canvas;
    protected ctx: CanvasRenderingContext2D;
-   protected scaledSize: number;
    private data?: DataView;
 
    constructor(@Inject protected readonly store: MapStore) {
@@ -20,14 +19,13 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    createMap(radius: number): void {
-      this.canvasSize = radius * 2;
-      this.scaledSize = this.canvasSize * SharedConfig.MAP_OUTPUT_SCALE;
+      this.canvasSize = (radius * 2) / SharedConfig.MAP_OUTPUT_SCALE;
       this.canvas = createCanvas(this.canvasSize, this.canvasSize);
       this.ctx = this.canvas.getContext('2d');
 
       // Base cirlce
       this.ctx.fillStyle = '#ff0000';
-      this.ctx.arc(radius, radius, radius, 0, 2 * Math.PI);
+      this.ctx.arc(this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2, 0, 2 * Math.PI);
       this.ctx.fill();
 
       // Perlin Noise
@@ -73,7 +71,7 @@ export class ServerMapComponent extends SharedMapComponent {
       this.ctx.closePath();
       this.ctx.beginPath();
       this.ctx.fillStyle = '#ff0000';
-      this.ctx.arc(radius, radius, radius / 1.1, 0, 2 * Math.PI);
+      this.ctx.arc(this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2 / 1.1, 0, 2 * Math.PI);
       this.ctx.fill();
 
       // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
@@ -96,7 +94,7 @@ export class ServerMapComponent extends SharedMapComponent {
 
    getRandomPositionAboveSurface(elevation: number): Vector {
       const angle = (Math.random() * Math.PI) / 2;
-      const radius = this.scaledSize / 2 + elevation;
+      const radius = this.canvasSize / 2 + elevation;
       return {
          x: Math.cos(angle) * radius,
          y: Math.sin(angle) * radius,

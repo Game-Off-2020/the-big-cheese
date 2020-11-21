@@ -1,6 +1,5 @@
 import { MapStore } from './map-store';
 import { MapDestruction } from './map-model';
-import { SharedConfig } from '../config/shared-config';
 
 export class SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
@@ -24,6 +23,6 @@ export class SharedMapComponent {
    }
 
    protected toLocalCanvas(xy: number): number {
-      return Math.round(xy / SharedConfig.MAP_OUTPUT_SCALE + this.canvasSize / 2);
+      return Math.round(xy + this.canvasSize / 2);
    }
 }
