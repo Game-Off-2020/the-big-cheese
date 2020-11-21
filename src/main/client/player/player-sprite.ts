@@ -18,8 +18,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
    private positionChangedSubject = new Subject<Vector2>();
    readonly positionChanged$ = this.positionChangedSubject.asObservable();
-   private gun: GunSprite;
-   private character: Phaser.GameObjects.Sprite;
+   private readonly gun: GunSprite;
+   private readonly character: Phaser.GameObjects.Sprite;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);

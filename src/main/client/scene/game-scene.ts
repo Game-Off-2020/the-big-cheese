@@ -13,8 +13,8 @@ import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientOtherPlayerComponent } from '../player/client-other-player-component';
 import { OtherPlayerSprite } from '../player/other-player-sprite';
-import { BehaviorSubject, forkJoin, ReplaySubject } from 'rxjs';
-import { filter, first, share, shareReplay, switchMap } from 'rxjs/operators';
+import { ReplaySubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
@@ -58,17 +58,16 @@ export class GameScene extends Scene {
          this.mapComponent.setMapSprite(this.mapSprite);
       });
       this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
-      this.created$.pipe(filter((created) => created)).subscribe((created) => console.log(1, created));
-      this.otherPlayersComponent.added$.pipe(shareReplay()).subscribe((player) => console.log(2, player));
-
       this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
-         console.log(3, player);
          const sprite = new OtherPlayerSprite(this, player);
          this.otherPlayers.set(player.id, sprite);
       });
-
       this.otherPlayersComponent.removed$.subscribe((playerId) => {
-         this.otherPlayers.get(playerId)?.destroy();
+         const sprite = this.otherPlayers.get(playerId);
+         if (sprite) {
+            sprite.destroy();
+            this.otherPlayers.delete(playerId);
+         }
       });
    }
 
@@ -227,5 +226,16 @@ export class GameScene extends Scene {
       }
 
       this.character.update();
+      this.updateOtherPlayers();
+   }
+
+   private updateOtherPlayers(): void {
+      for (const [playerId, sprite] of this.otherPlayers.entries()) {
+         const player = this.otherPlayersComponent.getPlayer(playerId);
+         if (player) {
+            sprite.updatePlayer(player);
+            sprite.update();
+         }
+      }
    }
 }

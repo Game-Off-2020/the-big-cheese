@@ -1,7 +1,7 @@
 import { Inject, Singleton } from 'typescript-ioc';
 import { PlayerStore } from '../../shared/player/player-store';
 import { Player } from '../../shared/player/player-model';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ClientPlayerComponent } from './client-player-component';
 
@@ -15,9 +15,13 @@ export class ClientOtherPlayerComponent {
       @Inject private readonly store: PlayerStore,
    ) {
       this.added$ = store.added$.pipe(
-         // filter((playerEntity) => playerEntity.id !== clientPlayer.getClientId()),
+         filter((playerEntity) => playerEntity.id !== clientPlayer.getClientId()),
          map((entity) => entity.value),
       );
       this.removed$ = store.removed$;
+   }
+
+   getPlayer(playerId: string): Player | undefined {
+      return this.store.get(playerId);
    }
 }
