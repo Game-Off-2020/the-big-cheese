@@ -13,15 +13,17 @@ interface PlayerOptions {
       readonly onShoot: (position: Phaser.Math.Vector2) => void;
    };
    readonly physics: {
-      readonly leftWallCollision: (player: PlayerSprite) => boolean;
-      readonly rightWallCollision: (player: PlayerSprite) => boolean;
-      readonly floorCollision: (player: PlayerSprite) => boolean;
-      readonly ceilingCollision: (player: PlayerSprite) => boolean;
+      readonly leftWallCollision: (player: PlayerSprite, width: number, height: number) => boolean;
+      readonly rightWallCollision: (player: PlayerSprite, width: number, height: number) => boolean;
+      readonly floorCollision: (player: PlayerSprite, width: number, height: number) => boolean;
+      readonly ceilingCollision: (player: PlayerSprite, width: number, height: number) => boolean;
    };
 }
 
 const MAX_HORIZONTAL_SPEED = 3;
 const MAX_VERTICAL_SPEED = 10;
+const PLAYER_HEIGHT = 20;
+const PLAYER_WIDTH = 10;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
@@ -31,6 +33,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private character: Phaser.GameObjects.Sprite;
    private jumping = false;
    private verticalSpeed = 0;
+   private graphics: Phaser.GameObjects.Graphics;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
@@ -57,6 +60,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       options.scene.add.existing(this);
 
       this.character.setOrigin(0.5, 1);
+      this.graphics = this.scene.add.graphics();
    }
 
    private lastShootTimestamp = 0;
@@ -84,20 +88,20 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (this.options.cursorKeys.left.isDown) {
          this.character.anims.play('player1-walk', true);
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
-            if (!this.options.physics.leftWallCollision(this)) {
+            if (!this.options.physics.leftWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.moveLeft(this);
             }
-            while (this.options.physics.floorCollision(this)) {
+            while (this.options.physics.floorCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.applyGroundReactionForce(this);
             }
          }
       } else if (this.options.cursorKeys.right.isDown) {
          this.character.anims.play('player1-walk', true);
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
-            if (!this.options.physics.rightWallCollision(this)) {
+            if (!this.options.physics.rightWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.moveRight(this);
             }
-            while (this.options.physics.floorCollision(this)) {
+            while (this.options.physics.floorCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.applyGroundReactionForce(this);
             }
          }
@@ -116,14 +120,14 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
          if (this.verticalSpeed > 0) {
             //check ground
-            if (!this.options.physics.floorCollision(this)) {
+            if (!this.options.physics.floorCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.applyGravity(this);
             } else {
                this.jumping = false;
                this.verticalSpeed = 0;
             }
          } else {
-            if (!this.options.physics.ceilingCollision(this)) {
+            if (!this.options.physics.ceilingCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.applyGroundReactionForce(this);
             } else {
                this.verticalSpeed = 0;
@@ -142,5 +146,57 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
 
       this.gun.update();
+      this.drawDebug();
+   }
+
+   private drawDebug(): void {
+      this.graphics.clear();
+      this.graphics.lineStyle(2, 0xff0000, 1);
+
+      const f = VectorUtil.createLocalWall(this, 2);
+      const locationOfLeftWall = new Phaser.Math.Vector2({ x: this.x, y: this.y })
+         .subtract(VectorUtil.getFloorVector(this).scale(-PLAYER_WIDTH / 2))
+         .add(VectorUtil.getUpwardVector(this).scale(PLAYER_HEIGHT));
+      this.graphics.lineBetween(
+         locationOfLeftWall.x,
+         locationOfLeftWall.y,
+         locationOfLeftWall.x + f[f.length - 1].x,
+         locationOfLeftWall.y + f[f.length - 1].y,
+      );
+
+      const locationOfRightWall = new Phaser.Math.Vector2({ x: this.x, y: this.y })
+         .subtract(VectorUtil.getFloorVector(this).scale(PLAYER_WIDTH / 2))
+         .add(VectorUtil.getUpwardVector(this).scale(PLAYER_HEIGHT));
+
+      this.graphics.lineBetween(
+         locationOfRightWall.x,
+         locationOfRightWall.y,
+         locationOfRightWall.x + f[f.length - 1].x,
+         locationOfRightWall.y + f[f.length - 1].y,
+      );
+
+      const g = VectorUtil.createLocalFloor(this, PLAYER_WIDTH);
+
+      const locationOfFloor = new Phaser.Math.Vector2({ x: this.x, y: this.y }).subtract(
+         VectorUtil.getFloorVector(this).scale(PLAYER_WIDTH / 2),
+      );
+
+      this.graphics.lineBetween(
+         locationOfFloor.x,
+         locationOfFloor.y,
+         locationOfFloor.x + g[g.length - 1].x,
+         locationOfFloor.y + g[g.length - 1].y,
+      );
+
+      const locationOfCeiling = new Phaser.Math.Vector2({ x: this.x, y: this.y })
+         .subtract(VectorUtil.getFloorVector(this).scale(PLAYER_WIDTH / 2))
+         .add(VectorUtil.getUpwardVector(this).scale(PLAYER_HEIGHT));
+
+      this.graphics.lineBetween(
+         locationOfCeiling.x,
+         locationOfCeiling.y,
+         locationOfCeiling.x + g[g.length - 1].x,
+         locationOfCeiling.y + g[g.length - 1].y,
+      );
    }
 }
