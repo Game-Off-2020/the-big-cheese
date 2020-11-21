@@ -68,7 +68,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    private updatePosition(): void {
       this.positionInterpolation.step();
       const position = this.positionInterpolation.get();
-      this.character.setPosition(position.x, position.y);
+      this.setPosition(position.x, position.y);
    }
 
    private updateDirection(): void {
