@@ -37,7 +37,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       options.scene.anims.create(config);
 
       this.character = options.scene.make.sprite({ key: 'player' });
-      this.character.play('player-walk');
       this.add(this.character);
 
       this.gun = new GunSprite({

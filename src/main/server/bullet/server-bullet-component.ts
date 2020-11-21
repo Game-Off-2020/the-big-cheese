@@ -48,7 +48,7 @@ export class ServerBulletComponent {
             y: directionY,
          },
          timestamp: Date.now(),
-      } as ServerBullet);
+      });
    }
 
    private nextPosition = { x: 0, y: 0 };
