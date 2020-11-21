@@ -10,6 +10,8 @@ interface PlayerOptions {
    readonly callbacks: {
       readonly onGoLeft: () => void;
       readonly onGoRight: () => void;
+      readonly onStartMoving: () => void;
+      readonly onStartStanding: () => void;
       readonly onShoot: (position: Phaser.Math.Vector2) => void;
    };
 }
@@ -24,15 +26,15 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
       const config = {
-         key: 'player1-walk',
-         frames: options.scene.anims.generateFrameNumbers('player1', { frames: [0, 1, 2, 6, 7, 8] }),
+         key: 'player-walk',
+         frames: options.scene.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 6, 7, 8] }),
          frameRate: 10,
          repeat: -1,
       };
       options.scene.anims.create(config);
 
-      this.character = options.scene.make.sprite({ key: 'player1' });
-      this.character.play('player1-walk');
+      this.character = options.scene.make.sprite({ key: 'player' });
+      this.character.play('player-walk');
       this.add(this.character);
 
       this.gun = new GunSprite({
@@ -69,13 +71,13 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
 
       if (this.options.cursorKeys.left.isDown) {
-         this.character.anims.play('player1-walk', true);
+         this.moving();
          this.options.callbacks.onGoLeft();
       } else if (this.options.cursorKeys.right.isDown) {
-         this.character.anims.play('player1-walk', true);
+         this.moving();
          this.options.callbacks.onGoRight();
       } else {
-         this.character.anims.pause();
+         this.standing();
       }
 
       if (this.scene.input.activePointer.isDown) {
@@ -86,5 +88,21 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
 
       this.gun.update();
+   }
+
+   private isMoving = false;
+   private moving(): void {
+      if (!this.isMoving) {
+         this.isMoving = true;
+         this.options.callbacks.onStartMoving();
+         this.character.anims.play('player-walk', true);
+      }
+   }
+   private standing(): void {
+      if (this.isMoving) {
+         this.isMoving = false;
+         this.options.callbacks.onStartStanding();
+         this.character.anims.pause();
+      }
    }
 }

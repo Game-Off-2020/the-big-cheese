@@ -20,7 +20,6 @@ export class ClientPlayerComponent {
 
    setClientPlayer(player: Player): void {
       this.clientId = player.id;
-      this.store.commit(player.id, player);
       this.clientInitSubject.next(player);
       this.store.update(player.id, player);
       this.subscribePlayerSpriteCommitToStore();
@@ -37,6 +36,10 @@ export class ClientPlayerComponent {
 
    shoot(options: BulletFireOptions): void {
       this.clientShootingSubject.next(options);
+   }
+
+   setMoving(moving: boolean): void {
+      this.store.commit(this.clientId, { moving } as Player);
    }
 
    // Wire client character from spriteX to store

@@ -22,17 +22,15 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
 
    constructor(protected readonly scene: Scene, private readonly player: Player) {
       super(scene, 0, 0);
-      this.key = 'player-' + player.id;
       const config = {
-         key: `${this.key}-walk`,
-         frames: scene.anims.generateFrameNumbers('player1', { frames: [0, 1, 2, 6, 7, 8] }),
+         key: 'player-walk',
+         frames: scene.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 6, 7, 8] }),
          frameRate: 10,
          repeat: -1,
       };
       scene.anims.create(config);
 
-      this.character = scene.make.sprite({ key: 'player1' });
-      this.character.play(`${this.key}-walk`);
+      this.character = scene.make.sprite({ key: 'player' });
       this.add(this.character);
 
       this.gun = new GunSprite({
@@ -58,6 +56,14 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
       this.directionInterpolation.add(direction);
    }
 
+   setMoving(moving: boolean): void {
+      if (moving) {
+         this.character.anims.play('player-walk', true);
+      } else {
+         this.character.anims.pause();
+      }
+   }
+
    update(): void {
       this.updatePosition();
       this.updateDirection();
@@ -72,7 +78,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
 
    private updateDirection(): void {
       this.directionInterpolation.step();
-      const direction = this.directionInterpolation.get();
+      // const direction = this.directionInterpolation.get();
       // TODO
    }
 }

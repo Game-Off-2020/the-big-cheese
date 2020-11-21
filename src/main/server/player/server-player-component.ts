@@ -21,7 +21,8 @@ export class ServerPlayerComponent {
             x: 0,
             y: 0,
          },
-      } as Player);
+         moving: false,
+      });
    }
 
    removeUser(userId: string): void {

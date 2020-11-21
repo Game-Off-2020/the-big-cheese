@@ -5,7 +5,6 @@ export interface Player {
    name: string;
    position: Vector;
    direction: Vector;
+   moving: boolean;
    //hp: number;
-   // TODO: direction (left or right)
-   // TODO: movement status (moving, standing or maybe jumping too)
 }

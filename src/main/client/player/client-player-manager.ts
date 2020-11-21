@@ -16,6 +16,7 @@ export class ClientPlayerManager {
             name: 'Unnamed',
             position: { x: 0, y: 0 },
             direction: { x: 0, y: 0 },
+            moving: false,
          });
       });
    }

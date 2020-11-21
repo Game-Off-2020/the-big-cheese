@@ -15,8 +15,8 @@ import { ClientOtherPlayerComponent } from '../player/client-other-player-compon
 import { OtherPlayerSprite } from '../player/other-player-sprite';
 import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { PlayerStore } from '../../shared/player/player-store';
+import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -70,6 +70,9 @@ export class GameScene extends Scene {
             if (updatedPlayer.position) {
                sprite.tickPosition(updatedPlayer.position);
             }
+            if (updatedPlayer.moving !== undefined) {
+               sprite.setMoving(updatedPlayer.moving);
+            }
          });
       });
       this.otherPlayersComponent.removed$.subscribe((playerId) => {
@@ -121,6 +124,12 @@ export class GameScene extends Scene {
                   position: position,
                   direction: VectorUtil.getRelativeMouseDirection(this, this.character),
                });
+            },
+            onStartMoving: () => {
+               this.playerComponent.setMoving(true);
+            },
+            onStartStanding: () => {
+               this.playerComponent.setMoving(false);
             },
          },
       });
