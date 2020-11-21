@@ -11,18 +11,18 @@ import { LavaFloorSprite } from './lava-floor-sprite';
 import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
-import { SharedConfig } from '../../shared/config/shared-config';
 import { ClientOtherPlayerComponent } from '../player/client-other-player-component';
 import { OtherPlayerSprite } from '../player/other-player-sprite';
 import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { PlayerStore } from '../../shared/player/player-store';
+import { ClientConfig } from '../config/client-config';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
-   private readonly maxHorizontalSpeed = 3 / SharedConfig.MAP_OUTPUT_SCALE;
+   private readonly maxHorizontalSpeed = 3 / ClientConfig.MAP_OUTPUT_SCALE;
    private readonly characterWidth = 10;
-   private readonly maxVerticalSpeed = 20 / SharedConfig.MAP_OUTPUT_SCALE;
+   private readonly maxVerticalSpeed = 20 / ClientConfig.MAP_OUTPUT_SCALE;
    private cursorKeys: CursorKeys;
    private character: PlayerSprite;
    private bullets?: Bullets;
@@ -136,7 +136,7 @@ export class GameScene extends Scene {
       });
       this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
-      this.cameras.main.zoom = SharedConfig.MAP_OUTPUT_SCALE;
+      this.cameras.main.zoom = ClientConfig.MAP_OUTPUT_SCALE;
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       new StarFieldSprite({ scene: this });
@@ -206,7 +206,7 @@ export class GameScene extends Scene {
       this.character.setRotation(VectorUtil.getFloorVector(this.character).scale(-1).angle());
 
       if (this.cursorKeys.up.isDown && !this.jumping) {
-         this.verticalSpeed = -80 / SharedConfig.MAP_OUTPUT_SCALE;
+         this.verticalSpeed = -80 / ClientConfig.MAP_OUTPUT_SCALE;
          this.jumping = true;
       }
       this.verticalSpeed++;

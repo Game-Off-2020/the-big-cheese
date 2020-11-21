@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 
 import { MapDestruction } from '../../shared/map/map-model';
-import { SharedConfig } from '../../shared/config/shared-config';
+import { ClientConfig } from '../config/client-config';
 
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
@@ -40,7 +40,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
          y: this.y,
          speed: { min: -20, max: 20 },
          angle: { min: 0, max: 360 },
-         scale: { start: 0, end: 0.4 / SharedConfig.MAP_OUTPUT_SCALE },
+         scale: { start: 0, end: 0.4 / ClientConfig.MAP_OUTPUT_SCALE },
          alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
          blendMode: Phaser.BlendModes.SCREEN,
          gravityY: 0,

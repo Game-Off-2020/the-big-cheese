@@ -4,24 +4,23 @@ import { GunSprite } from './gun-sprite';
 import { Player } from '../../shared/player/player-model';
 import { Vector } from '../../shared/bullet/vector-model';
 import { CatmullRomInterpolation } from '../util/catmull-rom-interpolation';
-import { SharedConfig } from '../../shared/config/shared-config';
 import { ClientConfig } from '../config/client-config';
 
 export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    private readonly gun: GunSprite;
    private readonly character: Phaser.GameObjects.Sprite;
    private readonly positionInterpolation = new CatmullRomInterpolation(
-      SharedConfig.NETWORK_TICK_RATE,
+      ClientConfig.NETWORK_TICK_RATE,
       ClientConfig.INTERPOLATION_SIZE,
    );
    private readonly directionInterpolation = new CatmullRomInterpolation(
-      SharedConfig.NETWORK_TICK_RATE,
+      ClientConfig.NETWORK_TICK_RATE,
       ClientConfig.INTERPOLATION_SIZE,
    );
 
    constructor(protected readonly scene: Scene, private readonly player: Player) {
       super(scene);
-      this.setScale(1 / SharedConfig.MAP_OUTPUT_SCALE, 1 / SharedConfig.MAP_OUTPUT_SCALE);
+      this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
       scene.anims.create({
          key: 'player-walk',
          frames: scene.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 6, 7, 8] }),

@@ -7,7 +7,6 @@ import { ServerConfig } from '../config/server-config';
 import { MathUtil } from '../../client/util/math-util';
 import { ServerBullet } from './server-bullet-model';
 import { ServerBulletStore } from './server-bullet-store';
-import { SharedConfig } from '../../shared/config/shared-config';
 
 @Singleton
 export class ServerBulletComponent {
@@ -61,7 +60,7 @@ export class ServerBulletComponent {
    }
 
    stepBullet(id: string, bullet: ServerBullet): void {
-      if (Date.now() > bullet.timestamp + SharedConfig.BULLET_MAX_AGE_MS) {
+      if (Date.now() > bullet.timestamp + ServerConfig.BULLET_MAX_AGE_MS) {
          // This bullet is too old, lets remove it
          this.store.remove(id);
          return;
@@ -84,7 +83,7 @@ export class ServerBulletComponent {
                x: collision[0],
                y: collision[1],
             },
-            radius: MathUtil.randomFloatFromInterval(10, 35) / SharedConfig.MAP_OUTPUT_SCALE,
+            radius: MathUtil.randomFloatFromInterval(10, 35) / ServerConfig.MAP_OUTPUT_SCALE,
          });
       } else {
          // We dont use store.commit here on purpose, unnecessary to sync with clients

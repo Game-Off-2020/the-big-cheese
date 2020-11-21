@@ -6,7 +6,7 @@ import { MapDestruction } from '../../shared/map/map-model';
 import { Utils } from '../../shared/util/utils';
 import { Vector } from '../../shared/bullet/vector-model';
 import { PerlinNoise } from './perlin-noise';
-import { SharedConfig } from '../../shared/config/shared-config';
+import { ServerConfig } from '../config/server-config';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
@@ -19,7 +19,7 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    createMap(radius: number): void {
-      this.canvasSize = (radius * 2) / SharedConfig.MAP_OUTPUT_SCALE;
+      this.canvasSize = (radius * 2) / ServerConfig.MAP_OUTPUT_SCALE;
       this.canvas = createCanvas(this.canvasSize, this.canvasSize);
       this.ctx = this.canvas.getContext('2d');
 

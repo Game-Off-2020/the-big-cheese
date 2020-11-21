@@ -1,7 +1,7 @@
 // Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 import * as Phaser from 'phaser';
-import { SharedConfig } from '../../shared/config/shared-config';
 import { MathUtil } from '../util/math-util';
+import { ClientConfig } from '../config/client-config';
 
 export interface BulletFireOptions {
    readonly position: Phaser.Math.Vector2;
@@ -12,7 +12,7 @@ const DEFAULT_BULLET_SPEED = 0.85; // It needs to be synced with the server
 
 class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
    private timeAlive = 0;
-   private readonly lifeTime: number = SharedConfig.BULLET_MAX_AGE_MS;
+   private readonly lifeTime: number = ClientConfig.BULLET_MAX_AGE_MS;
 
    constructor(scene: Phaser.Scene, x: number, y: number) {
       super(scene, x, y, 'bullet');
@@ -24,7 +24,7 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
       this.setActive(true);
       this.setVisible(true);
 
-      options.direction.scale(DEFAULT_BULLET_SPEED * SharedConfig.BULLET_BASE_SPEED);
+      options.direction.scale(DEFAULT_BULLET_SPEED * ClientConfig.BULLET_BASE_SPEED);
 
       this.setVelocityY(options.direction.y);
       this.setVelocityX(options.direction.x);
@@ -85,7 +85,7 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
    fireBullet(id: string, options: BulletFireOptions): void {
       const bullet: DefaultBullet = this.getFirstDead(false);
       if (bullet) {
-         bullet.setScale(1 / SharedConfig.MAP_OUTPUT_SCALE, 1 / SharedConfig.MAP_OUTPUT_SCALE);
+         bullet.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
          this.cache[id] = bullet;
          bullet.fire(options);
          this.bulletSounds[MathUtil.randomIntFromInterval(0, this.bulletSounds.length - 1)].play();
