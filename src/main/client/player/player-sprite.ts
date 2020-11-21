@@ -8,11 +8,17 @@ interface PlayerOptions {
    readonly scene: Phaser.Scene;
    readonly cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
    readonly callbacks: {
-      readonly onGoLeft: () => void;
-      readonly onGoRight: () => void;
       readonly onShoot: (position: Phaser.Math.Vector2) => void;
    };
+   readonly physics: {
+      readonly leftWallCollision: (player: PlayerSprite) => boolean;
+      readonly rightWallCollision: (player: PlayerSprite) => boolean;
+      readonly floorCollision: (player: PlayerSprite) => boolean;
+   };
 }
+
+const MAX_HORIZONTAL_SPEED = 3;
+const MAX_VERTICAL_SPEED = 3;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
@@ -20,6 +26,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    readonly positionChanged$ = this.positionChangedSubject.asObservable();
    private gun: GunSprite;
    private character: Phaser.GameObjects.Sprite;
+   private jumping = false;
+   private verticalSpeed = 0;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
@@ -45,12 +53,12 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
 
       options.scene.add.existing(this);
 
-      // this.add(game.make.sprite(-50, -50, 'mummy'));
-
       this.character.setOrigin(0.5, 1);
    }
 
    update(): void {
+      this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
+
       const direction = VectorUtil.getRelativeMouseDirection(this.options.scene, this).rotate(-this.rotation);
 
       if (direction.x < 0) {
@@ -70,13 +78,68 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
 
       if (this.options.cursorKeys.left.isDown) {
          this.character.anims.play('player1-walk', true);
-         this.options.callbacks.onGoLeft();
+         for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
+            if (this.options.physics.leftWallCollision(this)) {
+               VectorUtil.moveLeft(this);
+            }
+         }
       } else if (this.options.cursorKeys.right.isDown) {
          this.character.anims.play('player1-walk', true);
-         this.options.callbacks.onGoRight();
+         for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
+            if (this.options.physics.rightWallCollision(this)) {
+               VectorUtil.moveRight(this);
+            }
+         }
       } else {
          this.character.anims.pause();
       }
+
+      if (this.options.cursorKeys.up.isDown && !this.jumping) {
+         this.verticalSpeed = -MAX_VERTICAL_SPEED;
+         this.jumping = true;
+      }
+
+      console.log('jump', this.jumping, this.verticalSpeed);
+
+      this.verticalSpeed += 0.1;
+      this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -MAX_VERTICAL_SPEED, MAX_VERTICAL_SPEED);
+
+      for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
+         if (this.verticalSpeed < 0) {
+            // Jumping
+            VectorUtil.applyJump(this, this.verticalSpeed);
+         } else {
+            if (!this.options.physics.floorCollision(this)) {
+               VectorUtil.applyGravity(this);
+            } else {
+               this.jumping = false;
+               this.verticalSpeed = 0;
+               VectorUtil.applyGroundReactionForce(this);
+            }
+         }
+      }
+      // if (this.verticalSpeed >= 0) {
+      //    for (let _ = 0; _ < this.verticalSpeed; _++) {
+      //       if (this.options.physics.floorCollision(this)) {
+      //          // Ground
+      //          VectorUtil.applyGroundReactionForce(this.character);
+      //       } else {
+      //          // Air
+      //          this.jumping = false;
+      //          // this.verticalSpeed = 0;
+      //       }
+      //    }
+      // } else {
+      //    // Jumping
+      //    for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
+      //       if (!this.options.physics.floorCollision(this)) {
+      //          console.log('raising player');
+      //          VectorUtil.moveByVector(this.character, VectorUtil.getDownwardVector(this.character).scale(-1));
+      //       } else {
+      //          // this.verticalSpeed = 0;
+      //       }
+      //    }
+      // }
 
       if (this.scene.input.activePointer.isDown) {
          const gunPosition = new Vector2({ x: this.x, y: this.y }).add(

@@ -14,9 +14,7 @@ import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
 
 export class GameScene extends Scene {
-   private readonly maxHorizontalSpeed = 3;
    private readonly characterWidth = 10;
-   private readonly maxVerticalSpeed = 10;
    private cursorKeys: CursorKeys;
    private character: PlayerSprite;
    private bullets?: Bullets;
@@ -57,39 +55,26 @@ export class GameScene extends Scene {
          scene: this,
          cursorKeys: this.cursorKeys,
          callbacks: {
-            onGoLeft: () => {
-               for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
-                  if (
-                     !this.mapSprite.hitTestTerrain(
-                        this.character.x - 1,
-                        this.character.y,
-                        this.createLocalWall(this.character, 10),
-                     )
-                  ) {
-                     this.moveLeft(this.character);
-                  }
-                  this.stickToGround(this.character);
-               }
-            },
-            onGoRight: () => {
-               for (let _ = 0; _ < this.maxHorizontalSpeed; _++) {
-                  if (
-                     !this.mapSprite.hitTestTerrain(
-                        this.character.x + this.characterWidth,
-                        this.character.y,
-                        this.createLocalWall(this.character, 10),
-                     )
-                  ) {
-                     this.moveRight(this.character);
-                  }
-                  this.stickToGround(this.character);
-               }
-            },
             onShoot: (position) => {
                this.playerComponent.shoot({
                   position: position,
                   direction: VectorUtil.getRelativeMouseDirection(this, this.character),
                });
+            },
+         },
+         physics: {
+            leftWallCollision: (player) => {
+               return !this.mapSprite.hitTestTerrain(player.x - 1, player.y, VectorUtil.createLocalWall(player, 10));
+            },
+            rightWallCollision: (player) => {
+               return !this.mapSprite.hitTestTerrain(
+                  player.x + this.characterWidth,
+                  player.y,
+                  VectorUtil.createLocalWall(player, 10),
+               );
+            },
+            floorCollision: (player) => {
+               return this.mapSprite.hitTestTerrain(player.x, player.y, VectorUtil.createLocalFloor(player, 10));
             },
          },
       });
@@ -101,108 +86,9 @@ export class GameScene extends Scene {
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
    }
 
-   private jumping = false;
-   private verticalSpeed = 0;
-
-   private applyGravity(sprite: Phaser.GameObjects.Components.Transform): void {
-      const vector = VectorUtil.getDownwardVector(sprite).scale(-1);
-      this.moveByVector(sprite, vector);
-   }
-
-   private applyGroundReactionForce(sprite: Phaser.GameObjects.Components.Transform): void {
-      const vector = VectorUtil.getDownwardVector(sprite).scale(0.5);
-      this.moveByVector(sprite, vector);
-   }
-
-   private moveByVector(sprite: Phaser.GameObjects.Components.Transform, vector: Phaser.Math.Vector2): void {
-      sprite.x += vector.x;
-      sprite.y += vector.y;
-   }
-
-   private createLocalWall(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
-      const downVector = VectorUtil.getDownwardVector(sprite);
-
-      return this.createCollisionLine(downVector, length, -length);
-   }
-
-   private createLocalFloor(sprite: Phaser.GameObjects.Components.Transform, length: number): Phaser.Geom.Point[] {
-      const floorVector = VectorUtil.getFloorVector(sprite);
-
-      return this.createCollisionLine(floorVector, length, -length / 2);
-   }
-
-   private createCollisionLine(vector: Phaser.Math.Vector2, length: number, offset: number): Phaser.Geom.Point[] {
-      return [...Array(length).keys()]
-         .map((key) => key + offset)
-         .map((i) => {
-            const newDownVector = vector.clone().scale(i);
-            return new Phaser.Geom.Point(newDownVector.x, newDownVector.y);
-         });
-   }
-
-   private stickToGround(sprite: Phaser.GameObjects.Components.Transform): void {
-      while (this.mapSprite.hitTestTerrain(sprite.x, sprite.y, this.createLocalFloor(sprite, 10))) {
-         this.applyGravity(sprite);
-      }
-   }
-
-   private moveLeft(sprite: Phaser.GameObjects.Components.Transform): void {
-      const floorVector = VectorUtil.getFloorVector(sprite);
-      this.moveByVector(sprite, floorVector);
-   }
-
-   private moveRight(sprite: Phaser.GameObjects.Components.Transform): void {
-      const floorVector = VectorUtil.getFloorVector(sprite).scale(-1);
-      this.moveByVector(sprite, floorVector);
-   }
-
    update(): void {
       if (!this.mapSprite) return;
       this.cameras.main.setRotation(-this.character.rotation);
-
-      this.character.setRotation(VectorUtil.getFloorVector(this.character).scale(-1).angle());
-
-      if (this.cursorKeys.up.isDown && !this.jumping) {
-         this.verticalSpeed = -40;
-         this.jumping = true;
-      }
-      this.verticalSpeed++;
-      this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -this.maxVerticalSpeed, this.maxVerticalSpeed);
-
-      if (this.verticalSpeed > 0) {
-         for (let _ = 0; _ < this.verticalSpeed; _++) {
-            if (
-               !this.mapSprite.hitTestTerrain(
-                  this.character.x,
-                  this.character.y,
-                  this.createLocalFloor(this.character, 10),
-               )
-            ) {
-               // Ground
-               this.applyGroundReactionForce(this.character);
-            } else {
-               // Air
-               this.jumping = false;
-               this.verticalSpeed = 0;
-            }
-         }
-      } else {
-         // Jumping
-         for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
-            if (
-               !this.mapSprite.hitTestTerrain(
-                  this.character.x,
-                  this.character.y,
-                  this.createLocalFloor(this.character, 10),
-               )
-            ) {
-               this.moveByVector(this.character, VectorUtil.getDownwardVector(this.character).scale(-1));
-            } else {
-               this.verticalSpeed = 0;
-            }
-         }
-      }
-
       this.character.update();
    }
 }
