@@ -72,7 +72,7 @@ export class ServerNetworkManager {
             userId: entity.id,
             map: {
                buffer: this.map.getMap(),
-               size: this.map.getSize(),
+               size: this.map.getCanvasSize(),
             },
          });
       });
