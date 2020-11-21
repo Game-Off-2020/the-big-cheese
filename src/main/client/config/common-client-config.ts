@@ -1,9 +1,10 @@
-// Set production (or for both production and development) properties here,
-// but import them via ServerConfig
 import { SharedConfig } from '../../shared/config/shared-config';
 
+// Set production (or for both production and development) properties here,
+// but import them via ServerConfig
 export class CommonClientConfig {
    static readonly ASSET_FOLDER: string = 'asset/';
    static readonly AUTO_START: boolean = false;
    static readonly SERVER_HOST: string = `https://game-off.glitch.me:${SharedConfig.SERVER_PORT}`;
+   static readonly INTERPOLATION_SIZE: number = 3;
 }

@@ -2,13 +2,21 @@ import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { GunSprite } from './gun-sprite';
 import { Player } from '../../shared/player/player-model';
+import { Vector } from '../../shared/bullet/vector-model';
+import { CatmullRomInterpolation } from '../util/catmull-rom-interpolation';
+import { SharedConfig } from '../../shared/config/shared-config';
+import { ClientConfig } from '../config/client-config';
 
 export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    private readonly gun: GunSprite;
    private readonly character: Phaser.GameObjects.Sprite;
    private readonly key: string;
+   private readonly positionInterpolation = new CatmullRomInterpolation(
+      SharedConfig.NETWORK_TICK_RATE,
+      ClientConfig.INTERPOLATION_SIZE,
+   );
 
-   constructor(protected readonly scene: Scene, private player: Player) {
+   constructor(protected readonly scene: Scene, private readonly player: Player) {
       super(scene, 0, 0);
       this.key = 'player-' + player.id;
       const config = {
@@ -34,15 +42,17 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
       scene.add.existing(this);
 
       this.character.setOrigin(0.5, 1); // TODO: Need to move (relative v absolute)
+      this.updatePosition(player.position);
    }
 
-   updatePlayer(player: Player): void {
-      this.player = player;
+   updatePosition(position: Vector): void {
+      this.positionInterpolation.add(position);
    }
 
    update(): void {
-      // TODO: Update position from interpolation object
-      this.character.setPosition(this.player.position.x, this.player.position.y);
+      this.positionInterpolation.step();
+      const position = this.positionInterpolation.get();
+      this.character.setPosition(position.x, position.y);
       this.gun.update();
    }
 }

@@ -16,6 +16,7 @@ import { OtherPlayerSprite } from '../player/other-player-sprite';
 import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
+import { PlayerStore } from '../../shared/player/player-store';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -32,6 +33,9 @@ export class GameScene extends Scene {
 
    @Inject
    private readonly playerComponent: ClientPlayerComponent;
+
+   @Inject
+   private readonly playerStore: PlayerStore;
 
    @Inject
    private readonly otherPlayersComponent: ClientOtherPlayerComponent;
@@ -61,6 +65,12 @@ export class GameScene extends Scene {
       this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
          const sprite = new OtherPlayerSprite(this, player);
          this.otherPlayers.set(player.id, sprite);
+         // TODO: Cleanup
+         this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
+            if (updatedPlayer.position) {
+               sprite.updatePosition(updatedPlayer.position);
+            }
+         });
       });
       this.otherPlayersComponent.removed$.subscribe((playerId) => {
          const sprite = this.otherPlayers.get(playerId);
@@ -230,12 +240,8 @@ export class GameScene extends Scene {
    }
 
    private updateOtherPlayers(): void {
-      for (const [playerId, sprite] of this.otherPlayers.entries()) {
-         const player = this.otherPlayersComponent.getPlayer(playerId);
-         if (player) {
-            sprite.updatePlayer(player);
-            sprite.update();
-         }
+      for (const sprite of this.otherPlayers.values()) {
+         sprite.update();
       }
    }
 }
