@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 
 import { MapDestruction } from '../../shared/map/map-model';
+import { SharedConfig } from '../../shared/config/shared-config';
 
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
@@ -48,11 +49,12 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter.reserve(1000);
       this.dustEmitter.stop();
       particle.setDepth(100);
+      this.setScale(SharedConfig.MAP_OUTPUT_SCALE, SharedConfig.MAP_OUTPUT_SCALE);
    }
 
    hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
-      const localX = worldX + this.radius;
-      const localY = worldY + this.radius;
+      const localX = Math.round(worldX / SharedConfig.MAP_OUTPUT_SCALE + this.radius);
+      const localY = Math.round(worldY / SharedConfig.MAP_OUTPUT_SCALE + this.radius);
 
       if (localX < 0 || localY < 0 || localX > this.radius * 2 || localY > this.radius * 2) return false;
 

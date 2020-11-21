@@ -1,9 +1,10 @@
 import { MapStore } from './map-store';
 import { MapDestruction } from './map-model';
+import { SharedConfig } from '../config/shared-config';
 
 export class SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
-   protected size = 0;
+   protected canvasSize = 0;
 
    constructor(protected readonly store: MapStore) {}
 
@@ -12,8 +13,8 @@ export class SharedMapComponent {
       this.ctx.globalCompositeOperation = 'destination-out';
       this.ctx.fillStyle = '';
       this.ctx.arc(
-         this.getLocal(destruction.position.x),
-         this.getLocal(destruction.position.y),
+         this.toLocalCanvas(destruction.position.x),
+         this.toLocalCanvas(destruction.position.y),
          destruction.radius,
          0,
          2 * Math.PI,
@@ -22,7 +23,7 @@ export class SharedMapComponent {
       this.ctx.fill();
    }
 
-   protected getLocal(xy: number): number {
-      return Math.round(xy + this.size / 2);
+   protected toLocalCanvas(xy: number): number {
+      return Math.round(xy / SharedConfig.MAP_OUTPUT_SCALE + this.canvasSize / 2);
    }
 }

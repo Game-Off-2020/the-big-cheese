@@ -29,7 +29,7 @@ export class GameComponent {
          },
          parent: 'game',
          backgroundColor: '#000000',
-         render: { antialias: true },
+         render: { antialias: false },
          fps: {
             smoothStep: true,
             target: 60,
