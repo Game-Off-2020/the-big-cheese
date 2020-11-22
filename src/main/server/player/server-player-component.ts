@@ -4,6 +4,7 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { ServerMapComponent } from '../map/server-map-component';
 import { CollisionPhysics } from './collision-physics/collision-physics';
 import { ServerConfig } from '../config/server-config';
+import { MathUtil } from '../../client/util/math-util';
 
 @Singleton
 export class ServerPlayerComponent {
@@ -36,6 +37,7 @@ export class ServerPlayerComponent {
          },
          moving: false,
          hp: 1.0,
+         type: MathUtil.randomIntFromInterval(0, ServerConfig.NR_OF_PLAYER_TYPES),
       });
       // Width and height must be switched for some reason
       this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_HEIGHT, ServerConfig.PLAYER_WIDTH);

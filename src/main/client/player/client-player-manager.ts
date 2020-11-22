@@ -11,14 +11,7 @@ export class ClientPlayerManager {
       @Inject private readonly network: ClientNetworkComponent,
    ) {
       network.joined$.subscribe((response) => {
-         this.component.setClientPlayer({
-            id: response.userId,
-            name: 'Unnamed',
-            position: { x: 0, y: 0 },
-            direction: { x: 0, y: 0 },
-            moving: false,
-            hp: 1.0,
-         });
+         this.component.setClientPlayer(response.player);
       });
    }
 }

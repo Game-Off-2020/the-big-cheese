@@ -7,6 +7,7 @@ import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
 import { HitBoxDebugger } from '../util/hitbox-debugger-util';
 import { Keys } from '../config/constants';
+import { PlayerType } from '../../shared/player/player-model';
 import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
@@ -42,31 +43,27 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private verticalSpeed = 0;
    private readonly debugger: HitBoxDebugger;
 
-   constructor(private readonly options: PlayerOptions) {
+   constructor(private readonly options: PlayerOptions, private readonly playerType: PlayerType) {
       super(options.scene, 0, 0);
+      // TODO: Use playerType
+      console.log('player-sprite', playerType);
       this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
-      const config = {
+      options.scene.anims.create({
          key: Keys.PLAYER_1_WALK,
          frames: options.scene.anims.generateFrameNumbers(Keys.PLAYER_1, { frames: [0, 1, 2, 6, 7, 8] }),
          frameRate: 10,
          repeat: -1,
-      };
-      options.scene.anims.create(config);
-
-      this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 });
-      this.character.play(Keys.PLAYER_1_WALK);
-      this.add(this.character);
-
-      this.gun = new GunSprite({
-         scene: options.scene,
-         character: this.character,
-         x: 30,
-         y: -30,
       });
-      this.add(this.gun);
-
       options.scene.add.existing(this);
-
+      this.add((this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 })));
+      this.add(
+         (this.gun = new GunSprite({
+            scene: options.scene,
+            character: this.character,
+            x: 30,
+            y: -30,
+         })),
+      );
       this.character.setOrigin(0.5, 1);
       this.debugger = new HitBoxDebugger({ scene: this.scene });
       this.scene.add.existing(this.debugger);

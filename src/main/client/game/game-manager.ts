@@ -2,6 +2,7 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { GameComponent } from './game-component';
 import { WindowEventComponent } from '../window/window-event-component';
 import { ClientNetworkComponent } from '../network/client-network-component';
+import { ClientPlayerComponent } from '../player/client-player-component';
 
 @Singleton
 export class GameManager {
@@ -9,9 +10,10 @@ export class GameManager {
       @Inject private readonly component: GameComponent,
       @Inject private readonly windowEvent: WindowEventComponent,
       @Inject private readonly network: ClientNetworkComponent,
+      @Inject private readonly player: ClientPlayerComponent,
    ) {
       windowEvent.resize$.subscribe(() => component.refreshScale());
       network.joinFailed$.subscribe((status) => component.showErrorScreen(status));
-      network.joined$.subscribe(() => component.showGameScene());
+      player.clientInit$.subscribe(() => component.showGameScene());
    }
 }

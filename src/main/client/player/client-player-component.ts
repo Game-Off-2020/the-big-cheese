@@ -20,6 +20,7 @@ export class ClientPlayerComponent {
 
    setClientPlayer(player: Player): void {
       this.clientId = player.id;
+      this.store.commit(player.id, player);
       this.clientInitSubject.next(player);
       this.store.update(player.id, player);
       this.subscribeOnUpdateToPlayerSprite();
@@ -31,6 +32,10 @@ export class ClientPlayerComponent {
 
    getClientId(): string | undefined {
       return this.clientId;
+   }
+
+   getClient(): Player {
+      return this.store.get(this.clientId);
    }
 
    shoot(options: BulletFireOptions): void {

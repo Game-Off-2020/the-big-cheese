@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { GunSprite } from './gun-sprite';
-import { Player } from '../../shared/player/player-model';
+import { PlayerType } from '../../shared/player/player-model';
 import { Vector } from '../../shared/bullet/vector-model';
 import { CatmullRomInterpolation } from '../util/catmull-rom-interpolation';
 import { ClientConfig } from '../config/client-config';
@@ -18,8 +18,10 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
       ClientConfig.INTERPOLATION_SIZE,
    );
 
-   constructor(protected readonly scene: Scene, private readonly player: Player) {
+   constructor(protected readonly scene: Scene, private readonly playerType: PlayerType) {
       super(scene);
+      // TODO: Use playerType
+      console.log('pother-layer-sprite', playerType);
       this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
       scene.anims.create({
          key: 'player-walk',
