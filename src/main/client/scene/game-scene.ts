@@ -66,10 +66,12 @@ export class GameScene extends Scene {
       this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
          const sprite = new OtherPlayerSprite(this, player);
          this.otherPlayers.set(player.id, sprite);
-         // TODO: Cleanup
          this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
             if (updatedPlayer.position) {
                sprite.tickPosition(updatedPlayer.position);
+            }
+            if (updatedPlayer.direction) {
+               sprite.tickDirection(updatedPlayer.direction);
             }
             if (updatedPlayer.moving !== undefined) {
                sprite.setMoving(updatedPlayer.moving);
@@ -131,6 +133,12 @@ export class GameScene extends Scene {
             },
             onStartStanding: () => {
                this.playerComponent.setMoving(false);
+            },
+            onPositionChanged: (position) => {
+               this.playerComponent.setPosition(position);
+            },
+            onDirectionChanged: (direction) => {
+               this.playerComponent.setDirection(direction);
             },
          },
       });

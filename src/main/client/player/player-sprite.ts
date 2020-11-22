@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
+import { Vector } from '../../shared/bullet/vector-model';
 import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
@@ -13,6 +14,8 @@ interface PlayerOptions {
       readonly onGoRight: () => void;
       readonly onStartMoving: () => void;
       readonly onStartStanding: () => void;
+      readonly onPositionChanged: (position: Vector) => void;
+      readonly onDirectionChanged: (position: Vector) => void;
       readonly onShoot: (position: Phaser.Math.Vector2) => void;
    };
 }
@@ -54,9 +57,15 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    }
 
    private lastShootTimestamp = 0;
+   private lastDirection: Vector = { x: null, y: null };
 
    update(): void {
       const direction = VectorUtil.getRelativeMouseDirection(this.options.scene, this).rotate(-this.rotation);
+      if (direction.x !== this.lastDirection.x || direction.y !== this.lastDirection.y) {
+         this.lastDirection.x = direction.x;
+         this.lastDirection.y = direction.y;
+         this.options.callbacks.onDirectionChanged(direction);
+      }
 
       if (direction.x < 0) {
          this.character.flipX = true;
@@ -71,6 +80,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (this.prevPosition.x !== this.x || this.prevPosition.y !== this.y) {
          this.prevPosition.set(this.x, this.y);
          this.positionChangedSubject.next(this.prevPosition);
+         this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
       if (this.options.cursorKeys.left.isDown) {

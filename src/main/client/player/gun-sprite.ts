@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { VectorUtil } from '../util/vector-util';
+import Vector2 = Phaser.Math.Vector2;
 
 interface GunOptions {
    readonly scene: Scene;
@@ -10,14 +11,25 @@ interface GunOptions {
 }
 
 export class GunSprite extends Phaser.GameObjects.Sprite {
+   private relativeDirection?: Vector2;
+
    constructor(private readonly options: GunOptions) {
       super(options.scene, options.x, options.y, 'basic-gun');
-      this.setOrigin(0.2, 0.7);
+      this.flip(true);
+   }
+
+   setRelativeDirection(x: number, y: number): void {
+      if (this.relativeDirection === undefined) {
+         this.relativeDirection = new Vector2();
+      }
+      this.relativeDirection.set(x, y);
    }
 
    update(): void {
-      const direction = VectorUtil.getRelativeMouseDirection(this.scene, this.options.character);
-
+      const direction =
+         this.relativeDirection === undefined
+            ? VectorUtil.getRelativeMouseDirection(this.scene, this.options.character)
+            : this.relativeDirection;
       this.setRotation(direction.angle());
    }
 

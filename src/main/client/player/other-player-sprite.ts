@@ -73,7 +73,16 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
 
    private updateDirection(): void {
       this.directionInterpolation.step();
-      // const direction = this.directionInterpolation.get();
-      // TODO
+      const direction = this.directionInterpolation.get();
+      this.gun.setRelativeDirection(direction.x, direction.y);
+      if (direction.x < 0) {
+         this.character.flipX = true;
+         this.gun.flip(true);
+         this.gun.setPosition(-30, -30);
+      } else {
+         this.character.flipX = false;
+         this.gun.flip(false);
+         this.gun.setPosition(30, -30);
+      }
    }
 }

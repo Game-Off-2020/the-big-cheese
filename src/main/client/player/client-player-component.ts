@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
 import { filter } from 'rxjs/operators';
 import { BulletFireOptions } from '../bullet/default-bullet';
+import { Vector } from '../../shared/bullet/vector-model';
 
 @Singleton
 export class ClientPlayerComponent {
@@ -22,7 +23,6 @@ export class ClientPlayerComponent {
       this.clientId = player.id;
       this.clientInitSubject.next(player);
       this.store.update(player.id, player);
-      this.subscribePlayerSpriteCommitToStore();
       this.subscribeOnUpdateToPlayerSprite();
    }
 
@@ -42,16 +42,22 @@ export class ClientPlayerComponent {
       this.store.commit(this.clientId, { moving } as Player);
    }
 
-   // Wire client character from spriteX to store
-   private subscribePlayerSpriteCommitToStore(): void {
-      this.clientPlayer.positionChanged$.subscribe((position) => {
-         this.store.commit(this.clientId, {
-            position: {
-               x: position.x,
-               y: position.y,
-            },
-         } as Player);
-      });
+   setPosition(position: Vector): void {
+      this.store.commit(this.clientId, {
+         position: {
+            x: position.x,
+            y: position.y,
+         },
+      } as Player);
+   }
+
+   setDirection(direction: Vector): void {
+      this.store.commit(this.clientId, {
+         direction: {
+            x: direction.x,
+            y: direction.y,
+         },
+      } as Player);
    }
 
    // Wire client character from store to sprite
