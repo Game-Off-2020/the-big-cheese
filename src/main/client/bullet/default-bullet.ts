@@ -1,7 +1,7 @@
 // Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 import * as Phaser from 'phaser';
 import { SharedConfig } from '../../shared/config/shared-config';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 import { MathUtil } from '../util/math-util';
 
 export interface BulletFireOptions {

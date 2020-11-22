@@ -12,7 +12,7 @@ import { LavaFloorSprite } from './lava-floor-sprite';
 import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;

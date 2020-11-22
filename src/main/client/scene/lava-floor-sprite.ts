@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 interface LavaFloorOptions {
    readonly scene: Phaser.Scene;

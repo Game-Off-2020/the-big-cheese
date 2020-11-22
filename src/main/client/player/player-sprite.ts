@@ -4,7 +4,7 @@ import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 import Vector2 = Phaser.Math.Vector2;
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;

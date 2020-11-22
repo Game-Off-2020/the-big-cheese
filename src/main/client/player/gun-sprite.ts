@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 
 import { Scene } from 'phaser';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 import { VectorUtil } from '../util/vector-util';
 
 interface GunOptions {

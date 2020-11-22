@@ -1,7 +1,7 @@
 import { SceneUtil } from '../util/scene-util';
 import { Scene } from 'phaser';
 import { ClientConfig } from '../config/client-config';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 export class BootScene extends Scene {
    constructor() {

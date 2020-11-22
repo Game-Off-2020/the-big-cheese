@@ -2,7 +2,7 @@ import { MenuButton } from '../ui/menu-button';
 import { ClientConfig } from '../config/client-config';
 import { Inject } from 'typescript-ioc';
 import { GameStateComponent } from '../game-state/game-state-component';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 export class MainMenuScene extends Phaser.Scene {
    @Inject

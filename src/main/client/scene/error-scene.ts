@@ -1,6 +1,6 @@
 import { MenuButton } from '../ui/menu-button';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 export class ErrorScene extends Phaser.Scene {
    constructor() {

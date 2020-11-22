@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 
 import { MapDestruction } from '../../shared/map/map-model';
 import { SharedConfig } from '../../shared/config/shared-config';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;

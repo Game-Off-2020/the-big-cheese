@@ -5,7 +5,7 @@ import { MainMenuScene } from '../scene/main-menu-scene';
 import { GameScene } from '../scene/game-scene';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { ErrorScene } from '../scene/error-scene';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 
 @Singleton
 export class GameComponent {

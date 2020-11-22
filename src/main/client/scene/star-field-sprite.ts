@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Keys } from '../util/keys';
+import { Keys } from '../config/constants';
 import { MathUtil } from '../util/math-util';
 
 interface StarFieldOptions {
