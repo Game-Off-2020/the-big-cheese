@@ -12,12 +12,12 @@ export class ServerPlayerManager {
    ) {
       network.joinRequest$.subscribe((requestMessage) => {
          if (component.getNrOfPlayers() < ServerConfig.MAX_NR_OF_PLAYERS) {
-            component.addUser(requestMessage.user, requestMessage.value.userName);
+            component.add(requestMessage.user, requestMessage.value.userName);
          } else {
             this.sendServerIsFullJoinResponse(requestMessage.user);
          }
       });
-      network.clientDisconnectedId$.subscribe((userId) => component.removeUser(userId));
+      network.clientDisconnectedId$.subscribe((userId) => component.remove(userId));
    }
 
    private sendServerIsFullJoinResponse(userId: string): void {

@@ -15,6 +15,7 @@ export abstract class Store<T> {
    readonly added$ = this.mapEntityWithId(this.addedSubject);
    readonly committed$ = this.mapEntityWithId(this.committedSubject);
    readonly updated$ = this.mapEntityWithId(this.updatedSubject);
+   readonly changed$ = this.mapEntityWithId(this.changedSubject);
    readonly removed$ = this.removedSubject.asObservable();
 
    private mapEntityWithId(source: Observable<StoreData<T>>): Observable<StoreEntity<T>> {
