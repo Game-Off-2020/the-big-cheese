@@ -5,9 +5,9 @@ import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
-import Vector2 = Phaser.Math.Vector2;
 import { HitBoxDebugger } from '../util/hitbox-debugger-util';
 import { Keys } from '../config/constants';
+import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -29,8 +29,8 @@ interface PlayerOptions {
 
 const MAX_HORIZONTAL_SPEED = 1;
 const MAX_VERTICAL_SPEED = 10;
-export const PLAYER_HEIGHT = 20;
-export const PLAYER_WIDTH = 10;
+export const PLAYER_HEIGHT = ClientConfig.PLAYER_HEIGHT;
+export const PLAYER_WIDTH = ClientConfig.PLAYER_WIDTH;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();

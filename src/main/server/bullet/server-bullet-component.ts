@@ -17,7 +17,7 @@ export class ServerBulletComponent {
    ) {}
 
    shoot(playerId: string, shootRequest: ShootRequest): void {
-      const player = this.players.getPlayer(playerId);
+      const player = this.players.get(playerId);
       if (player) {
          this.createBullet(
             playerId,
@@ -70,18 +70,25 @@ export class ServerBulletComponent {
       this.nextPosition.y = bullet.position.y + bullet.direction.y * ServerConfig.BULLET_SPEED;
 
       // Check if it will hit a wall or player (?) using continuous collision detection
-      const collision = this.map.raycast(
+      const mapCollision = this.map.raycast(
          bullet.position.x,
          bullet.position.y,
          this.nextPosition.x,
          this.nextPosition.y,
       );
-      if (collision) {
+      const playerCollision = this.players.raycast(
+         bullet.position.x,
+         bullet.position.y,
+         this.nextPosition.x,
+         this.nextPosition.y,
+         bullet.playerId,
+      );
+      if (mapCollision || playerCollision) {
          this.store.remove(id);
          this.map.destruct({
             position: {
-               x: collision[0],
-               y: collision[1],
+               x: mapCollision ? mapCollision[0] : playerCollision[0],
+               y: mapCollision ? mapCollision[1] : playerCollision[1],
             },
             radius: MathUtil.randomFloatFromInterval(10, 35) / ServerConfig.MAP_OUTPUT_SCALE,
          });

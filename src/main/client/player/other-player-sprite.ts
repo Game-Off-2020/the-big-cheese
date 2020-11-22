@@ -38,9 +38,6 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
             y: -30,
          })),
       );
-
-      this.tickPosition(player.position);
-      this.tickDirection(player.direction);
    }
 
    tickPosition(position: Vector): void {

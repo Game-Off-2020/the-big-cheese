@@ -80,6 +80,7 @@
       "deepmerge": "^4.2.2",
       "eiows": "^3.4.0",
       "phaser": "3.24.1",
+      "quadtree-lib": "^1.0.9",
       "socket.io": "^3.0.1",
       "socket.io-client": "^3.0.1",
       "threads": "1.6.3",
