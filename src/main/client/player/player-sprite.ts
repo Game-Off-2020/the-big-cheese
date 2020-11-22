@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
+import { Vector } from '../../shared/bullet/vector-model';
 import Vector2 = Phaser.Math.Vector2;
 import { HitBoxDebugger } from '../util/hitbox-debugger-util';
 import { Keys } from '../config/constants';
@@ -12,6 +13,10 @@ interface PlayerOptions {
    readonly scene: Phaser.Scene;
    readonly cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
    readonly callbacks: {
+      readonly onStartMoving: () => void;
+      readonly onStartStanding: () => void;
+      readonly onPositionChanged: (position: Vector) => void;
+      readonly onDirectionChanged: (position: Vector) => void;
       readonly onShoot: (position: Phaser.Math.Vector2) => void;
    };
    readonly physics: {
@@ -22,23 +27,24 @@ interface PlayerOptions {
    };
 }
 
-const MAX_HORIZONTAL_SPEED = 3;
+const MAX_HORIZONTAL_SPEED = 1;
 const MAX_VERTICAL_SPEED = 10;
-export const PLAYER_HEIGHT = 40;
+export const PLAYER_HEIGHT = 20;
 export const PLAYER_WIDTH = 10;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
    private positionChangedSubject = new Subject<Vector2>();
    readonly positionChanged$ = this.positionChangedSubject.asObservable();
-   private gun: GunSprite;
-   private character: Phaser.GameObjects.Sprite;
+   private readonly gun: GunSprite;
+   private readonly character: Phaser.GameObjects.Sprite;
    private jumping = false;
    private verticalSpeed = 0;
-   private debugger: HitBoxDebugger;
+   private readonly debugger: HitBoxDebugger;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
+      this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
       const config = {
          key: Keys.PLAYER_1_WALK,
          frames: options.scene.anims.generateFrameNumbers(Keys.PLAYER_1, { frames: [0, 1, 2, 6, 7, 8] }),
@@ -67,11 +73,17 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    }
 
    private lastShootTimestamp = 0;
+   private lastDirection: Vector = { x: null, y: null };
 
    update(): void {
       this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
 
       const direction = VectorUtil.getRelativeMouseDirection(this.options.scene, this).rotate(-this.rotation);
+      if (direction.x !== this.lastDirection.x || direction.y !== this.lastDirection.y) {
+         this.lastDirection.x = direction.x;
+         this.lastDirection.y = direction.y;
+         this.options.callbacks.onDirectionChanged(direction);
+      }
 
       if (direction.x < 0) {
          this.character.flipX = true;
@@ -86,10 +98,11 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (this.prevPosition.x !== this.x || this.prevPosition.y !== this.y) {
          this.prevPosition.set(this.x, this.y);
          this.positionChangedSubject.next(this.prevPosition);
+         this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
       if (this.options.cursorKeys.left.isDown) {
-         this.character.anims.play(Keys.PLAYER_1_WALK, true);
+         this.moving();
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
             if (!this.options.physics.leftWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.moveLeft(this);
@@ -99,7 +112,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
             }
          }
       } else if (this.options.cursorKeys.right.isDown) {
-         this.character.anims.play(Keys.PLAYER_1_WALK, true);
+         this.moving();
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
             if (!this.options.physics.rightWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.moveRight(this);
@@ -109,7 +122,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
             }
          }
       } else {
-         this.character.anims.pause();
+         this.standing();
       }
 
       if (this.options.cursorKeys.up.isDown && !this.jumping) {
@@ -142,7 +155,10 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          if (Date.now() > this.lastShootTimestamp + ClientConfig.SHOOT_INTERVAL) {
             this.lastShootTimestamp = Date.now();
             const gunPosition = new Vector2({ x: this.x, y: this.y }).add(
-               new Vector2({ x: this.gun.x, y: this.gun.y }).rotate(this.rotation),
+               new Vector2({
+                  x: this.gun.x / ClientConfig.MAP_OUTPUT_SCALE,
+                  y: this.gun.y / ClientConfig.MAP_OUTPUT_SCALE,
+               }).rotate(this.rotation),
             );
             this.options.callbacks.onShoot(gunPosition);
          }
@@ -150,5 +166,23 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
 
       this.gun.update();
       this.debugger.update(this);
+   }
+
+   private isMoving = false;
+
+   private moving(): void {
+      if (!this.isMoving) {
+         this.isMoving = true;
+         this.options.callbacks.onStartMoving();
+         this.character.anims.play(Keys.PLAYER_1_WALK, true);
+      }
+   }
+
+   private standing(): void {
+      if (this.isMoving) {
+         this.isMoving = false;
+         this.options.callbacks.onStartStanding();
+         this.character.anims.pause();
+      }
    }
 }

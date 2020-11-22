@@ -6,13 +6,12 @@ import { MapDestruction } from '../../shared/map/map-model';
 import { Utils } from '../../shared/util/utils';
 import { Vector } from '../../shared/bullet/vector-model';
 import { PerlinNoise } from './perlin-noise';
-import { SharedConfig } from '../../shared/config/shared-config';
+import { ServerConfig } from '../config/server-config';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
    private canvas: Canvas;
    protected ctx: CanvasRenderingContext2D;
-   protected scaledSize: number;
    private data?: DataView;
 
    constructor(@Inject protected readonly store: MapStore) {
@@ -20,15 +19,14 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    createMap(radius: number): void {
-      this.canvasSize = radius * 2;
-      this.scaledSize = this.canvasSize * SharedConfig.MAP_OUTPUT_SCALE;
+      this.canvasSize = (radius * 2) / ServerConfig.MAP_OUTPUT_SCALE;
       this.canvas = createCanvas(this.canvasSize, this.canvasSize);
       this.ctx = this.canvas.getContext('2d');
       this.ctx.imageSmoothingEnabled = false;
 
       // Base cirlce
       this.ctx.fillStyle = '#ff0000';
-      this.aliasedCircle(this.ctx, 0, 0, radius);
+      this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2);
       this.ctx.fill();
 
       // Perlin Noise
@@ -74,7 +72,7 @@ export class ServerMapComponent extends SharedMapComponent {
       this.ctx.closePath();
       this.ctx.beginPath();
       this.ctx.fillStyle = '#ff0000';
-      this.aliasedCircle(this.ctx, radius, radius, radius / 1.1);
+      this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, Math.floor(this.canvasSize / 2 / 1.1));
       this.ctx.fill();
 
       // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
@@ -96,8 +94,8 @@ export class ServerMapComponent extends SharedMapComponent {
    //
 
    getRandomPositionAboveSurface(elevation: number): Vector {
-      const angle = (Math.random() * Math.PI) / 2;
-      const radius = this.scaledSize / 2 + elevation;
+      const angle = Math.random() * Math.PI * 2;
+      const radius = this.canvasSize / 2 + elevation;
       return {
          x: Math.cos(angle) * radius,
          y: Math.sin(angle) * radius,

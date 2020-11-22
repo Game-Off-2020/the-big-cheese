@@ -10,12 +10,13 @@ export class ServerPlayerComponent {
    addUser(id: string, name: string): void {
       this.store.commit(id, {
          id,
-         name, // TODO: Check name availability and add number at the end if taken
+         name: this.getUniqueName(name),
          position: this.map.getRandomPositionAboveSurface(30),
          direction: {
             x: 0,
             y: 0,
          },
+         moving: false,
       });
    }
 
@@ -29,5 +30,23 @@ export class ServerPlayerComponent {
 
    getNrOfPlayers(): number {
       return this.store.getIds().length;
+   }
+
+   private getUniqueName(name: string): string {
+      const playerWithThisName = Array.from(Object.values(this.store.getData())).find((player) => player.name === name);
+      if (playerWithThisName) {
+         const nameSplit = name.split(' ');
+         if (nameSplit.length > 1) {
+            let nameEndingNumber = parseInt(nameSplit[nameSplit.length - 1]);
+            if (Number.isFinite(nameEndingNumber)) {
+               nameEndingNumber++;
+               nameSplit[nameSplit.length - 1] = nameEndingNumber.toString();
+               return this.getUniqueName(nameSplit.join(' '));
+            }
+         }
+         nameSplit.push('1');
+         return this.getUniqueName(nameSplit.join(' '));
+      }
+      return name;
    }
 }

@@ -1,8 +1,8 @@
 import { fromEvent, Subject } from 'rxjs';
-import { SharedConfig } from '../../shared/config/shared-config';
 import Http from 'http';
 import { Server, Socket } from 'socket.io';
 import { SharedSocketIoWrapper } from '../../shared/network/shared-socket-io-wrapper';
+import { ServerConfig } from '../config/server-config';
 
 export class ServerSocketIoWrapper extends SharedSocketIoWrapper {
    private readonly connectedSubject = new Subject<Socket>();
@@ -20,6 +20,6 @@ export class ServerSocketIoWrapper extends SharedSocketIoWrapper {
       fromEvent(this.socketServer, ServerSocketIoWrapper.EVENT_CONNECTED).subscribe((socket: Socket) => {
          this.connectedSubject.next(socket);
       });
-      this.httpServer.listen(SharedConfig.SERVER_PORT);
+      this.httpServer.listen(ServerConfig.SERVER_PORT);
    }
 }

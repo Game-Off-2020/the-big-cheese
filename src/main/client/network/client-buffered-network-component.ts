@@ -1,15 +1,15 @@
 import { Singleton } from 'typescript-ioc';
 import { NetworkEvent, NetworkMessage, NetworkPayload } from '../../shared/network/shared-network-model';
-import { SharedConfig } from '../../shared/config/shared-config';
 import deepmerge from 'deepmerge';
 import { spawn, Worker } from 'threads/dist';
 import { ClientNetworkThread } from './network-thread/client-network-thread';
 import 'threads/register';
 import { ReplaySubject, Subject } from 'rxjs';
+import { ClientConfig } from '../config/client-config';
 
 @Singleton
 export class ClientBufferedNetworkComponent {
-   private readonly bufferTimerMs = 1000 / SharedConfig.NETWORK_TICK_RATE;
+   private readonly bufferTimerMs = 1000 / ClientConfig.NETWORK_TICK_RATE;
    private bufferedEventsMessages = new Map<NetworkEvent, NetworkPayload>();
    private lastSendTime = 0;
    private readonly bindRequestBufferTimer;

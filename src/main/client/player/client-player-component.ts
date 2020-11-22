@@ -3,8 +3,9 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { Player } from '../../shared/player/player-model';
 import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { BulletFireOptions } from '../bullet/default-bullet';
+import { Vector } from '../../shared/bullet/vector-model';
 
 @Singleton
 export class ClientPlayerComponent {
@@ -20,10 +21,8 @@ export class ClientPlayerComponent {
 
    setClientPlayer(player: Player): void {
       this.clientId = player.id;
-      this.store.commit(player.id, player);
       this.clientInitSubject.next(player);
       this.store.update(player.id, player);
-      this.subscribePlayerSpriteCommitToStore();
       this.subscribeOnUpdateToPlayerSprite();
    }
 
@@ -31,34 +30,45 @@ export class ClientPlayerComponent {
       this.clientPlayer = player;
    }
 
+   getClientId(): string | undefined {
+      return this.clientId;
+   }
+
    shoot(options: BulletFireOptions): void {
       this.clientShootingSubject.next(options);
    }
 
-   // Wire client character from spriteX to store
-   private subscribePlayerSpriteCommitToStore(): void {
-      this.clientPlayer.positionChanged$.subscribe((position) => {
-         this.store.commit(this.clientId, {
-            position: {
-               x: position.x,
-               y: position.y,
-            },
-         } as Player);
-      });
+   setMoving(moving: boolean): void {
+      this.store.commit(this.clientId, { moving } as Player);
+   }
+
+   setPosition(position: Vector): void {
+      this.store.commit(this.clientId, {
+         position: {
+            x: position.x,
+            y: position.y,
+         },
+      } as Player);
+   }
+
+   setDirection(direction: Vector): void {
+      this.store.commit(this.clientId, {
+         direction: {
+            x: direction.x,
+            y: direction.y,
+         },
+      } as Player);
    }
 
    // Wire client character from store to sprite
    private subscribeOnUpdateToPlayerSprite(): void {
       this.store
          .onUpdatedId(this.clientId)
-         .pipe(
-            filter((playerData) => !!playerData.position),
-            map((playerData) => playerData.position),
-         )
-         .subscribe((position) => {
-            // TODO: Might need to calculate relative position in the client?
-            console.log('Player position updated');
-            this.clientPlayer.setPosition(position.x, position.y);
+         .pipe(filter((playerData) => !!playerData.position))
+         .subscribe((player) => {
+            if (player.position) {
+               this.clientPlayer.setPosition(player.position.x, player.position.y);
+            }
          });
    }
 }

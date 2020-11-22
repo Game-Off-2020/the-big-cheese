@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 
 import { MapDestruction } from '../../shared/map/map-model';
-import { SharedConfig } from '../../shared/config/shared-config';
+import { ClientConfig } from '../config/client-config';
 import { PLAYER_HEIGHT, PLAYER_WIDTH } from '../player/player-sprite';
 import { Keys } from '../config/constants';
 
@@ -39,7 +39,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
          y: this.y,
          speed: { min: -20, max: 20 },
          angle: { min: 0, max: 360 },
-         scale: { start: 0, end: 0.4 },
+         scale: { start: 0, end: 0.4 / ClientConfig.MAP_OUTPUT_SCALE },
          alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
          blendMode: Phaser.BlendModes.SCREEN,
          gravityY: 0,
@@ -48,12 +48,11 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter.reserve(1000);
       this.dustEmitter.stop();
       particle.setDepth(100);
-      this.setScale(SharedConfig.MAP_OUTPUT_SCALE, SharedConfig.MAP_OUTPUT_SCALE);
    }
 
    hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
-      const localX = Math.round(worldX / SharedConfig.MAP_OUTPUT_SCALE + this.radius);
-      const localY = Math.round(worldY / SharedConfig.MAP_OUTPUT_SCALE + this.radius);
+      const localX = Math.round(worldX + this.radius);
+      const localY = Math.round(worldY + this.radius);
 
       if (localX < 0 || localY < 0 || localX > this.radius * 2 || localY > this.radius * 2) return false;
 
@@ -76,8 +75,10 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter
          .setSpeed({ min: destruction.radius, max: destruction.radius })
          .explode(10, destruction.position.x, destruction.position.y);
+   }
 
-      this.scene.cameras.main.shake(100, 0.002);
+   shake(intensity: number): void {
+      this.scene.cameras.main.shake(100, intensity);
    }
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {

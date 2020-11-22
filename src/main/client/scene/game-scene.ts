@@ -6,16 +6,24 @@ import { ClientMapComponent } from '../map/client-map-component';
 import { PlayerSprite } from '../player/player-sprite';
 import { Bullets } from '../bullet/default-bullet';
 import { ClientPlayerComponent } from '../player/client-player-component';
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { MapSprite } from '../map/map-sprite';
 import { LavaFloorSprite } from './lava-floor-sprite';
 import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
+import { ClientOtherPlayerComponent } from '../player/client-other-player-component';
+import { OtherPlayerSprite } from '../player/other-player-sprite';
+import { ReplaySubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { PlayerStore } from '../../shared/player/player-store';
+import { ClientConfig } from '../config/client-config';
+import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { Keys } from '../config/constants';
 
 export class GameScene extends Scene {
+   private readonly maxHorizontalSpeed = 3 / ClientConfig.MAP_OUTPUT_SCALE;
    private readonly characterWidth = 10;
+   private readonly maxVerticalSpeed = 20 / ClientConfig.MAP_OUTPUT_SCALE;
    private cursorKeys: CursorKeys;
    private character: PlayerSprite;
    private bullets?: Bullets;
@@ -29,7 +37,18 @@ export class GameScene extends Scene {
    private readonly playerComponent: ClientPlayerComponent;
 
    @Inject
+   private readonly playerStore: PlayerStore;
+
+   @Inject
+   private readonly otherPlayersComponent: ClientOtherPlayerComponent;
+
+   @Inject
    private readonly bulletGroupComponent: ClientBulletComponent;
+
+   private readonly otherPlayers = new Map<string, OtherPlayerSprite>();
+
+   private readonly createdSubject = new ReplaySubject<boolean>();
+   private readonly created$ = this.createdSubject.asObservable();
 
    constructor() {
       super({
@@ -44,8 +63,28 @@ export class GameScene extends Scene {
          });
          this.mapComponent.setMapSprite(this.mapSprite);
       });
-      this.mapComponent.updated$.subscribe(() => {
-         this.mapSprite && this.mapSprite.update();
+      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+      this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
+         const sprite = new OtherPlayerSprite(this, player);
+         this.otherPlayers.set(player.id, sprite);
+         this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
+            if (updatedPlayer.position) {
+               sprite.tickPosition(updatedPlayer.position);
+            }
+            if (updatedPlayer.direction) {
+               sprite.tickDirection(updatedPlayer.direction);
+            }
+            if (updatedPlayer.moving !== undefined) {
+               sprite.setMoving(updatedPlayer.moving);
+            }
+         });
+      });
+      this.otherPlayersComponent.removed$.subscribe((playerId) => {
+         const sprite = this.otherPlayers.get(playerId);
+         if (sprite) {
+            sprite.destroy();
+            this.otherPlayers.delete(playerId);
+         }
       });
    }
 
@@ -61,6 +100,18 @@ export class GameScene extends Scene {
                   position: position,
                   direction: VectorUtil.getRelativeMouseDirection(this, this.character),
                });
+            },
+            onStartMoving: () => {
+               this.playerComponent.setMoving(true);
+            },
+            onStartStanding: () => {
+               this.playerComponent.setMoving(false);
+            },
+            onPositionChanged: (position) => {
+               this.playerComponent.setPosition(position);
+            },
+            onDirectionChanged: (direction) => {
+               this.playerComponent.setDirection(direction);
             },
          },
          physics: {
@@ -108,15 +159,25 @@ export class GameScene extends Scene {
       });
       this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
+      this.cameras.main.zoom = ClientConfig.MAP_OUTPUT_SCALE;
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
+      this.createdSubject.next(true);
    }
 
    update(): void {
       if (!this.mapSprite) return;
       this.cameras.main.setRotation(-this.character.rotation);
       this.character.update();
+      this.updateOtherPlayers();
+   }
+
+   private updateOtherPlayers(): void {
+      for (const sprite of this.otherPlayers.values()) {
+         sprite.update();
+         sprite.setRotation(VectorUtil.getFloorVector(sprite).scale(-1).angle());
+      }
    }
 }
