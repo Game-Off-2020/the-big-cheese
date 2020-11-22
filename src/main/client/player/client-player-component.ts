@@ -3,7 +3,6 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { Player } from '../../shared/player/player-model';
 import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
-import { filter } from 'rxjs/operators';
 import { BulletFireOptions } from '../bullet/default-bullet';
 import { Vector } from '../../shared/bullet/vector-model';
 
@@ -62,13 +61,13 @@ export class ClientPlayerComponent {
 
    // Wire client character from store to sprite
    private subscribeOnUpdateToPlayerSprite(): void {
-      this.store
-         .onUpdatedId(this.clientId)
-         .pipe(filter((playerData) => !!playerData.position))
-         .subscribe((player) => {
-            if (player.position) {
-               this.clientPlayer.setPosition(player.position.x, player.position.y);
-            }
-         });
+      this.store.onUpdatedId(this.clientId).subscribe((player) => {
+         if (player.position) {
+            this.clientPlayer.setPosition(player.position.x, player.position.y);
+         }
+         if (player.hp !== undefined) {
+            console.log(`My hp is changed to ${player.hp}%`);
+         }
+      });
    }
 }

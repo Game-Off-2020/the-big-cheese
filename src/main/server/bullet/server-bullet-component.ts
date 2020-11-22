@@ -85,17 +85,33 @@ export class ServerBulletComponent {
       );
       if (mapCollision || playerCollision) {
          this.store.remove(id);
-         this.map.destruct({
-            position: {
-               x: mapCollision ? mapCollision[0] : playerCollision[0],
-               y: mapCollision ? mapCollision[1] : playerCollision[1],
-            },
-            radius: MathUtil.randomFloatFromInterval(20, 60) / ServerConfig.MAP_OUTPUT_SCALE,
-         });
+         this.dealDamage(
+            mapCollision ? mapCollision[0] : playerCollision[0],
+            mapCollision ? mapCollision[1] : playerCollision[1],
+            MathUtil.randomFloatFromInterval(20, 60) / ServerConfig.MAP_OUTPUT_SCALE,
+            MathUtil.randomFloatFromInterval(15, 20) / 100,
+            bullet.playerId,
+         );
       } else {
          // We dont use store.commit here on purpose, unnecessary to sync with clients
          bullet.position.x = this.nextPosition.x;
          bullet.position.y = this.nextPosition.y;
       }
+   }
+
+   private dealDamage(x: number, y: number, radius: number, damage: number, playerId?: string): void {
+      this.map.destruct({
+         position: { x, y },
+         radius,
+      });
+      this.players
+         .getIdsInRadius(x, y, radius)
+         .filter((id) => id !== playerId)
+         .forEach((id) => {
+            const hpLeft = this.players.dealDamage(id, damage);
+            if (playerId && hpLeft !== null) {
+               // TODO: Score
+            }
+         });
    }
 }
