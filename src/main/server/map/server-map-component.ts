@@ -93,7 +93,7 @@ export class ServerMapComponent extends SharedMapComponent {
    //
 
    getRandomPositionAboveSurface(elevation: number): Vector {
-      const angle = (Math.random() * Math.PI) / 2;
+      const angle = Math.random() * Math.PI * 2;
       const radius = this.canvasSize / 2 + elevation;
       return {
          x: Math.cos(angle) * radius,

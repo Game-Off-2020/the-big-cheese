@@ -26,20 +26,20 @@ interface PlayerOptions {
    };
 }
 
-const MAX_HORIZONTAL_SPEED = 3;
+const MAX_HORIZONTAL_SPEED = 1;
 const MAX_VERTICAL_SPEED = 10;
-export const PLAYER_HEIGHT = 40;
+export const PLAYER_HEIGHT = 20;
 export const PLAYER_WIDTH = 10;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
    private positionChangedSubject = new Subject<Vector2>();
    readonly positionChanged$ = this.positionChangedSubject.asObservable();
-   private gun: GunSprite;
-   private character: Phaser.GameObjects.Sprite;
+   private readonly gun: GunSprite;
+   private readonly character: Phaser.GameObjects.Sprite;
    private jumping = false;
    private verticalSpeed = 0;
-   private debugger: HitBoxDebugger;
+   private readonly debugger: HitBoxDebugger;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);

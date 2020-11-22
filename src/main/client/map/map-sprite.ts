@@ -74,8 +74,10 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter
          .setSpeed({ min: destruction.radius, max: destruction.radius })
          .explode(10, destruction.position.x, destruction.position.y);
+   }
 
-      this.scene.cameras.main.shake(100, 0.002);
+   shake(intensity: number): void {
+      this.scene.cameras.main.shake(100, intensity);
    }
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
