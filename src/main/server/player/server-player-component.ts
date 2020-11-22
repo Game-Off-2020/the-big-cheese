@@ -14,10 +14,11 @@ export class ServerPlayerComponent {
    ) {
       store.changed$.subscribe((entity) => {
          if (entity.value.position) {
+            // Width and height must be switched for some reason
             collisionPhysics.updatePosition(
                entity.id,
                entity.value.position.x,
-               entity.value.position.y - ServerConfig.PLAYER_HEIGHT / 2,
+               entity.value.position.y - ServerConfig.PLAYER_WIDTH / 2,
             );
          }
       });
