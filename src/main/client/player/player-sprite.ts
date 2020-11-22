@@ -7,6 +7,7 @@ import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
 import Vector2 = Phaser.Math.Vector2;
 import { HitBoxDebugger } from '../util/hitbox-debugger-util';
+import { Keys } from '../config/constants';
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -45,14 +46,15 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       super(options.scene, 0, 0);
       this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
       const config = {
-         key: 'player-walk',
-         frames: options.scene.anims.generateFrameNumbers('player1', { frames: [0, 1, 2, 6, 7, 8] }),
+         key: Keys.PLAYER_1_WALK,
+         frames: options.scene.anims.generateFrameNumbers(Keys.PLAYER_1, { frames: [0, 1, 2, 6, 7, 8] }),
          frameRate: 10,
          repeat: -1,
       };
       options.scene.anims.create(config);
 
-      this.character = options.scene.make.sprite({ key: 'player1' });
+      this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 });
+      this.character.play(Keys.PLAYER_1_WALK);
       this.add(this.character);
 
       this.gun = new GunSprite({
@@ -172,7 +174,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (!this.isMoving) {
          this.isMoving = true;
          this.options.callbacks.onStartMoving();
-         this.character.anims.play('player-walk', true);
+         this.character.anims.play(Keys.PLAYER_1_WALK, true);
       }
    }
 

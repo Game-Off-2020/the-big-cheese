@@ -18,6 +18,7 @@ import { switchMap } from 'rxjs/operators';
 import { PlayerStore } from '../../shared/player/player-store';
 import { ClientConfig } from '../config/client-config';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
+import { Keys } from '../config/constants';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3 / ClientConfig.MAP_OUTPUT_SCALE;
@@ -53,7 +54,7 @@ export class GameScene extends Scene {
       super({
          active: false,
          visible: false,
-         key: 'Game', // TODO: Extract key
+         key: Keys.GAME_SCENE,
       });
       this.mapComponent.mapLoaded$.subscribe((canvas) => {
          this.mapSprite = new MapSprite({

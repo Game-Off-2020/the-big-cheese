@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
+import { Keys } from '../config/constants';
 import { VectorUtil } from '../util/vector-util';
 import Vector2 = Phaser.Math.Vector2;
 
@@ -14,7 +15,7 @@ export class GunSprite extends Phaser.GameObjects.Sprite {
    private relativeDirection?: Vector2;
 
    constructor(private readonly options: GunOptions) {
-      super(options.scene, options.x, options.y, 'basic-gun');
+      super(options.scene, options.x, options.y, Keys.BASIC_GUN);
       this.flip(true);
    }
 
