@@ -110,13 +110,13 @@ export class CollisionPhysics {
       const right = this.raycastLineToLine(x1, y1, x2, y2, rx + rw, ry, rx + rw, ry + rh);
       const top = this.raycastLineToLine(x1, y1, x2, y2, rx, ry, rx + rw, ry);
       const bottom = this.raycastLineToLine(x1, y1, x2, y2, rx, ry + rh, rx + rw, ry + rh);
-      let minSide = left;
+      let closestCollision = left;
       for (const side of [right, top, bottom]) {
-         if (side && (!minSide || side.distanceSquared < minSide.distanceSquared)) {
-            minSide = side;
+         if (side && (!closestCollision || side.distanceSquared < closestCollision.distanceSquared)) {
+            closestCollision = side;
          }
       }
-      return minSide;
+      return closestCollision;
    }
 
    // http://www.jeffreythompson.org/collision-detection/line-rect.php
