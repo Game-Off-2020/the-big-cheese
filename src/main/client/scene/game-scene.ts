@@ -12,6 +12,7 @@ import { LavaFloorSprite } from './lava-floor-sprite';
 import { ClientBulletComponent } from '../bullet/client-bullet-component';
 import { StarFieldSprite } from './star-field-sprite';
 import { VectorUtil } from '../util/vector-util';
+import { Keys } from '../util/keys';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3;
@@ -36,7 +37,7 @@ export class GameScene extends Scene {
       super({
          active: false,
          visible: false,
-         key: 'Game', // TODO: Extract key
+         key: Keys.GAME_SCENE,
       });
       this.mapComponent.mapLoaded$.subscribe((canvas) => {
          this.mapSprite = new MapSprite({

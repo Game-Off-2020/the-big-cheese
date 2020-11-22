@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Keys } from '../util/keys';
 
 interface LavaFloorOptions {
    readonly scene: Phaser.Scene;
@@ -13,8 +14,8 @@ export class LavaFloorSprite extends Phaser.GameObjects.Sprite {
       canvas.width = options.size;
       canvas.height = options.size;
 
-      const texture = options.scene.textures.addCanvas('lava', canvas);
-      super(options.scene, 0, 0, 'lava');
+      const texture = options.scene.textures.addCanvas(Keys.LAVA, canvas);
+      super(options.scene, 0, 0, Keys.LAVA);
 
       this.radius = canvas.width / 2;
       this.lavaTexture = texture;

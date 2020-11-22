@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 
 import { MapDestruction } from '../../shared/map/map-model';
 import { SharedConfig } from '../../shared/config/shared-config';
+import { Keys } from '../util/keys';
 
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
@@ -24,17 +25,17 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
    constructor(options: MapSpriteOptions) {
-      const terrainTexture = options.scene.textures.addCanvas('terrain', options.canvas);
-      super(options.scene, 0, 0, 'terrain');
+      const terrainTexture = options.scene.textures.addCanvas(Keys.TERRAIN, options.canvas);
+      super(options.scene, 0, 0, Keys.TERRAIN);
 
       this.terrainTexture = terrainTexture;
       this.radius = options.canvas.width / 2;
-      const moon = options.scene.textures.get('moon').getSourceImage() as HTMLImageElement;
+      const moon = options.scene.textures.get(Keys.MOON).getSourceImage() as HTMLImageElement;
       options.scene.add.existing(this);
       terrainTexture.context.globalCompositeOperation = 'source-in';
       terrainTexture.draw(0, 0, moon);
 
-      const particle = options.scene.add.particles('moon-dust-particle');
+      const particle = options.scene.add.particles(Keys.MOON_DUST_PARTICLE);
       this.dustEmitter = particle.createEmitter({
          x: this.x,
          y: this.y,

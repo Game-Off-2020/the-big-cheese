@@ -1,12 +1,13 @@
 import { MenuButton } from '../ui/menu-button';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
+import { Keys } from '../util/keys';
 
 export class ErrorScene extends Phaser.Scene {
    constructor() {
       super({
          active: false,
          visible: false,
-         key: 'ErrorScreen', // TODO: Extract key
+         key: Keys.ERROR_SCENE,
       });
    }
 
@@ -18,10 +19,10 @@ export class ErrorScene extends Phaser.Scene {
          .setFontSize(24);
 
       new MenuButton(this, 100, 150, 'Cancel', () => {
-         this.game.scene.start('MainMenu'); // TODO: Extract key
+         this.game.scene.start(Keys.MAIN_MENU_SCENE);
       });
       // new MenuButton(this, 300, 150, 'Retry', () => {
-      //   this.game.scene.start('MainMenu'); // TODO: Extract key
+      //   this.game.scene.start(Keys.MAIN_MENU_SCENE);
       //});
    }
 
