@@ -90,7 +90,7 @@ export class ServerBulletComponent {
                x: mapCollision ? mapCollision[0] : playerCollision[0],
                y: mapCollision ? mapCollision[1] : playerCollision[1],
             },
-            radius: MathUtil.randomFloatFromInterval(10, 35) / ServerConfig.MAP_OUTPUT_SCALE,
+            radius: MathUtil.randomFloatFromInterval(20, 60) / ServerConfig.MAP_OUTPUT_SCALE,
          });
       } else {
          // We dont use store.commit here on purpose, unnecessary to sync with clients
