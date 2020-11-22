@@ -1,6 +1,7 @@
 // Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 import * as Phaser from 'phaser';
 import { SharedConfig } from '../../shared/config/shared-config';
+import { Keys } from '../config/constants';
 import { MathUtil } from '../util/math-util';
 
 export interface BulletFireOptions {
@@ -15,7 +16,7 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
    private readonly lifeTime = 1000;
 
    constructor(scene: Phaser.Scene, x: number, y: number) {
-      super(scene, x, y, 'bullet');
+      super(scene, x, y, Keys.BULLET);
    }
 
    fire(options: BulletFireOptions): void {
@@ -53,29 +54,29 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
 
       this.createMultiple({
          frameQuantity: 100,
-         key: 'bullet',
+         key: Keys.BULLET,
          active: false,
          visible: false,
          classType: DefaultBullet,
       });
 
       this.bulletSounds = [
-         scene.sound.add('basic-gun-sound', {
+         scene.sound.add(Keys.BASIC_GUN_SOUND, {
             volume: 0.3,
          }),
-         scene.sound.add('basic-gun-sound', {
+         scene.sound.add(Keys.BASIC_GUN_SOUND, {
             volume: 0.3,
             detune: -100,
          }),
-         scene.sound.add('basic-gun-sound', {
+         scene.sound.add(Keys.BASIC_GUN_SOUND, {
             volume: 0.3,
             detune: -50,
          }),
-         scene.sound.add('basic-gun-sound', {
+         scene.sound.add(Keys.BASIC_GUN_SOUND, {
             volume: 0.3,
             detune: 50,
          }),
-         scene.sound.add('basic-gun-sound', {
+         scene.sound.add(Keys.BASIC_GUN_SOUND, {
             volume: 0.3,
             detune: 100,
          }),

@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Keys } from '../config/constants';
 import { MathUtil } from '../util/math-util';
 
 interface StarFieldOptions {
@@ -14,8 +15,8 @@ export class StarFieldSprite extends Phaser.GameObjects.Sprite {
       canvas.width = largestSide * 2;
       canvas.height = largestSide * 2;
 
-      const texture = options.scene.textures.addCanvas('star-field', canvas);
-      super(options.scene, options.scene.game.scale.width / 2, options.scene.game.scale.height / 2, 'star-field');
+      const texture = options.scene.textures.addCanvas(Keys.STAR_FIELD, canvas);
+      super(options.scene, options.scene.game.scale.width / 2, options.scene.game.scale.height / 2, Keys.STAR_FIELD);
 
       for (let i = 0; i < 2000; i++) {
          const radius = MathUtil.randomFloatFromInterval(0.2, 2);
