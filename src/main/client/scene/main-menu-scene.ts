@@ -3,6 +3,7 @@ import { ClientConfig } from '../config/client-config';
 import { Inject } from 'typescript-ioc';
 import { GameStateComponent } from '../game-state/game-state-component';
 import { Utils } from '../../shared/util/utils';
+import { Keys } from '../config/constants';
 
 export class MainMenuScene extends Phaser.Scene {
    @Inject
@@ -12,7 +13,7 @@ export class MainMenuScene extends Phaser.Scene {
       super({
          active: false,
          visible: false,
-         key: 'MainMenu', // TODO: Extract key
+         key: Keys.MAIN_MENU_SCENE,
       });
    }
 

@@ -23,12 +23,12 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
       this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
       scene.anims.create({
          key: 'player-walk',
-         frames: scene.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 6, 7, 8] }),
+         frames: scene.anims.generateFrameNumbers('player1', { frames: [0, 1, 2, 6, 7, 8] }),
          frameRate: 10,
          repeat: -1,
       });
       scene.add.existing(this);
-      this.add((this.character = scene.make.sprite({ key: 'player' })));
+      this.add((this.character = scene.make.sprite({ key: 'player1' })));
       this.character.setOrigin(0.5, 1);
       this.add(
          (this.gun = new GunSprite({

@@ -22,10 +22,11 @@ export class ServerMapComponent extends SharedMapComponent {
       this.canvasSize = (radius * 2) / ServerConfig.MAP_OUTPUT_SCALE;
       this.canvas = createCanvas(this.canvasSize, this.canvasSize);
       this.ctx = this.canvas.getContext('2d');
+      this.ctx.imageSmoothingEnabled = false;
 
       // Base cirlce
       this.ctx.fillStyle = '#ff0000';
-      this.ctx.arc(this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2, 0, 2 * Math.PI);
+      this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2);
       this.ctx.fill();
 
       // Perlin Noise
@@ -71,7 +72,7 @@ export class ServerMapComponent extends SharedMapComponent {
       this.ctx.closePath();
       this.ctx.beginPath();
       this.ctx.fillStyle = '#ff0000';
-      this.ctx.arc(this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2 / 1.1, 0, 2 * Math.PI);
+      this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, Math.floor(this.canvasSize / 2 / 1.1));
       this.ctx.fill();
 
       // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
