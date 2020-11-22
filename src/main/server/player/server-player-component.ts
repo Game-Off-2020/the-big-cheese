@@ -35,6 +35,7 @@ export class ServerPlayerComponent {
             y: 0,
          },
          moving: false,
+         hp: 1.0,
       });
       // Width and height must be switched for some reason
       this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_HEIGHT, ServerConfig.PLAYER_WIDTH);
@@ -53,9 +54,23 @@ export class ServerPlayerComponent {
       return this.store.getIds().length;
    }
 
+   getIdsInRadius(x: number, y: number, radius: number): string[] {
+      return this.collisionPhysics.getIdsInRadius(x, y, radius);
+   }
+
    raycast(x1: number, y1: number, x2: number, y2: number, exceptId: string): [number, number] | null {
-      // TODO: Different size of bullets?
       return this.collisionPhysics.raycast(x1, y1, x2, y2, exceptId);
+   }
+
+   dealDamage(id: string, damage: number): number | null {
+      const player = this.store.get(id);
+      if (player) {
+         if (player.hp === 0) return null;
+         const hp = Math.max(0, player.hp - damage);
+         this.store.commit(id, { hp } as Player);
+         return hp;
+      }
+      return null;
    }
 
    private getUniqueName(name: string): string {

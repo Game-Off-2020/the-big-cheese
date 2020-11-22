@@ -43,11 +43,14 @@ export class ClientMapComponent extends SharedMapComponent {
    drawDestruction(destruction: MapDestruction): void {
       super.drawDestruction(destruction);
       this.mapSprite.emitDust(destruction);
+      this.shake(destruction);
+      this.updatedSubject.next();
+   }
 
+   private shake(destruction: MapDestruction): void {
       const shakeLimit = 40 / ClientConfig.MAP_OUTPUT_SCALE;
       if (destruction.radius > shakeLimit) {
          this.mapSprite.shake((0.0002 * destruction.radius) / shakeLimit);
       }
-      this.updatedSubject.next();
    }
 }

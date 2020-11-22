@@ -57,19 +57,25 @@ export class CollisionPhysics {
       }
    }
 
+   getIdsInRadius(x: number, y: number, radius: number): string[] {
+      x = this.toLocalCoordinate(x);
+      y = this.toLocalCoordinate(y);
+      return this.getItemsInRectangle(x - radius, y - radius, radius * 2, radius * 2)
+         .filter((item) => this.raycastCircleToRectangle(x, y, radius, item.x, item.y, item.width, item.height))
+         .map((item) => item.id);
+   }
+
    raycast(x1: number, y1: number, x2: number, y2: number, exceptId?: string): [number, number] | null {
       x1 = this.toLocalCoordinate(x1);
       x2 = this.toLocalCoordinate(x2);
       y1 = this.toLocalCoordinate(y1);
       y2 = this.toLocalCoordinate(y2);
-      const lineRectWidth = Math.abs(x1 - x2);
-      const lineRectHeight = Math.abs(y1 - y2);
-      const itemsInRectangle = this.tree.colliding({
-         x: Math.min(x1, x2),
-         y: Math.min(y1, y2),
-         width: lineRectWidth,
-         height: lineRectHeight,
-      });
+      const itemsInRectangle = this.getItemsInRectangle(
+         Math.min(x1, x2),
+         Math.min(y1, y2),
+         Math.abs(x1 - x2),
+         Math.abs(y1 - y2),
+      );
       if (itemsInRectangle.length) {
          for (const item of itemsInRectangle) {
             if (exceptId && item.id === exceptId) continue;
@@ -93,6 +99,10 @@ export class CollisionPhysics {
          }
       }
       return null;
+   }
+
+   private getItemsInRectangle(x: number, y: number, width: number, height: number): CollisionPhysicsItem[] {
+      return this.tree.colliding({ x, y, width, height });
    }
 
    // http://www.jeffreythompson.org/collision-detection/line-rect.php
@@ -146,6 +156,25 @@ export class CollisionPhysics {
          };
       }
       return null;
+   }
+
+   // https://stackoverflow.com/questions/21089959/detecting-collision-of-rectangle-with-circle
+   private raycastCircleToRectangle(
+      x1: number,
+      y1: number,
+      r: number,
+      x2: number,
+      y2: number,
+      w: number,
+      h: number,
+   ): boolean {
+      const distX = Math.abs(x1 - x2 - w / 2);
+      const distY = Math.abs(y1 - y2 - h / 2);
+      if (distX > w / 2 + r) return false;
+      if (distY > h / 2 + r) return false;
+      if (distX <= w / 2) return true;
+      if (distY <= h / 2) return true;
+      return Math.pow(distX - w / 2, 2) + Math.pow(distY - h / 2, 2) <= r * r;
    }
 
    private toLocalCoordinate(worldXY: number): number {
