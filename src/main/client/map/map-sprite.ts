@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 
 import { MapDestruction } from '../../shared/map/map-model';
 import { SharedConfig } from '../../shared/config/shared-config';
+import { PLAYER_HEIGHT, PLAYER_WIDTH } from '../player/player-sprite';
 
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
@@ -14,9 +15,6 @@ interface Color {
    readonly blue: number;
    readonly alpha: number;
 }
-
-const CHARACTER_HEIGHT = 20;
-const CHARACTER_WIDTH = 10;
 
 export class MapSprite extends Phaser.GameObjects.Sprite {
    private terrainTexture: Phaser.Textures.CanvasTexture;
@@ -58,7 +56,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 
       if (localX < 0 || localY < 0 || localX > this.radius * 2 || localY > this.radius * 2) return false;
 
-      const data = this.terrainTexture.getData(localX, localY, CHARACTER_WIDTH, CHARACTER_HEIGHT);
+      const data = this.terrainTexture.getData(localX, localY, PLAYER_WIDTH, PLAYER_HEIGHT);
 
       for (const point of points) {
          if (this.testCollisionWithTerrain(point.x, point.y, data)) {
@@ -77,6 +75,8 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter
          .setSpeed({ min: destruction.radius, max: destruction.radius })
          .explode(10, destruction.position.x, destruction.position.y);
+
+      this.scene.cameras.main.shake(100, 0.002);
    }
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
