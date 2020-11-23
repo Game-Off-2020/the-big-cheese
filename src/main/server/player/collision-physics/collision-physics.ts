@@ -33,7 +33,7 @@ export class CollisionPhysics {
       const item: CollisionPhysicsItem = {
          id,
          x: this.toLocalCoordinate(x),
-         y: this.toLocalCoordinate(y),
+         y: this.toLocalCoordinate(y) - width / 2, // Some adjustment
          width,
          height,
       };
@@ -45,7 +45,7 @@ export class CollisionPhysics {
       const item = this.items.get(id);
       if (item) {
          item.x = this.toLocalCoordinate(x);
-         item.y = this.toLocalCoordinate(y);
+         item.y = this.toLocalCoordinate(y) - item.width / 2; // Some adjustment
       }
    }
 
@@ -65,7 +65,13 @@ export class CollisionPhysics {
          .map((item) => item.id);
    }
 
-   raycast(x1: number, y1: number, x2: number, y2: number, exceptId?: string): [number, number] | null {
+   getIdsInRectangle(x: number, y: number, w: number, h: number): string[] {
+      x = this.toLocalCoordinate(x);
+      y = this.toLocalCoordinate(y);
+      return this.getItemsInRectangle(x, y, w, h).map((item) => item.id);
+   }
+
+   raycast(x1: number, y1: number, x2: number, y2: number, exceptId?: string): [number, number, string] | null {
       x1 = this.toLocalCoordinate(x1);
       x2 = this.toLocalCoordinate(x2);
       y1 = this.toLocalCoordinate(y1);
@@ -94,7 +100,7 @@ export class CollisionPhysics {
                itemRectHeight,
             );
             if (point) {
-               return [this.toWorldCoordinate(point.x), this.toWorldCoordinate(point.y)];
+               return [this.toWorldCoordinate(point.x), this.toWorldCoordinate(point.y), item.id];
             }
          }
       }

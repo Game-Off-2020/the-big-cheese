@@ -1,5 +1,5 @@
 import { MapStore } from './map-store';
-import { MapDestruction } from './map-model';
+import { Destruction } from './map-model';
 
 export class SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
@@ -7,7 +7,7 @@ export class SharedMapComponent {
 
    constructor(protected readonly store: MapStore) {}
 
-   drawDestruction(destruction: MapDestruction): void {
+   drawDestruction(destruction: Destruction): void {
       this.ctx.imageSmoothingEnabled = false;
       this.ctx.beginPath();
       this.ctx.globalCompositeOperation = 'destination-out';

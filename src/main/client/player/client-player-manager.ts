@@ -17,7 +17,7 @@ export class ClientPlayerManager {
             position: { x: 0, y: 0 },
             direction: { x: 0, y: 0 },
             moving: false,
-            hp: 1.0,
+            cheese: 0.0,
          });
       });
    }

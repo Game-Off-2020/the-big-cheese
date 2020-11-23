@@ -5,11 +5,21 @@ import { ServerMapComponent } from '../map/server-map-component';
 import { ShootRequest } from '../../shared/network/shared-network-model';
 import { ServerConfig } from '../config/server-config';
 import { MathUtil } from '../../client/util/math-util';
-import { ServerBullet } from './server-bullet-model';
+import { Damage, ServerBullet } from './server-bullet-model';
 import { ServerBulletStore } from './server-bullet-store';
+import { Subject } from 'rxjs';
+import { Vector } from '../../shared/bullet/vector-model';
+import { Destruction } from '../../shared/map/map-model';
 
 @Singleton
 export class ServerBulletComponent {
+   private readonly damageSubject = new Subject<Damage>();
+   private readonly mapDamageSubject = new Subject<Destruction>();
+   private readonly playerDamageSubject = new Subject<Damage>();
+   readonly damage$ = this.damageSubject.asObservable();
+   readonly mapDamage$ = this.mapDamageSubject.asObservable();
+   readonly playerDamage$ = this.playerDamageSubject.asObservable();
+
    constructor(
       @Inject private readonly store: ServerBulletStore,
       @Inject private readonly players: ServerPlayerComponent,
@@ -85,33 +95,34 @@ export class ServerBulletComponent {
       );
       if (mapCollision || playerCollision) {
          this.store.remove(id);
-         this.dealDamage(
-            mapCollision ? mapCollision[0] : playerCollision[0],
-            mapCollision ? mapCollision[1] : playerCollision[1],
-            MathUtil.randomFloatFromInterval(20, 60) / ServerConfig.MAP_OUTPUT_SCALE,
-            MathUtil.randomFloatFromInterval(15, 20) / 100,
-            bullet.playerId,
-         );
+         const position: Vector = {
+            x: mapCollision ? mapCollision[0] : playerCollision[0],
+            y: mapCollision ? mapCollision[1] : playerCollision[1],
+         };
+         const radius = MathUtil.randomFloatFromInterval(20, 60) / ServerConfig.MAP_OUTPUT_SCALE;
+         this.damageSubject.next({
+            position,
+            radius,
+            playerId: bullet.playerId,
+            collidedPlayerId: playerCollision ? playerCollision[2] : null,
+         });
+         if (mapCollision) {
+            this.mapDamageSubject.next({
+               position,
+               radius,
+            });
+         } else {
+            this.playerDamageSubject.next({
+               playerId: bullet.playerId,
+               position,
+               radius,
+               collidedPlayerId: playerCollision[2],
+            });
+         }
       } else {
          // We dont use store.commit here on purpose, unnecessary to sync with clients
          bullet.position.x = this.nextPosition.x;
          bullet.position.y = this.nextPosition.y;
       }
-   }
-
-   private dealDamage(x: number, y: number, radius: number, damage: number, playerId?: string): void {
-      this.map.destruct({
-         position: { x, y },
-         radius,
-      });
-      this.players
-         .getIdsInRadius(x, y, radius)
-         .filter((id) => id !== playerId)
-         .forEach((id) => {
-            const hpLeft = this.players.dealDamage(id, damage);
-            if (playerId && hpLeft !== null) {
-               // TODO: Score
-            }
-         });
    }
 }

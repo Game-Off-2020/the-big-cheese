@@ -7,4 +7,5 @@ export class CommonSharedConfig {
    static readonly PLAYER_WIDTH: number = 10;
    static readonly PLAYER_HEIGHT: number = 20;
    static readonly RANDOM_START_POSITION: boolean = true;
+   static readonly SHAKE_LIMIT: number = 40 / CommonSharedConfig.MAP_OUTPUT_SCALE;
 }

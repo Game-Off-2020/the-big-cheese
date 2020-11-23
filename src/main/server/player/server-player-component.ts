@@ -4,22 +4,26 @@ import { PlayerStore } from '../../shared/player/player-store';
 import { ServerMapComponent } from '../map/server-map-component';
 import { CollisionPhysics } from './collision-physics/collision-physics';
 import { ServerConfig } from '../config/server-config';
+import { Vector } from '../../shared/bullet/vector-model';
+import { ServerCheeseComponent } from '../cheese/server-cheese-component';
+import { Damage } from '../bullet/server-bullet-model';
+import { DropCheese } from '../../shared/cheese/cheese-model';
+import { Subject } from 'rxjs';
 
 @Singleton
 export class ServerPlayerComponent {
+   private readonly dropCheeseSubject = new Subject<DropCheese>();
+   readonly dropCheese$ = this.dropCheeseSubject.asObservable();
+
    constructor(
       @Inject private readonly store: PlayerStore,
       @Inject private readonly map: ServerMapComponent,
+      @Inject private readonly ammo: ServerCheeseComponent,
       @Inject private readonly collisionPhysics: CollisionPhysics,
    ) {
       store.changed$.subscribe((entity) => {
          if (entity.value.position) {
-            // Width and height must be switched for some reason
-            collisionPhysics.updatePosition(
-               entity.id,
-               entity.value.position.x,
-               entity.value.position.y - ServerConfig.PLAYER_WIDTH / 2,
-            );
+            this.handlePlayerPositionChanged(entity.id, entity.value.position);
          }
       });
    }
@@ -35,7 +39,7 @@ export class ServerPlayerComponent {
             y: 0,
          },
          moving: false,
-         hp: 1.0,
+         cheese: 0.0,
       });
       // Width and height must be switched for some reason
       this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_HEIGHT, ServerConfig.PLAYER_WIDTH);
@@ -58,19 +62,39 @@ export class ServerPlayerComponent {
       return this.collisionPhysics.getIdsInRadius(x, y, radius);
    }
 
-   raycast(x1: number, y1: number, x2: number, y2: number, exceptId: string): [number, number] | null {
+   raycast(x1: number, y1: number, x2: number, y2: number, exceptId: string): [number, number, string] | null {
       return this.collisionPhysics.raycast(x1, y1, x2, y2, exceptId);
    }
 
-   dealDamage(id: string, damage: number): number | null {
+   dealDamage(damage: Damage): void {
+      this.getIdsInRadius(damage.position.x, damage.position.y, damage.radius)
+         .filter((playerId) => playerId !== damage.playerId)
+         .forEach((playerId) => {
+            const cheeseRemoved = this.removeSomeCheese(playerId);
+            if (cheeseRemoved) {
+               this.dropCheeseSubject.next({
+                  position: damage.position,
+                  amount: cheeseRemoved,
+               });
+            }
+         });
+   }
+
+   private removeSomeCheese(id: string): number {
       const player = this.store.get(id);
       if (player) {
-         if (player.hp === 0) return null;
-         const hp = Math.max(0, player.hp - damage);
-         this.store.commit(id, { hp } as Player);
-         return hp;
+         const cheese = Math.max(0, player.cheese - Math.ceil(player.cheese * 0.2));
+         this.store.commit(id, { cheese } as Player);
+         return player.cheese - cheese;
       }
-      return null;
+      return 0;
+   }
+
+   addCheese(id: string): void {
+      const player = this.store.get(id);
+      if (player) {
+         this.store.commit(id, { cheese: ++player.cheese } as Player);
+      }
    }
 
    private getUniqueName(name: string): string {
@@ -89,5 +113,11 @@ export class ServerPlayerComponent {
          return this.getUniqueName(nameSplit.join(' '));
       }
       return name;
+   }
+
+   private handlePlayerPositionChanged(playerId: string, position: Vector): void {
+      this.collisionPhysics.updatePosition(playerId, position.x, position.y);
+      // TODO: Check lava distance and kill if closer
+      this.ammo.checkPickup(playerId, position.x, position.y, ServerConfig.PLAYER_WIDTH, ServerConfig.PLAYER_HEIGHT);
    }
 }
