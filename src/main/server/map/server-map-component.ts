@@ -7,7 +7,6 @@ import { Utils } from '../../shared/util/utils';
 import { Vector } from '../../shared/bullet/vector-model';
 import { PerlinNoise } from './perlin-noise';
 import { ServerConfig } from '../config/server-config';
-import { ServerCheeseComponent } from '../cheese/server-cheese-component';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
@@ -15,7 +14,7 @@ export class ServerMapComponent extends SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
    private data?: DataView;
 
-   constructor(@Inject protected readonly store: MapStore, @Inject private readonly cheese: ServerCheeseComponent) {
+   constructor(@Inject protected readonly store: MapStore) {
       super(store);
    }
 
