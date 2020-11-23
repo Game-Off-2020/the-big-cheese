@@ -20,6 +20,42 @@ import { ClientConfig } from '../config/client-config';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { Keys } from '../config/constants';
 
+class GrayscalePipeline extends Phaser.Renderer.WebGL.Pipelines.TextureTintPipeline {
+   constructor(game: Phaser.Game) {
+      super({
+         game: game,
+         renderer: game.renderer,
+         fragShader: `
+         #ifdef GL_FRAGMENT_PRECISION_HIGH
+         #define highmedp highp
+         #else
+         #define highmedp mediump
+         #endif
+         precision highmedp float;
+         // Scene buffer
+         uniform sampler2D uMainSampler;
+         varying vec2 outTexCoord;
+         // Effect parameters
+         vec2 texSize = vec2(1000.0, 1000.0);
+         vec2 pixelSize = vec2(3.0, 3.0);
+         uniform float radius;
+         uniform float angle;
+         void main (void) {
+           if ((pixelSize.x > 0.0) || (pixelSize.y > 0.0)) {
+             vec2 dxy = pixelSize/texSize;
+             vec2 tc = vec2(dxy.x*( floor(outTexCoord.x/dxy.x) + 0.5 ),
+                            dxy.y*( floor(outTexCoord.y/dxy.y) + 0.5 )
+                           );
+             gl_FragColor = texture2D(uMainSampler, tc);
+           } else {
+             gl_FragColor = texture2D(uMainSampler, outTexCoord);
+           }
+         }
+         `,
+      });
+   }
+}
+
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3 / ClientConfig.MAP_OUTPUT_SCALE;
    private readonly characterWidth = 10;
@@ -89,6 +125,11 @@ export class GameScene extends Scene {
    }
 
    create(): void {
+      const grayscalePipeline = (this.game.renderer as Phaser.Renderer.WebGL.WebGLRenderer).addPipeline(
+         'Grayscale',
+         new GrayscalePipeline(this.game),
+      );
+
       this.cursorKeys = this.input.keyboard.createCursorKeys();
 
       this.character = new PlayerSprite({
@@ -158,18 +199,19 @@ export class GameScene extends Scene {
          },
       });
       this.playerComponent.setClientPlayerSprite(this.character);
-      this.cameras.main.startFollow(this.character);
-      this.cameras.main.zoom = ClientConfig.MAP_OUTPUT_SCALE;
+      // this.cameras.main.startFollow(this.character);
+      // this.cameras.main.zoom = ClientConfig.MAP_OUTPUT_SCALE;
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       new StarFieldSprite({ scene: this });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
       this.createdSubject.next(true);
+      // this.cameras.main.setRenderToTexture(grayscalePipeline);
    }
 
    update(): void {
       if (!this.mapSprite) return;
-      this.cameras.main.setRotation(-this.character.rotation);
+      // this.cameras.main.setRotation(-this.character.rotation);
       this.character.update();
       this.updateOtherPlayers();
    }
