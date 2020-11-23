@@ -41,7 +41,7 @@ export class BootScene extends Scene {
       this.load.on('progress', (progress: number) => {
          progressBar.width = (progressBarWidth - 30) * progress;
 
-         const percent = progress * 100;
+         const percent = Math.round(progress * 100);
          percentText.setText(`${percent}%`);
       });
 

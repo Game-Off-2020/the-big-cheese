@@ -15,6 +15,7 @@ export class GameComponent {
       this.game = new Game({
          type: Phaser.AUTO,
          scale: {
+            mode: Phaser.Scale.RESIZE,
             width: window.innerWidth,
             height: window.innerHeight,
          },
@@ -49,6 +50,7 @@ export class GameComponent {
    }
 
    showGameScene(): void {
+      this.game.scene.stop(Keys.MAIN_MENU_SCENE);
       this.game.scene.start(Keys.GAME_SCENE);
    }
 }
