@@ -4,5 +4,5 @@ import { CommonClientConfig } from './common-client-config';
 export class ClientConfig extends CommonClientConfig {
    static readonly ASSET_FOLDER: string = '../../src/asset/';
    static readonly AUTO_START: boolean = true; // Skip main menu for development purposes
-   static readonly SERVER_HOST: string = `http://localhost:${ClientConfig.SERVER_PORT}`;
+   static readonly SERVER_HOST: string = `http://localhost:${ClientConfig.SERVER_SOCKET_PORT}`;
 }
