@@ -14,5 +14,6 @@ export enum Keys {
    MOON_DUST_PARTICLE = 'moon-dust-particle',
    TERRAIN = 'terrain',
    LAVA = 'lava',
-   STAR_FIELD = 'star-field',
+   // UI
+   LOGO = 'logo',
 }

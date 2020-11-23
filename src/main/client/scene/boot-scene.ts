@@ -41,7 +41,7 @@ export class BootScene extends Scene {
       this.load.on('progress', (progress: number) => {
          progressBar.width = (progressBarWidth - 30) * progress;
 
-         const percent = progress * 100;
+         const percent = Math.round(progress * 100);
          percentText.setText(`${percent}%`);
       });
 
@@ -75,5 +75,6 @@ export class BootScene extends Scene {
       });
       this.load.audio(Keys.BASIC_GUN_SOUND, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
+      this.load.image(Keys.LOGO, ClientConfig.ASSET_FOLDER + 'ui/logo.png');
    }
 }

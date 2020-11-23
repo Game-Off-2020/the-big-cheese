@@ -162,7 +162,7 @@ export class GameScene extends Scene {
       this.cameras.main.zoom = ClientConfig.MAP_OUTPUT_SCALE;
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
-      new StarFieldSprite({ scene: this });
+      new StarFieldSprite({ scene: this, scale: ClientConfig.MAP_OUTPUT_SCALE });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
       this.createdSubject.next(true);
    }
