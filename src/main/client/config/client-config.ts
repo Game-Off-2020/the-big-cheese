@@ -1,6 +1,6 @@
 import { CommonClientConfig } from './common-client-config';
 
-interface ServerConfig {
+interface GameServer {
    readonly url: string;
    readonly name: string;
 }
@@ -9,7 +9,7 @@ interface ServerConfig {
 export class ClientConfig extends CommonClientConfig {
    static readonly ASSET_FOLDER: string = '../../src/asset/';
    static readonly AUTO_START: boolean = false; // Skip main menu for development purposes
-   static readonly SERVER_HOSTS: ServerConfig[] = [
+   static readonly SERVER_HOSTS: GameServer[] = [
       {
          url: `http://localhost:${ClientConfig.SERVER_PORT}`,
          name: 'Europe West',
