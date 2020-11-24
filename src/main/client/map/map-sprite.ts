@@ -33,13 +33,13 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       terrainTexture.context.globalCompositeOperation = 'source-in';
       terrainTexture.draw(0, 0, moon);
 
-      const particle = options.scene.add.particles(Keys.MOON_DUST_PARTICLE);
+      const particle = options.scene.add.particles(Keys.SMOKE_FIRE);
       this.dustEmitter = particle.createEmitter({
          x: this.x,
          y: this.y,
          speed: { min: -20, max: 20 },
          angle: { min: 0, max: 360 },
-         scale: { start: 0, end: 0.4 / ClientConfig.MAP_OUTPUT_SCALE },
+         scale: { start: 0, end: 1.2 },
          alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
          blendMode: Phaser.BlendModes.SCREEN,
          gravityY: 0,

@@ -41,6 +41,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private jumping = false;
    private verticalSpeed = 0;
    private readonly debugger: HitBoxDebugger;
+   private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
@@ -52,6 +53,19 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          repeat: -1,
       };
       options.scene.anims.create(config);
+
+      const particle = options.scene.add.particles(Keys.SMOKE_FIRE);
+      this.dustEmitter = particle.createEmitter({
+         speed: { min: -20, max: 20 },
+         angle: { min: 0, max: 360 },
+         scale: { start: 0, end: 0.7 / ClientConfig.MAP_OUTPUT_SCALE },
+         alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
+         gravityY: 0,
+         lifespan: 200,
+         follow: this,
+      });
+      this.dustEmitter.reserve(1000);
+      this.dustEmitter.stop();
 
       this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 });
       this.add(this.character);
@@ -174,6 +188,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.isMoving = true;
          this.options.callbacks.onStartMoving();
          this.character.anims.play(Keys.PLAYER_1_WALK, true);
+         this.dustEmitter.start();
       }
    }
 
@@ -182,6 +197,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.isMoving = false;
          this.options.callbacks.onStartStanding();
          this.character.anims.pause();
+         this.dustEmitter.stop();
       }
    }
 }

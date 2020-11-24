@@ -12,6 +12,7 @@ export enum Keys {
    PLAYER_1_WALK = 'player1-walk',
    BASIC_GUN_SOUND = 'basic-gun-sound',
    MOON_DUST_PARTICLE = 'moon-dust-particle',
+   SMOKE_FIRE = 'smoke-fire',
    TERRAIN = 'terrain',
    LAVA = 'lava',
    // UI

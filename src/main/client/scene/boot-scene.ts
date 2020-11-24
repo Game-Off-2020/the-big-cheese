@@ -75,6 +75,11 @@ export class BootScene extends Scene {
       });
       this.load.audio(Keys.BASIC_GUN_SOUND, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
+      this.load.spritesheet(Keys.SMOKE_FIRE, ClientConfig.ASSET_FOLDER + 'smoke-fire.png', {
+         frameWidth: 16,
+         frameHeight: 16,
+         endFrame: 16,
+      });
       this.load.image(Keys.LOGO, ClientConfig.ASSET_FOLDER + 'ui/logo.png');
    }
 }
