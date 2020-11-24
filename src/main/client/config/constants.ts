@@ -17,6 +17,7 @@ export enum Keys {
    BASIC_GUN_SOUND = 'basic-gun-sound',
    MOON_DUST_PARTICLE = 'moon-dust-particle',
    MOON_AMBIENCE = 'moon-ambience',
+   MOON_IMPACT = 'moon-impact',
    SMOKE_FIRE = 'smoke-fire',
    TERRAIN = 'terrain',
    LAVA = 'lava',
