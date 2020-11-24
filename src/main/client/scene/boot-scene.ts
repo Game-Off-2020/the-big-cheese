@@ -74,6 +74,8 @@ export class BootScene extends Scene {
          endFrame: 16,
       });
       this.load.audio(Keys.BASIC_GUN_SOUND, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
+      this.load.audio(Keys.MOON_AMBIENCE, [ClientConfig.ASSET_FOLDER + 'moon/moon-ambience.ogg']);
+
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
       this.load.spritesheet(Keys.SMOKE_FIRE, ClientConfig.ASSET_FOLDER + 'smoke-fire.png', {
          frameWidth: 16,

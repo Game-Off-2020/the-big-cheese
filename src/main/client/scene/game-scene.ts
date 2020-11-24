@@ -165,6 +165,9 @@ export class GameScene extends Scene {
       new StarFieldSprite({ scene: this, scale: ClientConfig.MAP_OUTPUT_SCALE });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
       this.createdSubject.next(true);
+
+      const music = this.sound.add(Keys.MOON_AMBIENCE, { loop: true });
+      music.play();
    }
 
    update(): void {
