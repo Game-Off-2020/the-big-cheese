@@ -1,7 +1,7 @@
 import { MenuButton } from '../ui/menu-button';
 import { ClientConfig } from '../config/client-config';
 import { Inject } from 'typescript-ioc';
-import { GameStateComponent } from '../game-state/game-state-component';
+import { ClientGameStateComponent } from '../game-state/client-game-state-component';
 import { Utils } from '../../shared/util/utils';
 import { Keys } from '../config/constants';
 import { StarFieldSprite } from './star-field-sprite';
@@ -12,7 +12,7 @@ import { TextLink } from '../ui/text-link';
 
 export class MainMenuScene extends Phaser.Scene {
    @Inject
-   private gameState: GameStateComponent;
+   private gameState: ClientGameStateComponent;
 
    private selectedServer: ServerConfig;
    private serverButtons: ServerButton[];
