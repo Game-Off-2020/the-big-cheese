@@ -64,10 +64,10 @@ export class BootScene extends Scene {
     * is currently active, so they can be accessed anywhere.
     */
    private loadAssets(): void {
-      // TODO: Extract file keys
       this.load.image(Keys.BULLET, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun-bullet.png');
       this.load.image(Keys.MOON, ClientConfig.ASSET_FOLDER + 'moon/moon-texture.png');
       this.load.image(Keys.BASIC_GUN, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
+      this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
       this.load.spritesheet(Keys.PLAYER_1, ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
          frameWidth: 73,
          frameHeight: 97,

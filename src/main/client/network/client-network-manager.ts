@@ -7,6 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import { MapStore } from '../../shared/map/map-store';
 import { GameStateComponent } from '../game-state/game-state-component';
 import { BulletStore } from '../../shared/bullet/bullet-store';
+import { CheeseStore } from '../../shared/cheese/cheese-store';
 
 @Singleton
 export class ClientNetworkManager {
@@ -17,6 +18,7 @@ export class ClientNetworkManager {
       @Inject private readonly playerStore: PlayerStore,
       @Inject private readonly mapStore: MapStore,
       @Inject private readonly bulletStore: BulletStore,
+      @Inject private readonly cheeseStore: CheeseStore,
    ) {
       gameState.joinGame$.subscribe((request) => {
          component.connect();
@@ -27,6 +29,7 @@ export class ClientNetworkManager {
          this.subscribeNetworkUpdateToStore(playerStore);
          this.subscribeNetworkUpdateToStore(mapStore);
          this.subscribeNetworkUpdateToStore(bulletStore);
+         this.subscribeNetworkUpdateToStore(cheeseStore);
       });
       player.clientShooting$.subscribe((shootingOptions) => {
          component.sendShootRequest(shootingOptions);

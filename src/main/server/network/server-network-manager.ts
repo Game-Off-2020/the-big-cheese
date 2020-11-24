@@ -9,6 +9,7 @@ import { StoreEntity } from '../../shared/store/store-model';
 import { Observable } from 'rxjs';
 import { ServerBulletStore } from '../bullet/server-bullet-store';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
+import { CheeseStore } from '../../shared/cheese/cheese-store';
 
 @Singleton
 export class ServerNetworkManager {
@@ -18,15 +19,20 @@ export class ServerNetworkManager {
       @Inject private readonly playerStore: PlayerStore,
       @Inject private readonly mapStore: MapStore,
       @Inject private readonly bulletStore: ServerBulletStore,
+      @Inject private readonly cheeseStore: CheeseStore,
    ) {
       this.subscribeNetworkUpdateToStore(playerStore);
       this.subscribeStoreToNetworkExceptEntity(this.playerStore, this.playerStore.updated$);
       this.subscribeStoreToNetwork(playerStore, playerStore.committed$);
       this.subscribeStoreToNetwork(mapStore, mapStore.committed$);
       this.subscribeStoreToNetwork(bulletStore, bulletStore.committed$);
+      this.subscribeStoreToNetwork(cheeseStore, cheeseStore.committed$);
       this.subscribeSendLoginResponseOnPlayerAddedToNetwork();
+
+      // Need to send out these stores manually upon joining
       playerStore.added$.subscribe((playerEntity) => {
          this.component.sendDataStore([playerEntity.id], playerStore.getId(), playerStore.getData());
+         this.component.sendDataStore([playerEntity.id], cheeseStore.getId(), cheeseStore.getData());
       });
    }
 

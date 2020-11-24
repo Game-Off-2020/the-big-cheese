@@ -17,8 +17,10 @@ import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { PlayerStore } from '../../shared/player/player-store';
 import { ClientConfig } from '../config/client-config';
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { Keys } from '../config/constants';
+import { ClientCheeseComponent } from '../cheese/client-cheese-component';
+import { CheeseSprite } from './cheese-sprite';
+import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3 / ClientConfig.MAP_OUTPUT_SCALE;
@@ -45,7 +47,11 @@ export class GameScene extends Scene {
    @Inject
    private readonly bulletGroupComponent: ClientBulletComponent;
 
+   @Inject
+   private readonly cheeseComponent: ClientCheeseComponent;
+
    private readonly otherPlayers = new Map<string, OtherPlayerSprite>();
+   private readonly cheeses = new Map<string, CheeseSprite>();
 
    private readonly createdSubject = new ReplaySubject<boolean>();
    private readonly created$ = this.createdSubject.asObservable();
@@ -56,36 +62,9 @@ export class GameScene extends Scene {
          visible: false,
          key: Keys.GAME_SCENE,
       });
-      this.mapComponent.mapLoaded$.subscribe((canvas) => {
-         this.mapSprite = new MapSprite({
-            scene: this,
-            canvas,
-         });
-         this.mapComponent.setMapSprite(this.mapSprite);
-      });
-      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
-      this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
-         const sprite = new OtherPlayerSprite(this, player);
-         this.otherPlayers.set(player.id, sprite);
-         this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
-            if (updatedPlayer.position) {
-               sprite.tickPosition(updatedPlayer.position);
-            }
-            if (updatedPlayer.direction) {
-               sprite.tickDirection(updatedPlayer.direction);
-            }
-            if (updatedPlayer.moving !== undefined) {
-               sprite.setMoving(updatedPlayer.moving);
-            }
-         });
-      });
-      this.otherPlayersComponent.removed$.subscribe((playerId) => {
-         const sprite = this.otherPlayers.get(playerId);
-         if (sprite) {
-            sprite.destroy();
-            this.otherPlayers.delete(playerId);
-         }
-      });
+      this.initMapSubscriptions();
+      this.initOtherPlayerSubscriptions();
+      this.initCheeseSubscriptions();
    }
 
    create(): void {
@@ -179,5 +158,54 @@ export class GameScene extends Scene {
          sprite.update();
          sprite.setRotation(VectorUtil.getFloorVector(sprite).scale(-1).angle());
       }
+   }
+
+   private initMapSubscriptions(): void {
+      this.mapComponent.mapLoaded$.subscribe((canvas) => {
+         this.mapSprite = new MapSprite({
+            scene: this,
+            canvas,
+         });
+         this.mapComponent.setMapSprite(this.mapSprite);
+      });
+      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+   }
+
+   private initOtherPlayerSubscriptions(): void {
+      this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
+         const sprite = new OtherPlayerSprite(this, player);
+         this.otherPlayers.set(player.id, sprite);
+         this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
+            if (updatedPlayer.position) {
+               sprite.tickPosition(updatedPlayer.position);
+            }
+            if (updatedPlayer.direction) {
+               sprite.tickDirection(updatedPlayer.direction);
+            }
+            if (updatedPlayer.moving !== undefined) {
+               sprite.setMoving(updatedPlayer.moving);
+            }
+         });
+      });
+      this.otherPlayersComponent.removed$.subscribe((id) => {
+         const sprite = this.otherPlayers.get(id);
+         if (sprite) {
+            sprite.destroy();
+            this.otherPlayers.delete(id);
+         }
+      });
+   }
+
+   private initCheeseSubscriptions(): void {
+      this.created$.pipe(switchMap(() => this.cheeseComponent.added$)).subscribe((cheeseEntity) => {
+         this.cheeses.set(cheeseEntity.id, new CheeseSprite(this, cheeseEntity.value.position));
+      });
+      this.cheeseComponent.removed$.subscribe((id) => {
+         const sprite = this.cheeses.get(id);
+         if (sprite) {
+            sprite.destroy();
+            this.cheeses.delete(id);
+         }
+      });
    }
 }

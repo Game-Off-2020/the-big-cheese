@@ -3,7 +3,7 @@ import { MapStore } from '../../shared/map/map-store';
 import { Subject } from 'rxjs';
 import { ImageUtil } from '../util/image-util';
 import { SharedMapComponent } from '../../shared/map/shared-map-component';
-import { MapDestruction } from '../../shared/map/map-model';
+import { Destruction } from '../../shared/map/map-model';
 import { MapSprite } from './map-sprite';
 import { ClientConfig } from '../config/client-config';
 
@@ -40,17 +40,16 @@ export class ClientMapComponent extends SharedMapComponent {
       this.mapSprite = mapSprite;
    }
 
-   drawDestruction(destruction: MapDestruction): void {
+   drawDestruction(destruction: Destruction): void {
       super.drawDestruction(destruction);
       this.mapSprite.emitDust(destruction);
       this.shake(destruction);
       this.updatedSubject.next();
    }
 
-   private shake(destruction: MapDestruction): void {
-      const shakeLimit = 40 / ClientConfig.MAP_OUTPUT_SCALE;
-      if (destruction.radius > shakeLimit) {
-         this.mapSprite.shake((0.0002 * destruction.radius) / shakeLimit);
+   private shake(destruction: Destruction): void {
+      if (destruction.radius > ClientConfig.SHAKE_LIMIT) {
+         this.mapSprite.shake((0.0002 * destruction.radius) / ClientConfig.SHAKE_LIMIT);
       }
    }
 }
