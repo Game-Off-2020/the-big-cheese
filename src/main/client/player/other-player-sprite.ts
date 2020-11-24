@@ -5,7 +5,8 @@ import { PlayerType } from '../../shared/player/player-model';
 import { Vector } from '../../shared/bullet/vector-model';
 import { CatmullRomInterpolation } from '../util/catmull-rom-interpolation';
 import { ClientConfig } from '../config/client-config';
-import { Keys, PLAYERS, PlayerSpriteSheetConfig } from '../config/constants';
+import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
+import { PLAYERS } from '../../shared/config/shared-constants';
 
 export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    private readonly gun: GunSprite;

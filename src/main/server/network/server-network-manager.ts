@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { ServerBulletStore } from '../bullet/server-bullet-store';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { CheeseStore } from '../../shared/cheese/cheese-store';
+import { GameStateStore } from '../../shared/game-state/game-state-store';
 
 @Singleton
 export class ServerNetworkManager {
@@ -20,6 +21,7 @@ export class ServerNetworkManager {
       @Inject private readonly mapStore: MapStore,
       @Inject private readonly bulletStore: ServerBulletStore,
       @Inject private readonly cheeseStore: CheeseStore,
+      @Inject private readonly gameStateStore: GameStateStore,
    ) {
       this.subscribeNetworkUpdateToStore(playerStore);
       this.subscribeStoreToNetworkExceptEntity(this.playerStore, this.playerStore.updated$);
@@ -27,13 +29,19 @@ export class ServerNetworkManager {
       this.subscribeStoreToNetwork(mapStore, mapStore.committed$);
       this.subscribeStoreToNetwork(bulletStore, bulletStore.committed$);
       this.subscribeStoreToNetwork(cheeseStore, cheeseStore.committed$);
+      this.subscribeStoreToNetwork(gameStateStore, gameStateStore.committed$);
       this.subscribeSendLoginResponseOnPlayerAddedToNetwork();
 
       // Need to send out these stores manually upon joining
       playerStore.added$.subscribe((playerEntity) => {
-         this.component.sendDataStore([playerEntity.id], playerStore.getId(), playerStore.getData());
-         this.component.sendDataStore([playerEntity.id], cheeseStore.getId(), cheeseStore.getData());
+         this.sendOutStore(playerEntity.id, playerStore);
+         this.sendOutStore(playerEntity.id, cheeseStore);
+         this.sendOutStore(playerEntity.id, gameStateStore);
       });
+   }
+
+   private sendOutStore<T>(playerId: string, store: Store<T>): void {
+      this.component.sendDataStore([playerId], store.getId(), store.getData());
    }
 
    // Updates from the network will be merged into the store

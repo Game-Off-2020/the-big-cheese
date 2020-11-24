@@ -4,9 +4,10 @@ import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
-import { Keys, PLAYERS, PlayerSpriteSheetConfig } from '../config/constants';
+import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PlayerType } from '../../shared/player/player-model';
 import Vector2 = Phaser.Math.Vector2;
+import { PLAYERS } from '../../shared/config/shared-constants';
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;

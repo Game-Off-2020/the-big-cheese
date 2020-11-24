@@ -10,6 +10,7 @@ import { Damage } from '../bullet/server-bullet-model';
 import { DropCheese } from '../../shared/cheese/cheese-model';
 import { Subject } from 'rxjs';
 import { MathUtil } from '../../client/util/math-util';
+import { PLAYERS } from '../../shared/config/shared-constants';
 
 @Singleton
 export class ServerPlayerComponent {
@@ -41,7 +42,7 @@ export class ServerPlayerComponent {
          },
          moving: false,
          cheese: 0.0,
-         type: MathUtil.randomIntFromInterval(0, ServerConfig.NR_OF_PLAYER_TYPES),
+         type: MathUtil.randomIntFromInterval(0, PLAYERS.length),
       });
       // Width and height must be switched for some reason
       this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_HEIGHT, ServerConfig.PLAYER_WIDTH);

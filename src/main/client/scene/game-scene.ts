@@ -16,10 +16,11 @@ import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { PlayerStore } from '../../shared/player/player-store';
 import { ClientConfig } from '../config/client-config';
-import { Keys, PLAYERS } from '../config/constants';
+import { Keys } from '../config/client-constants';
 import { ClientCheeseComponent } from '../cheese/client-cheese-component';
 import { CheeseSprite } from './cheese-sprite';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
+import { PLAYERS } from '../../shared/config/shared-constants';
 
 export class GameScene extends Scene {
    private cursorKeys: CursorKeys;

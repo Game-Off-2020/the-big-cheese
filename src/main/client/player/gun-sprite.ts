@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
-import { Keys } from '../config/constants';
+import { Keys } from '../config/client-constants';
 import { VectorUtil } from '../util/vector-util';
 import Vector2 = Phaser.Math.Vector2;
 

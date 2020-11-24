@@ -5,6 +5,7 @@ import { ServerMapManager } from './map/server-map-manager';
 import { ServerBulletManager } from './bullet/server-bullet-manager';
 import { ServerStatusComponent } from './status/server-status-component';
 import { ServerCheeseManager } from './cheese/server-cheese-manager';
+import { ServerGameStateManager } from './game-state/server-game-state-manager';
 
 @Singleton
 export class ServerMain {
@@ -15,6 +16,7 @@ export class ServerMain {
       @Inject private readonly bullet: ServerBulletManager,
       @Inject private readonly cheese: ServerCheeseManager,
       @Inject private readonly status: ServerStatusComponent,
+      @Inject private readonly gameState: ServerGameStateManager,
    ) {}
 }
 
