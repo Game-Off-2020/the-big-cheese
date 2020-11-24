@@ -75,6 +75,7 @@
    },
    "dependencies": {
       "@msgpack/msgpack": "^1.12.0",
+      "@types/shortid": "0.0.29",
       "bufferutil": "^4.0.2",
       "canvas": "^2.6.1",
       "deepmerge": "^4.2.2",
@@ -82,6 +83,7 @@
       "express": "^4.17.1",
       "phaser": "3.24.1",
       "quadtree-lib": "^1.0.9",
+      "shortid": "^2.2.16",
       "socket.io": "^3.0.1",
       "socket.io-client": "^3.0.1",
       "threads": "1.6.3",
