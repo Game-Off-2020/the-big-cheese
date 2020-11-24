@@ -15,5 +15,6 @@ export class ServerMapManager extends SharedMapManager {
       super(component, store);
       component.createMap(ServerConfig.MOON_RADIUS);
       bullet.damage$.subscribe((destruction) => component.destruct(destruction));
+      setInterval(() => component.updateMoonPixelPercentage(), 1000);
    }
 }

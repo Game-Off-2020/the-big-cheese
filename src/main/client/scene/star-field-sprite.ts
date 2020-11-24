@@ -1,5 +1,4 @@
 import * as Phaser from 'phaser';
-import { Keys } from '../config/constants';
 import { MathUtil } from '../util/math-util';
 import * as shortid from 'shortid';
 

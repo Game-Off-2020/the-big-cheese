@@ -7,12 +7,18 @@ import { Utils } from '../../shared/util/utils';
 import { Vector } from '../../shared/bullet/vector-model';
 import { PerlinNoise } from './perlin-noise';
 import { ServerConfig } from '../config/server-config';
+import { Subject } from 'rxjs';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
    private canvas: Canvas;
    protected ctx: CanvasRenderingContext2D;
    private data?: DataView;
+   private maxMoonPixel: number;
+   private moonPixel = 0;
+
+   private readonly moonPercentageChangeSubject = new Subject<number>();
+   readonly moonPercentageChange$ = this.moonPercentageChangeSubject.asObservable();
 
    constructor(@Inject protected readonly store: MapStore) {
       super(store);
@@ -83,6 +89,8 @@ export class ServerMapComponent extends SharedMapComponent {
       //    const position = this.getRandomPositionAboveSurface(Math.random() * 20 - 10);
       //    this.cheese.add(position.x, position.y);
       // }
+      this.updateData();
+      this.maxMoonPixel = this.getNrOfMoonPixel();
    }
 
    getMap(): Buffer {
@@ -95,6 +103,14 @@ export class ServerMapComponent extends SharedMapComponent {
 
    updateData(): void {
       this.data = new DataView(this.ctx.getImageData(0, 0, this.canvasSize, this.canvasSize).data.buffer);
+   }
+
+   updateMoonPixelPercentage(): void {
+      const moonPixel = this.getNrOfMoonPixel() / this.maxMoonPixel;
+      if (this.moonPixel !== moonPixel) {
+         this.moonPixel = moonPixel;
+         this.moonPercentageChangeSubject.next(moonPixel);
+      }
    }
 
    //
@@ -149,5 +165,15 @@ export class ServerMapComponent extends SharedMapComponent {
       // See other values here
       // https://stackoverflow.com/questions/17945972/converting-rgba-values-into-one-integer-in-javascript
       return ((pixelValue & 0xff000000) >>> 24) / 255;
+   }
+
+   private getNrOfMoonPixel(): number {
+      let result = 0;
+      for (let i = 0; i < this.canvasSize * this.canvasSize; i++) {
+         if ((this.data.getUint32(4 * i) & 0xff000000) >>> 24 > 0) {
+            result++;
+         }
+      }
+      return result;
    }
 }
