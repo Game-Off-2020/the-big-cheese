@@ -2,7 +2,6 @@ import { MenuButton } from '../ui/menu-button';
 import { ClientConfig } from '../config/client-config';
 import { Inject } from 'typescript-ioc';
 import { GameStateComponent } from '../game-state/game-state-component';
-import { Utils } from '../../shared/util/utils';
 import { Keys } from '../config/constants';
 import { StarFieldSprite } from './star-field-sprite';
 import { InputBox } from '../ui/input-box';
@@ -162,6 +161,6 @@ export class MainMenuScene extends Phaser.Scene {
    }
 
    private startGame(): void {
-      this.gameState.joinGame(Utils.generateId());
+      this.gameState.joinGame(this.nameInput.getValue());
    }
 }

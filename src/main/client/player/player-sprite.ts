@@ -1,11 +1,9 @@
-// Collision based on: http://jsfiddle.net/ksmbx3fz/7/
 import * as Phaser from 'phaser';
 import { Subject } from 'rxjs';
 import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
-import { HitBoxDebugger } from '../util/hitbox-debugger-util';
 import { Keys, PLAYERS, PlayerSpriteSheetConfig } from '../config/constants';
 import { PlayerType } from '../../shared/player/player-model';
 import Vector2 = Phaser.Math.Vector2;
@@ -28,6 +26,8 @@ interface PlayerOptions {
    };
 }
 
+// Collision based on: http://jsfiddle.net/ksmbx3fz/7/
+
 const MAX_HORIZONTAL_SPEED = 1;
 const MAX_VERTICAL_SPEED = 10;
 export const PLAYER_HEIGHT = ClientConfig.PLAYER_HEIGHT;
@@ -41,7 +41,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private readonly character: Phaser.GameObjects.Sprite;
    private jumping = false;
    private verticalSpeed = 0;
-   private readonly debugger: HitBoxDebugger;
+   // private readonly debugger: HitBoxDebugger;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
    private readonly spriteSheetConfig: PlayerSpriteSheetConfig;
 
@@ -63,7 +63,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       this.dustEmitter.stop();
 
       this.spriteSheetConfig = PLAYERS[playerType];
-
       this.character = options.scene.make.sprite({ key: this.spriteSheetConfig.spriteSheet });
       this.add(this.character);
 
@@ -74,7 +73,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          y: -30,
       });
       options.scene.add.existing(this);
-      this.add((this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 })));
       this.add(
          (this.gun = new GunSprite({
             scene: options.scene,
@@ -84,8 +82,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          })),
       );
       this.character.setOrigin(0.5, 1);
-      this.debugger = new HitBoxDebugger({ scene: this.scene });
-      this.scene.add.existing(this.debugger);
+      // this.debugger = new HitBoxDebugger({ scene: this.scene });
+      // this.scene.add.existing(this.debugger);
    }
 
    private lastShootTimestamp = 0;
@@ -181,7 +179,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
 
       this.gun.update();
-      this.debugger.update(this);
+      // this.debugger.update(this);
    }
 
    private isMoving = false;
