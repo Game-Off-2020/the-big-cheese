@@ -42,7 +42,7 @@ export class ClientMapComponent extends SharedMapComponent {
 
    drawDestruction(destruction: Destruction): void {
       super.drawDestruction(destruction);
-      this.mapSprite.emitDust(destruction);
+      this.mapSprite.destructionEffect(destruction);
       this.shake(destruction);
       this.updatedSubject.next();
    }

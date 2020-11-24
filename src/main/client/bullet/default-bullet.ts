@@ -27,8 +27,8 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
 
       options.direction.scale(DEFAULT_BULLET_SPEED * ClientConfig.BULLET_BASE_SPEED);
 
-      this.setVelocityY(options.direction.y);
-      this.setVelocityX(options.direction.x);
+      this.setVelocity(options.direction.x, options.direction.y);
+      this.setRotation(new Phaser.Math.Vector2({ x: options.direction.x, y: options.direction.y }).angle());
 
       this.timeAlive = 0;
    }

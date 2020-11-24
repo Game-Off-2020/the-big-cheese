@@ -6,7 +6,7 @@ import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
 import { HitBoxDebugger } from '../util/hitbox-debugger-util';
-import { Keys } from '../config/constants';
+import { Keys, PLAYERS, PlayerSpriteSheetConfig } from '../config/constants';
 import { PlayerType } from '../../shared/player/player-model';
 import Vector2 = Phaser.Math.Vector2;
 
@@ -42,20 +42,29 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private jumping = false;
    private verticalSpeed = 0;
    private readonly debugger: HitBoxDebugger;
+   private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+   private readonly spriteSheetConfig: PlayerSpriteSheetConfig;
 
    constructor(private readonly options: PlayerOptions, private readonly playerType: PlayerType) {
       super(options.scene, 0, 0);
-      // TODO: Use playerType
-      console.log('player-sprite', playerType);
       this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
-      options.scene.anims.create({
-         key: Keys.PLAYER_1_WALK,
-         frames: options.scene.anims.generateFrameNumbers(Keys.PLAYER_1, { frames: [0, 1, 2, 6, 7, 8] }),
-         frameRate: 10,
-         repeat: -1,
-      });
 
-      this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 });
+      const particle = options.scene.add.particles(Keys.SMOKE_FIRE);
+      this.dustEmitter = particle.createEmitter({
+         speed: { min: -20, max: 20 },
+         angle: { min: 0, max: 360 },
+         scale: { start: 0, end: 0.7 / ClientConfig.MAP_OUTPUT_SCALE },
+         alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
+         gravityY: 0,
+         lifespan: 200,
+         follow: this,
+      });
+      this.dustEmitter.reserve(1000);
+      this.dustEmitter.stop();
+
+      this.spriteSheetConfig = PLAYERS[playerType];
+
+      this.character = options.scene.make.sprite({ key: this.spriteSheetConfig.spriteSheet });
       this.add(this.character);
 
       this.gun = new GunSprite({
@@ -181,7 +190,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (!this.isMoving) {
          this.isMoving = true;
          this.options.callbacks.onStartMoving();
-         this.character.anims.play(Keys.PLAYER_1_WALK, true);
+         this.character.anims.play(this.spriteSheetConfig.walkAnimation, true);
+         this.dustEmitter.start();
       }
    }
 
@@ -190,6 +200,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.isMoving = false;
          this.options.callbacks.onStartStanding();
          this.character.anims.pause();
+         this.dustEmitter.stop();
       }
    }
 }
