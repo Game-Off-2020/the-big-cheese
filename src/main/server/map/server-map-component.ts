@@ -14,8 +14,8 @@ export class ServerMapComponent extends SharedMapComponent {
    private canvas: Canvas;
    protected ctx: CanvasRenderingContext2D;
    private data?: DataView;
-   private maxMoonPixel: number;
-   private moonPixel = 0;
+   private maxMoonPixels: number;
+   private moonPixels = 0;
 
    private readonly moonPercentageChangeSubject = new Subject<number>();
    readonly moonPercentageChange$ = this.moonPercentageChangeSubject.asObservable();
@@ -90,7 +90,7 @@ export class ServerMapComponent extends SharedMapComponent {
       //    this.cheese.add(position.x, position.y);
       // }
       this.updateData();
-      this.maxMoonPixel = this.getNrOfMoonPixel();
+      this.maxMoonPixels = this.getMoonPixelCount();
    }
 
    getMap(): Buffer {
@@ -106,10 +106,10 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    updateMoonPixelPercentage(): void {
-      const moonPixel = this.getNrOfMoonPixel() / this.maxMoonPixel;
-      if (this.moonPixel !== moonPixel) {
-         this.moonPixel = moonPixel;
-         this.moonPercentageChangeSubject.next(moonPixel);
+      const moonPixels = this.getMoonPixelCount() / this.maxMoonPixels;
+      if (this.moonPixels !== moonPixels) {
+         this.moonPixels = moonPixels;
+         this.moonPercentageChangeSubject.next(moonPixels);
       }
    }
 
@@ -167,7 +167,7 @@ export class ServerMapComponent extends SharedMapComponent {
       return ((pixelValue & 0xff000000) >>> 24) / 255;
    }
 
-   private getNrOfMoonPixel(): number {
+   private getMoonPixelCount(): number {
       let result = 0;
       for (let i = 0; i < this.canvasSize * this.canvasSize; i++) {
          if ((this.data.getUint32(4 * i) & 0xff000000) >>> 24 > 0) {
