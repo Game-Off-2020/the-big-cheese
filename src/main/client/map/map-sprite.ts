@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 
-import { MapDestruction } from '../../shared/map/map-model';
+import { Destruction } from '../../shared/map/map-model';
 import { ClientConfig } from '../config/client-config';
 import { PLAYER_HEIGHT, PLAYER_WIDTH } from '../player/player-sprite';
 import { Keys } from '../config/constants';
@@ -89,7 +89,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       super.update();
    }
 
-   destructionEffect(destruction: MapDestruction): void {
+   destructionEffect(destruction: Destruction): void {
       this.dustEmitter
          .setScale({ start: 0, end: destruction.radius / 5 })
          .setSpeed({ min: destruction.radius, max: destruction.radius })

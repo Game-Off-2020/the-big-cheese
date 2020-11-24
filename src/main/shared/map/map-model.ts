@@ -1,4 +1,4 @@
-export interface MapDestruction {
+export interface Destruction {
    position: {
       x: number;
       y: number;
