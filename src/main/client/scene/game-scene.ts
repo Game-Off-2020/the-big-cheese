@@ -18,7 +18,7 @@ import { switchMap } from 'rxjs/operators';
 import { PlayerStore } from '../../shared/player/player-store';
 import { ClientConfig } from '../config/client-config';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
-import { Keys } from '../config/constants';
+import { Keys, PLAYERS } from '../config/constants';
 
 export class GameScene extends Scene {
    private readonly maxHorizontalSpeed = 3 / ClientConfig.MAP_OUTPUT_SCALE;
@@ -175,6 +175,18 @@ export class GameScene extends Scene {
       this.cameras.main.setRotation(-this.character.rotation);
       this.character.update();
       this.updateOtherPlayers();
+   }
+
+   preload(): void {
+      // This animation has to be created once and only once, so it's loaded in one place in the scene rather than in the Player constructor
+      for (const player of PLAYERS) {
+         this.anims.create({
+            key: player.walkAnimation,
+            frames: this.anims.generateFrameNumbers(player.spriteSheet, { frames: [0, 1, 2, 6, 7, 8] }),
+            frameRate: 10,
+            repeat: -1,
+         });
+      }
    }
 
    private updateOtherPlayers(): void {

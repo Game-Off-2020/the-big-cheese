@@ -6,8 +6,9 @@ import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
 import { HitBoxDebugger } from '../util/hitbox-debugger-util';
-import { Keys } from '../config/constants';
+import { Keys, PLAYERS, PlayerSpriteSheetConfig } from '../config/constants';
 import Vector2 = Phaser.Math.Vector2;
+import { MathUtil } from '../util/math-util';
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -42,17 +43,11 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private verticalSpeed = 0;
    private readonly debugger: HitBoxDebugger;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+   private readonly spriteSheetConfig: PlayerSpriteSheetConfig;
 
    constructor(private readonly options: PlayerOptions) {
       super(options.scene, 0, 0);
       this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
-      const config = {
-         key: Keys.PLAYER_1_WALK,
-         frames: options.scene.anims.generateFrameNumbers(Keys.PLAYER_1, { frames: [0, 1, 2, 6, 7, 8] }),
-         frameRate: 10,
-         repeat: -1,
-      };
-      options.scene.anims.create(config);
 
       const particle = options.scene.add.particles(Keys.SMOKE_FIRE);
       this.dustEmitter = particle.createEmitter({
@@ -67,7 +62,9 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       this.dustEmitter.reserve(1000);
       this.dustEmitter.stop();
 
-      this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 });
+      this.spriteSheetConfig = PLAYERS[MathUtil.randomIntFromInterval(0, 2)];
+
+      this.character = options.scene.make.sprite({ key: this.spriteSheetConfig.spriteSheet });
       this.add(this.character);
 
       this.gun = new GunSprite({
@@ -187,7 +184,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (!this.isMoving) {
          this.isMoving = true;
          this.options.callbacks.onStartMoving();
-         this.character.anims.play(Keys.PLAYER_1_WALK, true);
+         this.character.anims.play(this.spriteSheetConfig.walkAnimation, true);
          this.dustEmitter.start();
       }
    }

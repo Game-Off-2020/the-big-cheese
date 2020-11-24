@@ -73,6 +73,16 @@ export class BootScene extends Scene {
          frameHeight: 97,
          endFrame: 16,
       });
+      this.load.spritesheet(Keys.PLAYER_2, ClientConfig.ASSET_FOLDER + 'players/p2-spritesheet.png', {
+         frameWidth: 71,
+         frameHeight: 95,
+         endFrame: 16,
+      });
+      this.load.spritesheet(Keys.PLAYER_3, ClientConfig.ASSET_FOLDER + 'players/p3-spritesheet.png', {
+         frameWidth: 73,
+         frameHeight: 97,
+         endFrame: 16,
+      });
       this.load.audio(Keys.BASIC_GUN_SOUND, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
       this.load.audio(Keys.MOON_AMBIENCE, [ClientConfig.ASSET_FOLDER + 'moon/moon-ambience.ogg']);
 
