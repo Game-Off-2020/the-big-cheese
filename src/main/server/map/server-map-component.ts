@@ -2,7 +2,7 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { Canvas, CanvasRenderingContext2D, createCanvas } from 'canvas';
 import { SharedMapComponent } from '../../shared/map/shared-map-component';
 import { MapStore } from '../../shared/map/map-store';
-import { MapDestruction } from '../../shared/map/map-model';
+import { Destruction } from '../../shared/map/map-model';
 import { Utils } from '../../shared/util/utils';
 import { Vector } from '../../shared/bullet/vector-model';
 import { PerlinNoise } from './perlin-noise';
@@ -77,6 +77,12 @@ export class ServerMapComponent extends SharedMapComponent {
 
       // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
       // console.log('ok');
+
+      // Add some cheese for testing purposes
+      // for (let i = 0; i < 200; i++) {
+      //    const position = this.getRandomPositionAboveSurface(Math.random() * 20 - 10);
+      //    this.cheese.add(position.x, position.y);
+      // }
    }
 
    getMap(): Buffer {
@@ -102,8 +108,11 @@ export class ServerMapComponent extends SharedMapComponent {
       };
    }
 
-   destruct(destruction: MapDestruction): void {
-      this.store.commit(Utils.generateId(), destruction);
+   destruct(destruction: Destruction): void {
+      this.store.commit(Utils.generateId(), {
+         position: destruction.position,
+         radius: destruction.radius,
+      });
    }
 
    raycast(x1: number, y1: number, x2: number, y2: number): [number, number] | null {

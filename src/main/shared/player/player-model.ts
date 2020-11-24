@@ -6,7 +6,7 @@ export interface Player {
    position: Vector;
    direction: Vector;
    moving: boolean;
-   hp: number;
+   cheese: number;
    type: PlayerType;
 }
 

@@ -18,12 +18,29 @@ export class ErrorScene extends Phaser.Scene {
          })
          .setFontSize(24);
 
-      new MenuButton(this, 100, 150, 'Cancel', () => {
-         this.game.scene.start(Keys.MAIN_MENU_SCENE);
+      new MenuButton({
+         scene: this,
+         x: 100,
+         y: 150,
+         text: 'Cancel',
+         onClick: () => {
+            this.game.scene.start(Keys.MAIN_MENU_SCENE);
+         },
+         colors: {
+            label: {
+               over: '#000000',
+               out: '#FFFFFF',
+               down: '#BBBBBB',
+               disabled: '',
+            },
+            rectangle: {
+               over: 0x636363,
+               out: 0x888888,
+               down: 0x444444,
+               disabled: 0,
+            },
+         },
       });
-      // new MenuButton(this, 300, 150, 'Retry', () => {
-      //   this.game.scene.start(Keys.MAIN_MENU_SCENE);
-      //});
    }
 
    private getErrorMessage(status: JoinResponseStatus): string {

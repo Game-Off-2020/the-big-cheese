@@ -41,7 +41,7 @@ export class BootScene extends Scene {
       this.load.on('progress', (progress: number) => {
          progressBar.width = (progressBarWidth - 30) * progress;
 
-         const percent = progress * 100;
+         const percent = Math.round(progress * 100);
          percentText.setText(`${percent}%`);
       });
 
@@ -64,10 +64,10 @@ export class BootScene extends Scene {
     * is currently active, so they can be accessed anywhere.
     */
    private loadAssets(): void {
-      // TODO: Extract file keys
       this.load.image(Keys.BULLET, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun-bullet.png');
       this.load.image(Keys.MOON, ClientConfig.ASSET_FOLDER + 'moon/moon-texture.png');
       this.load.image(Keys.BASIC_GUN, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
+      this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
       this.load.spritesheet(Keys.PLAYER_1, ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
          frameWidth: 73,
          frameHeight: 97,
@@ -75,5 +75,6 @@ export class BootScene extends Scene {
       });
       this.load.audio(Keys.BASIC_GUN_SOUND, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
+      this.load.image(Keys.LOGO, ClientConfig.ASSET_FOLDER + 'ui/logo.png');
    }
 }

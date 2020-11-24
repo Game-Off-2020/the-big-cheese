@@ -70,8 +70,8 @@ export class ClientPlayerComponent {
          if (player.position) {
             this.clientPlayer.setPosition(player.position.x, player.position.y);
          }
-         if (player.hp !== undefined) {
-            console.log(`My hp is changed to ${player.hp}%`);
+         if (player.cheese !== undefined) {
+            console.log(`My amount of cheese is changed to ${player.cheese}`);
          }
       });
    }

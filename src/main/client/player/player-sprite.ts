@@ -54,6 +54,16 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          frameRate: 10,
          repeat: -1,
       });
+
+      this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 });
+      this.add(this.character);
+
+      this.gun = new GunSprite({
+         scene: options.scene,
+         character: this.character,
+         x: 30,
+         y: -30,
+      });
       options.scene.add.existing(this);
       this.add((this.character = options.scene.make.sprite({ key: Keys.PLAYER_1 })));
       this.add(
