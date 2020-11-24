@@ -17,7 +17,7 @@ import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { PlayerStore } from '../../shared/player/player-store';
 import { ClientConfig } from '../config/client-config';
-import { Keys } from '../config/constants';
+import { Keys, PLAYERS } from '../config/constants';
 import { ClientCheeseComponent } from '../cheese/client-cheese-component';
 import { CheeseSprite } from './cheese-sprite';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
@@ -144,6 +144,9 @@ export class GameScene extends Scene {
       new StarFieldSprite({ scene: this, scale: ClientConfig.MAP_OUTPUT_SCALE });
       this.lava = new LavaFloorSprite({ scene: this, size: 100 });
       this.createdSubject.next(true);
+
+      const music = this.sound.add(Keys.MOON_AMBIENCE, { loop: true });
+      music.play();
    }
 
    update(): void {
@@ -151,6 +154,18 @@ export class GameScene extends Scene {
       this.cameras.main.setRotation(-this.character.rotation);
       this.character.update();
       this.updateOtherPlayers();
+   }
+
+   preload(): void {
+      // This animation has to be created once and only once, so it's loaded in one place in the scene rather than in the Player constructor
+      for (const player of PLAYERS) {
+         this.anims.create({
+            key: player.walkAnimation,
+            frames: this.anims.generateFrameNumbers(player.spriteSheet, { frames: [0, 1, 2, 6, 7, 8] }),
+            frameRate: 10,
+            repeat: -1,
+         });
+      }
    }
 
    private updateOtherPlayers(): void {

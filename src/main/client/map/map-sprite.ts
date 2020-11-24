@@ -4,6 +4,7 @@ import { Destruction } from '../../shared/map/map-model';
 import { ClientConfig } from '../config/client-config';
 import { PLAYER_HEIGHT, PLAYER_WIDTH } from '../player/player-sprite';
 import { Keys } from '../config/constants';
+import { MathUtil } from '../util/math-util';
 
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
@@ -21,6 +22,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
    private terrainTexture: Phaser.Textures.CanvasTexture;
    private radius: number;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+   private impactSounds: Phaser.Sound.BaseSound[];
 
    constructor(options: MapSpriteOptions) {
       const terrainTexture = options.scene.textures.addCanvas(Keys.TERRAIN, options.canvas);
@@ -33,21 +35,37 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       terrainTexture.context.globalCompositeOperation = 'source-in';
       terrainTexture.draw(0, 0, moon);
 
-      const particle = options.scene.add.particles(Keys.MOON_DUST_PARTICLE);
+      const particle = options.scene.add.particles(Keys.SMOKE_FIRE);
       this.dustEmitter = particle.createEmitter({
          x: this.x,
          y: this.y,
          speed: { min: -20, max: 20 },
          angle: { min: 0, max: 360 },
-         scale: { start: 0, end: 0.4 / ClientConfig.MAP_OUTPUT_SCALE },
+         scale: { start: 0, end: 1.2 },
          alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
          blendMode: Phaser.BlendModes.SCREEN,
          gravityY: 0,
-         lifespan: 400,
+         lifespan: 200,
       });
       this.dustEmitter.reserve(1000);
       this.dustEmitter.stop();
       particle.setDepth(100);
+
+      this.impactSounds = [
+         options.scene.sound.add(Keys.MOON_IMPACT, {}),
+         options.scene.sound.add(Keys.MOON_IMPACT, {
+            detune: -200,
+         }),
+         options.scene.sound.add(Keys.MOON_IMPACT, {
+            detune: -100,
+         }),
+         options.scene.sound.add(Keys.MOON_IMPACT, {
+            detune: 100,
+         }),
+         options.scene.sound.add(Keys.MOON_IMPACT, {
+            detune: 200,
+         }),
+      ];
    }
 
    hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -71,10 +89,13 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       super.update();
    }
 
-   emitDust(destruction: Destruction): void {
+   destructionEffect(destruction: Destruction): void {
       this.dustEmitter
+         .setScale({ start: 0, end: destruction.radius / 5 })
          .setSpeed({ min: destruction.radius, max: destruction.radius })
-         .explode(10, destruction.position.x, destruction.position.y);
+         .explode(5, destruction.position.x, destruction.position.y);
+
+      this.impactSounds[MathUtil.randomIntFromInterval(0, this.impactSounds.length - 1)].play();
    }
 
    shake(intensity: number): void {

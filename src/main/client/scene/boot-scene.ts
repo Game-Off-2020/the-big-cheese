@@ -73,8 +73,26 @@ export class BootScene extends Scene {
          frameHeight: 97,
          endFrame: 16,
       });
+      this.load.spritesheet(Keys.PLAYER_2, ClientConfig.ASSET_FOLDER + 'players/p2-spritesheet.png', {
+         frameWidth: 71,
+         frameHeight: 95,
+         endFrame: 16,
+      });
+      this.load.spritesheet(Keys.PLAYER_3, ClientConfig.ASSET_FOLDER + 'players/p3-spritesheet.png', {
+         frameWidth: 73,
+         frameHeight: 97,
+         endFrame: 16,
+      });
       this.load.audio(Keys.BASIC_GUN_SOUND, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
+      this.load.audio(Keys.MOON_AMBIENCE, [ClientConfig.ASSET_FOLDER + 'moon/moon-ambience.ogg']);
+      this.load.audio(Keys.MOON_IMPACT, [ClientConfig.ASSET_FOLDER + 'moon/moon-impact.ogg']);
+
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
+      this.load.spritesheet(Keys.SMOKE_FIRE, ClientConfig.ASSET_FOLDER + 'smoke-fire.png', {
+         frameWidth: 16,
+         frameHeight: 16,
+         endFrame: 16,
+      });
       this.load.image(Keys.LOGO, ClientConfig.ASSET_FOLDER + 'ui/logo.png');
    }
 }
