@@ -7,4 +7,9 @@ export interface Player {
    direction: Vector;
    moving: boolean;
    cheese: number;
+   type: PlayerType;
+}
+
+export enum PlayerType {
+   GREEN,
 }

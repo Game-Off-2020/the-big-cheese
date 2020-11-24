@@ -1,4 +1,5 @@
 import { Bullet } from '../bullet/bullet-model';
+import { Player } from '../player/player-model';
 
 export enum NetworkEvent {
    // PlayerCharacter data, chat messages, bullets game status and maybe plane data also should be sent using StoreService automatically.
@@ -25,11 +26,11 @@ export enum JoinResponseStatus {
 
 export interface JoinResponse {
    status: JoinResponseStatus;
-   userId?: string;
    map?: {
       buffer: Buffer;
       size: number;
    };
+   player?: Player;
 }
 
 export type ShootRequest = Bullet;

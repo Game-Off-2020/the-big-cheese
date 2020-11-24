@@ -86,11 +86,11 @@ export class ServerNetworkManager {
       this.playerStore.added$.subscribe((entity) => {
          this.component.sendLoginResponse(entity.id, {
             status: JoinResponseStatus.JOINED,
-            userId: entity.id,
             map: {
                buffer: this.map.getMap(),
                size: this.map.getCanvasSize(),
             },
+            player: entity.value,
          });
       });
    }

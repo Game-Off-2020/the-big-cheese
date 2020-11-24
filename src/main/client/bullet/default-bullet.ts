@@ -1,6 +1,6 @@
 // Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 import * as Phaser from 'phaser';
-import { Keys } from '../config/constants';
+import { Keys } from '../config/client-constants';
 import { MathUtil } from '../util/math-util';
 import { ClientConfig } from '../config/client-config';
 

@@ -1,9 +1,8 @@
 import * as Phaser from 'phaser';
 
 import { Destruction } from '../../shared/map/map-model';
-import { ClientConfig } from '../config/client-config';
 import { PLAYER_HEIGHT, PLAYER_WIDTH } from '../player/player-sprite';
-import { Keys } from '../config/constants';
+import { Keys } from '../config/client-constants';
 import { MathUtil } from '../util/math-util';
 
 interface MapSpriteOptions {

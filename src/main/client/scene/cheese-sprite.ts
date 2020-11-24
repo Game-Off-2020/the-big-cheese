@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
-import { Keys } from '../config/constants';
+import { Keys } from '../config/client-constants';
 import { Vector } from '../../shared/bullet/vector-model';
 
 export class CheeseSprite extends Phaser.GameObjects.Sprite {

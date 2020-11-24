@@ -2,7 +2,6 @@ import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { Inject } from 'typescript-ioc';
 import { ClientMapComponent } from '../map/client-map-component';
-
 import { PlayerSprite } from '../player/player-sprite';
 import { Bullets } from '../bullet/default-bullet';
 import { ClientPlayerComponent } from '../player/client-player-component';
@@ -17,15 +16,13 @@ import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { PlayerStore } from '../../shared/player/player-store';
 import { ClientConfig } from '../config/client-config';
-import { Keys, PLAYERS } from '../config/constants';
+import { Keys } from '../config/client-constants';
 import { ClientCheeseComponent } from '../cheese/client-cheese-component';
 import { CheeseSprite } from './cheese-sprite';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
+import { PLAYERS } from '../../shared/config/shared-constants';
 
 export class GameScene extends Scene {
-   private readonly maxHorizontalSpeed = 3 / ClientConfig.MAP_OUTPUT_SCALE;
-   private readonly characterWidth = 10;
-   private readonly maxVerticalSpeed = 20 / ClientConfig.MAP_OUTPUT_SCALE;
    private cursorKeys: CursorKeys;
    private character: PlayerSprite;
    private bullets?: Bullets;
@@ -70,72 +67,75 @@ export class GameScene extends Scene {
    create(): void {
       this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-      this.character = new PlayerSprite({
-         scene: this,
-         cursorKeys: this.cursorKeys,
-         callbacks: {
-            onShoot: (position) => {
-               this.playerComponent.shoot({
-                  position: position,
-                  direction: VectorUtil.getRelativeMouseDirection(this, this.character),
-               });
+      this.character = new PlayerSprite(
+         {
+            scene: this,
+            cursorKeys: this.cursorKeys,
+            callbacks: {
+               onShoot: (position) => {
+                  this.playerComponent.shoot({
+                     position: position,
+                     direction: VectorUtil.getRelativeMouseDirection(this, this.character),
+                  });
+               },
+               onStartMoving: () => {
+                  this.playerComponent.setMoving(true);
+               },
+               onStartStanding: () => {
+                  this.playerComponent.setMoving(false);
+               },
+               onPositionChanged: (position) => {
+                  this.playerComponent.setPosition(position);
+               },
+               onDirectionChanged: (direction) => {
+                  this.playerComponent.setDirection(direction);
+               },
             },
-            onStartMoving: () => {
-               this.playerComponent.setMoving(true);
-            },
-            onStartStanding: () => {
-               this.playerComponent.setMoving(false);
-            },
-            onPositionChanged: (position) => {
-               this.playerComponent.setPosition(position);
-            },
-            onDirectionChanged: (direction) => {
-               this.playerComponent.setDirection(direction);
+            physics: {
+               leftWallCollision: (player, width, height) => {
+                  const locationOfWall = new Phaser.Math.Vector2({ x: player.x, y: player.y })
+                     .subtract(VectorUtil.getFloorVector(player).scale(-width / 2))
+                     .add(VectorUtil.getUpwardVector(player).scale(height));
+                  return this.mapSprite.hitTestTerrain(
+                     locationOfWall.x,
+                     locationOfWall.y,
+                     VectorUtil.createLocalWall(player, 1),
+                  );
+               },
+               rightWallCollision: (player, width, height) => {
+                  const locationOfWall = new Phaser.Math.Vector2({ x: player.x, y: player.y })
+                     .subtract(VectorUtil.getFloorVector(player).scale(width / 2))
+                     .add(VectorUtil.getUpwardVector(player).scale(height));
+                  return this.mapSprite.hitTestTerrain(
+                     locationOfWall.x,
+                     locationOfWall.y,
+                     VectorUtil.createLocalWall(player, 1),
+                  );
+               },
+               floorCollision: (player, width) => {
+                  const locationOfFloor = new Phaser.Math.Vector2({ x: player.x, y: player.y }).subtract(
+                     VectorUtil.getFloorVector(player).scale(width / 2),
+                  );
+                  return this.mapSprite.hitTestTerrain(
+                     locationOfFloor.x,
+                     locationOfFloor.y,
+                     VectorUtil.createLocalFloor(player, width),
+                  );
+               },
+               ceilingCollision: (player, width, height) => {
+                  const locationOfCeiling = new Phaser.Math.Vector2({ x: player.x, y: player.y })
+                     .subtract(VectorUtil.getFloorVector(player).scale(width / 2))
+                     .add(VectorUtil.getUpwardVector(player).scale(height));
+                  return this.mapSprite.hitTestTerrain(
+                     locationOfCeiling.x,
+                     locationOfCeiling.y,
+                     VectorUtil.createLocalFloor(player, width),
+                  );
+               },
             },
          },
-         physics: {
-            leftWallCollision: (player, width, height) => {
-               const locationOfWall = new Phaser.Math.Vector2({ x: player.x, y: player.y })
-                  .subtract(VectorUtil.getFloorVector(player).scale(-width / 2))
-                  .add(VectorUtil.getUpwardVector(player).scale(height));
-               return this.mapSprite.hitTestTerrain(
-                  locationOfWall.x,
-                  locationOfWall.y,
-                  VectorUtil.createLocalWall(player, 1),
-               );
-            },
-            rightWallCollision: (player, width, height) => {
-               const locationOfWall = new Phaser.Math.Vector2({ x: player.x, y: player.y })
-                  .subtract(VectorUtil.getFloorVector(player).scale(width / 2))
-                  .add(VectorUtil.getUpwardVector(player).scale(height));
-               return this.mapSprite.hitTestTerrain(
-                  locationOfWall.x,
-                  locationOfWall.y,
-                  VectorUtil.createLocalWall(player, 1),
-               );
-            },
-            floorCollision: (player, width) => {
-               const locationOfFloor = new Phaser.Math.Vector2({ x: player.x, y: player.y }).subtract(
-                  VectorUtil.getFloorVector(player).scale(width / 2),
-               );
-               return this.mapSprite.hitTestTerrain(
-                  locationOfFloor.x,
-                  locationOfFloor.y,
-                  VectorUtil.createLocalFloor(player, width),
-               );
-            },
-            ceilingCollision: (player, width, height) => {
-               const locationOfCeiling = new Phaser.Math.Vector2({ x: player.x, y: player.y })
-                  .subtract(VectorUtil.getFloorVector(player).scale(width / 2))
-                  .add(VectorUtil.getUpwardVector(player).scale(height));
-               return this.mapSprite.hitTestTerrain(
-                  locationOfCeiling.x,
-                  locationOfCeiling.y,
-                  VectorUtil.createLocalFloor(player, width),
-               );
-            },
-         },
-      });
+         this.playerComponent.getClient().type,
+      );
       this.playerComponent.setClientPlayerSprite(this.character);
       this.cameras.main.startFollow(this.character);
       this.cameras.main.zoom = ClientConfig.MAP_OUTPUT_SCALE;
@@ -188,7 +188,7 @@ export class GameScene extends Scene {
 
    private initOtherPlayerSubscriptions(): void {
       this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
-         const sprite = new OtherPlayerSprite(this, player);
+         const sprite = new OtherPlayerSprite(this, player.type);
          this.otherPlayers.set(player.id, sprite);
          this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
             if (updatedPlayer.position) {
