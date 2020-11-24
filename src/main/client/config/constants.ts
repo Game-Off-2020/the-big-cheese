@@ -16,4 +16,6 @@ export enum Keys {
    LAVA = 'lava',
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
+   // UI
+   LOGO = 'logo',
 }
