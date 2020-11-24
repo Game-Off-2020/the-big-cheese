@@ -42,7 +42,7 @@ export class ServerPlayerComponent {
          },
          moving: false,
          cheese: 0.0,
-         type: MathUtil.randomIntFromInterval(0, PLAYERS.length),
+         type: MathUtil.randomIntFromInterval(0, PLAYERS.length - 1),
       });
       // Width and height must be switched for some reason
       this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_HEIGHT, ServerConfig.PLAYER_WIDTH);
