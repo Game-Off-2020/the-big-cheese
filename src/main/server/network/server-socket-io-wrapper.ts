@@ -20,6 +20,6 @@ export class ServerSocketIoWrapper extends SharedSocketIoWrapper {
       fromEvent(this.socketServer, ServerSocketIoWrapper.EVENT_CONNECTED).subscribe((socket: Socket) => {
          this.connectedSubject.next(socket);
       });
-      this.httpServer.listen(ServerConfig.SERVER_PORT);
+      this.httpServer.listen(ServerConfig.SERVER_SOCKET_PORT);
    }
 }
