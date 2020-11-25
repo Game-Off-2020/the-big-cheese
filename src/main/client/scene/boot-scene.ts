@@ -95,5 +95,11 @@ export class BootScene extends Scene {
          endFrame: 16,
       });
       this.load.image(Keys.LOGO, ClientConfig.ASSET_FOLDER + 'ui/logo.png');
+      this.load.atlas(
+         Keys.FLARES,
+         ClientConfig.ASSET_FOLDER + 'common/flares.png',
+         ClientConfig.ASSET_FOLDER + 'common/flares.json',
+      );
+      this.load.image(Keys.LAVA_SPIT, ClientConfig.ASSET_FOLDER + 'lava/lava-spit.png');
    }
 }

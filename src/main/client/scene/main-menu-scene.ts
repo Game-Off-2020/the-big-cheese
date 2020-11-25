@@ -33,7 +33,7 @@ export class MainMenuScene extends Phaser.Scene {
 
       new StarFieldSprite({ scene: this, scale: 1 });
 
-      const logo = this.add.image(this.game.scale.width / 2, this.game.scale.height / 2 - 250, Keys.LOGO).setScale(0.5);
+      const logo = this.add.image(this.game.scale.width / 2, this.game.scale.height / 2 - 220, Keys.LOGO).setScale(0.5);
 
       const gameOffText = new TextLink({
          scene: this,
@@ -135,7 +135,7 @@ export class MainMenuScene extends Phaser.Scene {
             const height = gameSize.height;
 
             this.cameras.resize(width, height);
-            logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 250);
+            logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 220);
             this.joinGameButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 300);
             this.nameInput.setPosition(gameSize.width / 2, gameSize.height / 2);
 
