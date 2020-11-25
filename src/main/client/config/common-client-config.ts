@@ -12,6 +12,7 @@ export class CommonClientConfig extends SharedConfig {
    static readonly AUTO_START: boolean = false;
    static readonly SHOOT_INTERVAL: number = 200; // After every x ms
    static readonly INTERPOLATION_SIZE: number = 3;
+   static readonly TIME_BETWEEN_TWO_JUMP_MS: number = 500;
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
          url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,

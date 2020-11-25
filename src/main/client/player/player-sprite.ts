@@ -6,8 +6,8 @@ import { ClientConfig } from '../config/client-config';
 import { Vector } from '../../shared/bullet/vector-model';
 import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PlayerType } from '../../shared/player/player-model';
-import Vector2 = Phaser.Math.Vector2;
 import { PLAYERS } from '../../shared/config/shared-constants';
+import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -45,6 +45,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    // private readonly debugger: HitBoxDebugger;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
    private readonly spriteSheetConfig: PlayerSpriteSheetConfig;
+   private lastJumptTimestamp = 0;
 
    constructor(private readonly options: PlayerOptions, private readonly playerType: PlayerType) {
       super(options.scene, 0, 0);
@@ -140,9 +141,10 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.standing();
       }
 
-      if (this.options.cursorKeys.up.isDown && !this.jumping) {
+      if (this.options.cursorKeys.up.isDown && this.canJump()) {
          this.verticalSpeed = -MAX_VERTICAL_SPEED;
          this.jumping = true;
+         this.lastJumptTimestamp = Date.now();
       }
 
       this.verticalSpeed += 1;
@@ -201,5 +203,9 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.character.anims.pause();
          this.dustEmitter.stop();
       }
+   }
+
+   private canJump(): boolean {
+      return !this.jumping && Date.now() > this.lastJumptTimestamp + ClientConfig.TIME_BETWEEN_TWO_JUMP_MS;
    }
 }
