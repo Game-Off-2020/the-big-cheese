@@ -12,8 +12,7 @@ export class ClientMapManager extends SharedMapManager {
       @Inject private readonly network: ClientNetworkComponent,
    ) {
       super(component, store);
-      network.joined$.subscribe((response) => {
-         component.initMap(response.map.size, response.map.buffer);
-      });
+      network.joined$.subscribe((response) => component.initMap(response.map.size, response.map.buffer));
+      network.mapUpdate$.subscribe((response) => component.updateMap(response.buffer));
    }
 }

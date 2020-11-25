@@ -11,6 +11,7 @@ import { ServerBulletStore } from '../bullet/server-bullet-store';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { CheeseStore } from '../../shared/cheese/cheese-store';
 import { GameStateStore } from '../../shared/game-state/game-state-store';
+import { ServerGameStateComponent } from '../game-state/server-game-state-component';
 
 @Singleton
 export class ServerNetworkManager {
@@ -22,6 +23,7 @@ export class ServerNetworkManager {
       @Inject private readonly bulletStore: ServerBulletStore,
       @Inject private readonly cheeseStore: CheeseStore,
       @Inject private readonly gameStateStore: GameStateStore,
+      @Inject private readonly gameState: ServerGameStateComponent,
    ) {
       this.subscribeNetworkUpdateToStore(playerStore);
       this.subscribeStoreToNetworkExceptEntity(this.playerStore, this.playerStore.updated$);
@@ -38,6 +40,8 @@ export class ServerNetworkManager {
          this.sendOutStore(playerEntity.id, cheeseStore);
          this.sendOutStore(playerEntity.id, gameStateStore);
       });
+
+      map.generated$.subscribe((buffer) => component.sendMapUpdate(this.playerStore.getIds(), buffer));
    }
 
    private sendOutStore<T>(playerId: string, store: Store<T>): void {
@@ -87,7 +91,7 @@ export class ServerNetworkManager {
          this.component.sendLoginResponse(entity.id, {
             status: JoinResponseStatus.JOINED,
             map: {
-               buffer: this.map.getMap(),
+               buffer: this.map.getBuffer(),
                size: this.map.getCanvasSize(),
             },
             player: entity.value,

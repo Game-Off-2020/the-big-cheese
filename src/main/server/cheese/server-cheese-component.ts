@@ -24,15 +24,25 @@ export class ServerCheeseComponent {
       this.collisionPhysics.add(id, x, y, CHEESE_SIZE, CHEESE_SIZE);
    }
 
-   checkPickup(playerId: string, x: number, y: number, w: number, h: number): void {
+   removeAll(): void {
+      for (const id of Object.keys(this.store.getData())) {
+         this.remove(id);
+      }
+   }
+
+   pickupInRectangle(playerId: string, x: number, y: number, w: number, h: number): void {
       this.collisionPhysics.getIdsInRectangle(x, y, w, h).forEach((id) => this.pickup(id, playerId));
    }
 
    private pickup(id: string, playerId: string): void {
       if (this.store.get(id)) {
-         this.store.remove(id);
-         this.collisionPhysics.remove(id);
+         this.remove(id);
          this.pickupSubject.next(playerId);
       }
+   }
+
+   private remove(id: string): void {
+      this.store.remove(id);
+      this.collisionPhysics.remove(id);
    }
 }

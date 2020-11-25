@@ -8,6 +8,7 @@ export enum NetworkEvent {
    JOIN_REQUEST,
    JOIN_RESPONSE,
    SHOOT_REQUEST,
+   MAP_UPDATE,
 }
 
 export interface NetworkMessage<T = NetworkPayload> {
@@ -31,6 +32,10 @@ export interface JoinResponse {
       size: number;
    };
    player?: Player;
+}
+
+export interface MapUpdateResponse {
+   buffer: Buffer;
 }
 
 export type ShootRequest = Bullet;
