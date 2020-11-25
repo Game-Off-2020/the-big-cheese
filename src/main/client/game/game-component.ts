@@ -6,10 +6,12 @@ import { GameScene } from '../scene/game-scene';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { ErrorScene } from '../scene/error-scene';
 import { Keys } from '../config/client-constants';
+import { fromEvent, Observable } from 'rxjs';
 
 @Singleton
 export class GameComponent {
    private readonly game: Game;
+   readonly hidden$: Observable<void>;
 
    constructor() {
       this.game = new Game({
@@ -37,6 +39,7 @@ export class GameComponent {
             target: 60,
          },
       });
+      this.hidden$ = fromEvent(this.game.events, 'hidden');
    }
 
    refreshScale(): void {
@@ -44,7 +47,6 @@ export class GameComponent {
    }
 
    showErrorScreen(status: JoinResponseStatus): void {
-      console.log('err');
       this.game.scene.stop(Keys.GAME_SCENE);
       this.game.scene.start(Keys.ERROR_SCENE, { status });
    }
