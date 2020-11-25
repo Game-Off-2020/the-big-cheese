@@ -9,6 +9,7 @@ import { ClientConfig } from '../config/client-config';
 
 @Singleton
 export class ClientMapComponent extends SharedMapComponent {
+   private canvas: HTMLCanvasElement;
    protected ctx: CanvasRenderingContext2D;
    protected canvasSize: number;
 
@@ -17,6 +18,10 @@ export class ClientMapComponent extends SharedMapComponent {
 
    private readonly updatedSubject = new Subject<void>();
    readonly updated$ = this.updatedSubject.asObservable();
+
+   private readonly reInitSubject = new Subject<void>();
+   readonly reInit$ = this.reInitSubject.asObservable();
+
    private mapSprite: MapSprite;
 
    constructor(@Inject protected readonly store: MapStore) {
@@ -25,14 +30,22 @@ export class ClientMapComponent extends SharedMapComponent {
 
    initMap(size: number, buffer: Buffer): void {
       this.canvasSize = size;
-      const canvas = document.createElement('canvas') as HTMLCanvasElement;
-      canvas.width = size;
-      canvas.height = size;
-      this.ctx = canvas.getContext('2d');
-
+      this.canvas = document.createElement('canvas') as HTMLCanvasElement;
+      this.canvas.width = size;
+      this.canvas.height = size;
+      this.ctx = this.canvas.getContext('2d');
       ImageUtil.createImageFromBuffer(buffer).then((image) => {
          this.ctx.drawImage(image, 0, 0);
-         this.mapLoadedSubject.next(canvas);
+         this.mapLoadedSubject.next(this.canvas);
+      });
+   }
+
+   updateMap(buffer: Buffer): void {
+      ImageUtil.createImageFromBuffer(buffer).then((image) => {
+         this.clear();
+         this.ctx.globalCompositeOperation = 'source-over';
+         this.ctx.drawImage(image, 0, 0);
+         this.reInitSubject.next();
       });
    }
 

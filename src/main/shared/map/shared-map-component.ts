@@ -43,4 +43,13 @@ export class SharedMapComponent {
          ctx.rect(xc - y, yc + x, y << 1, 1); // lower 4/4
       }
    }
+
+   protected clear(): void {
+      this.ctx.beginPath();
+      this.ctx.globalCompositeOperation = 'destination-out';
+      this.ctx.fillStyle = '';
+      this.ctx.rect(0, 0, this.canvasSize, this.canvasSize);
+      this.ctx.fill();
+      this.ctx.closePath();
+   }
 }

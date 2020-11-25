@@ -11,11 +11,14 @@ import { DropCheese } from '../../shared/cheese/cheese-model';
 import { Subject } from 'rxjs';
 import { MathUtil } from '../../client/util/math-util';
 import { PLAYERS } from '../../shared/config/shared-constants';
+import { filter } from 'rxjs/operators';
 
 @Singleton
 export class ServerPlayerComponent {
    private readonly dropCheeseSubject = new Subject<DropCheese>();
    readonly dropCheese$ = this.dropCheeseSubject.asObservable();
+
+   private playersCanMove = false;
 
    constructor(
       @Inject private readonly store: PlayerStore,
@@ -23,7 +26,7 @@ export class ServerPlayerComponent {
       @Inject private readonly ammo: ServerCheeseComponent,
       @Inject private readonly collisionPhysics: CollisionPhysics,
    ) {
-      store.changed$.subscribe((entity) => {
+      store.changed$.pipe(filter(() => this.playersCanMove)).subscribe((entity) => {
          if (entity.value.position) {
             this.handlePlayerPositionChanged(entity.id, entity.value.position);
          }
@@ -63,6 +66,20 @@ export class ServerPlayerComponent {
 
    getIdsInRadius(x: number, y: number, radius: number): string[] {
       return this.collisionPhysics.getIdsInRadius(x, y, radius);
+   }
+
+   setPlayersCanMove(playersCanMove: boolean): void {
+      this.playersCanMove = playersCanMove;
+   }
+
+   resetPlayers(): void {
+      for (const [id, player] of Object.entries(this.store.getData())) {
+         player.position = this.map.getRandomPositionAboveSurface(30);
+         player.type = MathUtil.randomIntFromInterval(0, PLAYERS.length - 1);
+         player.moving = false;
+         player.cheese = 0;
+         this.store.commit(id, player);
+      }
    }
 
    raycast(x1: number, y1: number, x2: number, y2: number, exceptId: string): [number, number, string] | null {
@@ -121,6 +138,12 @@ export class ServerPlayerComponent {
    private handlePlayerPositionChanged(playerId: string, position: Vector): void {
       this.collisionPhysics.updatePosition(playerId, position.x, position.y);
       // TODO: Check lava distance and kill if closer
-      this.ammo.checkPickup(playerId, position.x, position.y, ServerConfig.PLAYER_WIDTH, ServerConfig.PLAYER_HEIGHT);
+      this.ammo.pickupInRectangle(
+         playerId,
+         position.x,
+         position.y,
+         ServerConfig.PLAYER_WIDTH,
+         ServerConfig.PLAYER_HEIGHT,
+      );
    }
 }

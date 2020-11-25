@@ -5,6 +5,7 @@ import { ServerConfig } from '../config/server-config';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { ServerCheeseComponent } from '../cheese/server-cheese-component';
 import { ServerBulletComponent } from '../bullet/server-bullet-component';
+import { ServerGameStateComponent } from '../game-state/server-game-state-component';
 
 @Singleton
 export class ServerPlayerManager {
@@ -13,6 +14,7 @@ export class ServerPlayerManager {
       @Inject private readonly network: ServerNetworkComponent,
       @Inject private readonly cheese: ServerCheeseComponent,
       @Inject private readonly bullet: ServerBulletComponent,
+      @Inject private readonly gameState: ServerGameStateComponent,
    ) {
       network.joinRequest$.subscribe((requestMessage) => {
          if (component.getNrOfPlayers() < ServerConfig.MAX_NR_OF_PLAYERS) {
@@ -27,6 +29,11 @@ export class ServerPlayerManager {
          // Need to subscribe after ServerCheeseManager lol
          bullet.damage$.subscribe((damage) => component.dealDamage(damage));
       }, 10);
+      gameState.startPlaying$.subscribe(() => {
+         component.setPlayersCanMove(true);
+         component.resetPlayers();
+      });
+      gameState.finished$.subscribe(() => component.setPlayersCanMove(false));
    }
 
    private sendServerIsFullJoinResponse(userId: string): void {

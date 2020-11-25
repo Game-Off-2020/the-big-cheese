@@ -1,17 +1,30 @@
 import { Inject, Singleton } from 'typescript-ioc';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { JoinRequest } from '../../shared/network/shared-network-model';
 import { GameStateStore } from '../../shared/game-state/game-state-store';
+import { GamePhase, GameState } from '../../shared/game-state/game-state-model';
+import { filter, map, tap } from 'rxjs/operators';
 
 @Singleton
 export class ClientGameStateComponent {
    private gameStartedSubject = new Subject<JoinRequest>();
    readonly joinGame$ = this.gameStartedSubject.asObservable();
+   private readonly updated$: Observable<GameState>;
+   readonly startPlaying$: Observable<void>;
+   readonly finished$: Observable<void>;
 
    constructor(@Inject private readonly store: GameStateStore) {
-      store.onUpdatedId(GameStateStore.ENTITY_ID).subscribe((gameState) => {
-         console.log('GameState', gameState);
-      });
+      this.updated$ = store.onUpdatedId(GameStateStore.ENTITY_ID);
+      this.startPlaying$ = this.updated$.pipe(
+         filter((state) => state.phase === GamePhase.PLAYING),
+         map(() => null),
+         tap(() => console.log('Round started, lets play')),
+      );
+      this.finished$ = this.updated$.pipe(
+         filter((state) => state.phase === GamePhase.FINISHED),
+         map(() => null),
+         tap(() => console.log('Round finished, lets show the scoreboard')),
+      );
    }
 
    joinGame(userName: string): void {
