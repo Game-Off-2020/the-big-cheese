@@ -9,7 +9,7 @@ export class CommonSharedConfig {
    static readonly PLAYER_HEIGHT: number = 20;
    static readonly RANDOM_START_POSITION: boolean = true;
    static readonly SHAKE_LIMIT: number = 45 / CommonSharedConfig.MAP_OUTPUT_SCALE;
-   static readonly MOON_PERCENTAGE_TO_FINISH: number = 0.99;
+   static readonly MOON_PERCENTAGE_TO_FINISH: number = 0.5;
    static readonly GAME_RESTART_TIME_MS: number = 2000;
    static readonly LAVA_RADIUS: number = 200;
 }
