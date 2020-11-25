@@ -87,6 +87,10 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
             volume: 0.3,
             detune: 50,
          }),
+         scene.sound.add(key, {
+            volume: 0.3,
+            detune: 100,
+         }),
       ];
    }
 
