@@ -19,8 +19,8 @@ import { ClientConfig } from '../config/client-config';
 import { Keys } from '../config/client-constants';
 import { ClientCheeseComponent } from '../cheese/client-cheese-component';
 import { CheeseSprite } from './cheese-sprite';
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { PLAYERS } from '../../shared/config/shared-constants';
+import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
    private cursorKeys: CursorKeys;
@@ -184,6 +184,7 @@ export class GameScene extends Scene {
          this.mapComponent.setMapSprite(this.mapSprite);
       });
       this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+      this.mapComponent.reInit$.subscribe(() => this.mapSprite && this.mapSprite.drawMoonTextureOverMask());
    }
 
    private initOtherPlayerSubscriptions(): void {

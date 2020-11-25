@@ -18,6 +18,10 @@ export class ClientMapComponent extends SharedMapComponent {
 
    private readonly updatedSubject = new Subject<void>();
    readonly updated$ = this.updatedSubject.asObservable();
+
+   private readonly reInitSubject = new Subject<void>();
+   readonly reInit$ = this.reInitSubject.asObservable();
+
    private mapSprite: MapSprite;
 
    constructor(@Inject protected readonly store: MapStore) {
@@ -41,7 +45,7 @@ export class ClientMapComponent extends SharedMapComponent {
          this.clear();
          this.ctx.globalCompositeOperation = 'source-over';
          this.ctx.drawImage(image, 0, 0);
-         this.updatedSubject.next();
+         this.reInitSubject.next();
       });
    }
 

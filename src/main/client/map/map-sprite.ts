@@ -19,9 +19,10 @@ interface Color {
 
 export class MapSprite extends Phaser.GameObjects.Sprite {
    private terrainTexture: Phaser.Textures.CanvasTexture;
-   private radius: number;
+   private readonly radius: number;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
    private impactSounds: Phaser.Sound.BaseSound[];
+   private readonly moonTexture: HTMLImageElement;
 
    constructor(options: MapSpriteOptions) {
       const terrainTexture = options.scene.textures.addCanvas(Keys.TERRAIN, options.canvas);
@@ -29,10 +30,9 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 
       this.terrainTexture = terrainTexture;
       this.radius = options.canvas.width / 2;
-      const moon = options.scene.textures.get(Keys.MOON).getSourceImage() as HTMLImageElement;
+      this.moonTexture = options.scene.textures.get(Keys.MOON).getSourceImage() as HTMLImageElement;
       options.scene.add.existing(this);
-      terrainTexture.context.globalCompositeOperation = 'source-in';
-      terrainTexture.draw(0, 0, moon);
+      this.drawMoonTextureOverMask();
 
       const particle = options.scene.add.particles(Keys.SMOKE_FIRE);
       this.dustEmitter = particle.createEmitter({
@@ -99,6 +99,11 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 
    shake(intensity: number): void {
       this.scene.cameras.main.shake(100, intensity);
+   }
+
+   drawMoonTextureOverMask(): void {
+      this.terrainTexture.context.globalCompositeOperation = 'source-in';
+      this.terrainTexture.draw(0, 0, this.moonTexture);
    }
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
