@@ -83,7 +83,10 @@ export class BootScene extends Scene {
          frameHeight: 97,
          endFrame: 16,
       });
-      this.load.audio(Keys.BASIC_GUN_SOUND, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.ogg']);
+      this.load.audio(Keys.GUN_SOUND_1, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun1.mp3']);
+      this.load.audio(Keys.GUN_SOUND_2, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun2.mp3']);
+      this.load.audio(Keys.GUN_SOUND_3, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun3.mp3']);
+      this.load.audio(Keys.GUN_SOUND_4, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun4.mp3']);
       this.load.audio(Keys.MOON_AMBIENCE, [ClientConfig.ASSET_FOLDER + 'moon/moon-ambience.ogg']);
       this.load.audio(Keys.MOON_IMPACT, [ClientConfig.ASSET_FOLDER + 'moon/moon-impact.ogg']);
 

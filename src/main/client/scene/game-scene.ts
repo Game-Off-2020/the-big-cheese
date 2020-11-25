@@ -73,10 +73,9 @@ export class GameScene extends Scene {
             cursorKeys: this.cursorKeys,
             callbacks: {
                onShoot: (position) => {
-                  this.playerComponent.shoot({
-                     position: position,
-                     direction: VectorUtil.getRelativeMouseDirection(this, this.character),
-                  });
+                  const randomRotation = Math.random() * 0.15 - 0.075;
+                  const direction = VectorUtil.getRelativeMouseDirection(this, this.character).rotate(randomRotation);
+                  this.playerComponent.shoot({ position, direction });
                },
                onStartMoving: () => {
                   this.playerComponent.setMoving(true);
