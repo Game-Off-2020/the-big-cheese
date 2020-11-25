@@ -5,6 +5,7 @@ import {
    JoinRequest,
    JoinResponse,
    JoinResponseStatus,
+   MapUpdateResponse,
    NetworkEvent,
    NetworkMessage,
 } from '../../shared/network/shared-network-model';
@@ -22,6 +23,7 @@ export class ClientNetworkComponent {
    readonly joined$: Observable<JoinResponse>;
    readonly joinFailed$: Observable<JoinResponseStatus>;
    readonly dataStore$: Observable<{ [key: string]: AllStores }>;
+   readonly mapUpdate$: Observable<MapUpdateResponse>;
 
    constructor(@Inject private readonly bufferedNetwork: ClientBufferedNetworkComponent) {
       this.connected$ = bufferedNetwork.connected$;
@@ -34,6 +36,7 @@ export class ClientNetworkComponent {
          map((response) => response.status),
       );
       this.dataStore$ = this.onEvent<{ [key: string]: AllStores }>(NetworkEvent.DATA_STORE);
+      this.mapUpdate$ = this.onEvent<MapUpdateResponse>(NetworkEvent.MAP_UPDATE);
    }
 
    private onEvent<T>(event: NetworkEvent): Observable<T> {

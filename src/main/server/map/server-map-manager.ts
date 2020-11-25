@@ -17,7 +17,7 @@ export class ServerMapManager extends SharedMapManager {
       @Inject private readonly gameState: ServerGameStateComponent,
    ) {
       super(component, store);
-      gameState.startPlaying$.subscribe(() => component.createMap(ServerConfig.MOON_RADIUS));
+      gameState.startPlaying$.subscribe(() => component.init(ServerConfig.MOON_RADIUS));
       gameState.finished$.subscribe(() => component.clearMoonPixels());
       bullet.damage$.subscribe((destruction) => component.destruct(destruction));
       interval(1000)

@@ -25,21 +25,23 @@ export class ClientMapComponent extends SharedMapComponent {
    }
 
    initMap(size: number, buffer: Buffer): void {
-      const newMap = !this.ctx;
-      if (newMap) {
-         this.canvasSize = size;
-         this.canvas = document.createElement('canvas') as HTMLCanvasElement;
-         this.canvas.width = size;
-         this.canvas.height = size;
-         this.ctx = this.canvas.getContext('2d');
-      }
+      this.canvasSize = size;
+      this.canvas = document.createElement('canvas') as HTMLCanvasElement;
+      this.canvas.width = size;
+      this.canvas.height = size;
+      this.ctx = this.canvas.getContext('2d');
       ImageUtil.createImageFromBuffer(buffer).then((image) => {
          this.ctx.drawImage(image, 0, 0);
-         if (newMap) {
-            this.mapLoadedSubject.next(this.canvas);
-         } else {
-            this.updatedSubject.next();
-         }
+         this.mapLoadedSubject.next(this.canvas);
+      });
+   }
+
+   updateMap(buffer: Buffer): void {
+      ImageUtil.createImageFromBuffer(buffer).then((image) => {
+         this.clear();
+         this.ctx.globalCompositeOperation = 'source-over';
+         this.ctx.drawImage(image, 0, 0);
+         this.updatedSubject.next();
       });
    }
 
