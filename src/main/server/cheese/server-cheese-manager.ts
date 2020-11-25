@@ -15,13 +15,16 @@ export class ServerCheeseManager {
    ) {
       bullet.mapDamage$
          .pipe(filter((damage) => damage.radius >= ServerConfig.SHAKE_LIMIT))
-         .subscribe((damage) => this.add(damage.position, 1));
-      players.dropCheese$.subscribe((drop) => this.add(drop.position, drop.amount));
+         .subscribe((damage) => this.add(damage.position, 1, 1));
+      players.dropCheese$.subscribe((drop) => this.add(drop.position, drop.amount, 2));
    }
 
-   private add(position: Vector, amount: number): void {
+   private add(position: Vector, amount: number, deviationRatio: number): void {
       for (let i = 0; i < amount; i++) {
-         this.component.add(position.x + Math.random() * 20 - 10, position.y + Math.random() * 20 - 10);
+         this.component.add(
+            position.x + Math.random() * 20 * deviationRatio - 10 * deviationRatio,
+            position.y + Math.random() * 20 * deviationRatio - 10 * deviationRatio,
+         );
       }
    }
 }
