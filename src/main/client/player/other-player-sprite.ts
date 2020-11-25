@@ -65,7 +65,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
 
    setMoving(moving: boolean): void {
       if (moving) {
-         this.character.anims.play('player-walk', true);
+         this.character.anims.play(this.spriteSheetConfig.walkAnimation, true);
          this.dustEmitter.start();
       } else {
          this.character.anims.pause();
