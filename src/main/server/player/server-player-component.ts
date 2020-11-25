@@ -155,6 +155,6 @@ export class ServerPlayerComponent {
    }
 
    private lavaDistance2(position: Vector): number {
-      return position.x * position.x + position.y + position.y;
+      return position.x * position.x + position.y * position.y;
    }
 }
