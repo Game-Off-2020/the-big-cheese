@@ -125,4 +125,10 @@ export class ServerBulletComponent {
          bullet.position.y = this.nextPosition.y;
       }
    }
+
+   removeAll(): void {
+      for (const id of Object.keys(this.store.getData())) {
+         this.store.remove(id);
+      }
+   }
 }

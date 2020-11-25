@@ -20,17 +20,27 @@ export class ServerMapComponent extends SharedMapComponent {
    private readonly moonPercentageChangeSubject = new Subject<number>();
    readonly moonPercentageChange$ = this.moonPercentageChangeSubject.asObservable();
 
+   private readonly generatedSubject = new Subject<Buffer>();
+   readonly generated$ = this.generatedSubject.asObservable();
+   private first = true;
+
    constructor(@Inject protected readonly store: MapStore) {
       super(store);
    }
 
-   createMap(radius: number): void {
+   init(radius: number): void {
       this.canvasSize = (radius * 2) / ServerConfig.MAP_OUTPUT_SCALE;
       this.canvas = createCanvas(this.canvasSize, this.canvasSize);
       this.ctx = this.canvas.getContext('2d');
       this.ctx.imageSmoothingEnabled = false;
+      this.generateNew();
+   }
+
+   generateNew(): void {
+      this.clear();
 
       // Base cirlce
+      this.ctx.globalCompositeOperation = 'source-over';
       this.ctx.fillStyle = '#ff0000';
       this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2);
       this.ctx.fill();
@@ -81,19 +91,22 @@ export class ServerMapComponent extends SharedMapComponent {
       this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, Math.floor(this.canvasSize / 2 / 1.1));
       this.ctx.fill();
 
+      // Can save the map or noise mask for testing purposes
       // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
       // console.log('ok');
 
-      // Add some cheese for testing purposes
-      // for (let i = 0; i < 200; i++) {
-      //    const position = this.getRandomPositionAboveSurface(Math.random() * 20 - 10);
-      //    this.cheese.add(position.x, position.y);
-      // }
       this.updateData();
       this.maxMoonPixels = this.getMoonPixelCount();
+      this.updateMoonPixelPercentage();
+
+      if (this.first) {
+         this.first = false;
+      } else {
+         this.generatedSubject.next(this.getBuffer());
+      }
    }
 
-   getMap(): Buffer {
+   getBuffer(): Buffer {
       return this.canvas.toBuffer();
    }
 
@@ -111,6 +124,10 @@ export class ServerMapComponent extends SharedMapComponent {
          this.moonPixels = moonPixels;
          this.moonPercentageChangeSubject.next(moonPixels);
       }
+   }
+
+   clearMoonPixels(): void {
+      this.maxMoonPixels = 0;
    }
 
    //
