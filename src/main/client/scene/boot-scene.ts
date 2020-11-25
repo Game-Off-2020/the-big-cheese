@@ -68,6 +68,7 @@ export class BootScene extends Scene {
       this.load.image(Keys.MOON, ClientConfig.ASSET_FOLDER + 'moon/moon-texture.png');
       this.load.image(Keys.BASIC_GUN, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
       this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
+      this.load.audio(Keys.CHEESE_EAT_SOUND, [ClientConfig.ASSET_FOLDER + 'cheese/cheese-eat.ogg']);
       this.load.spritesheet(Keys.PLAYER_1, ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
          frameWidth: 73,
          frameHeight: 97,
@@ -97,5 +98,11 @@ export class BootScene extends Scene {
          endFrame: 16,
       });
       this.load.image(Keys.LOGO, ClientConfig.ASSET_FOLDER + 'ui/logo.png');
+      this.load.atlas(
+         Keys.FLARES,
+         ClientConfig.ASSET_FOLDER + 'common/flares.png',
+         ClientConfig.ASSET_FOLDER + 'common/flares.json',
+      );
+      this.load.image(Keys.LAVA_SPIT, ClientConfig.ASSET_FOLDER + 'lava/lava-spit.png');
    }
 }

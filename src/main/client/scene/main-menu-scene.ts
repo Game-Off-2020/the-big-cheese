@@ -138,7 +138,7 @@ export class MainMenuScene extends Phaser.Scene {
             const height = gameSize.height;
 
             this.cameras.resize(width, height);
-            logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 250);
+            logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 220);
             this.joinGameButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 300);
             this.nameInput.setPosition(gameSize.width / 2, gameSize.height / 2);
 

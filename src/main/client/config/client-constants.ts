@@ -26,8 +26,11 @@ export enum Keys {
    LAVA = 'lava',
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
+   CHEESE_EAT_SOUND = 'cheese-eat-sound',
    // UI
    LOGO = 'logo',
+   FLARES = 'flares',
+   LAVA_SPIT = 'lava-spit',
 }
 
 export interface PlayerSpriteSheetConfig {
