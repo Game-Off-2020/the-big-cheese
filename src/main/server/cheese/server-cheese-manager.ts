@@ -17,7 +17,7 @@ export class ServerCheeseManager {
    ) {
       bullet.mapDamage$
          .pipe(filter((damage) => damage.radius >= ServerConfig.SHAKE_LIMIT))
-         .subscribe((damage) => this.add(damage.position, 1));
+         .subscribe((damage) => this.add(damage.position, 1, 1));
       players.dropCheese$.subscribe((drop) => this.add(drop.position, drop.amount, 2));
       gameState.finished$.subscribe(() => component.removeAll());
    }
