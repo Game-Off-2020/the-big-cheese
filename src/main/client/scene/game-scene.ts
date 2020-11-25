@@ -141,7 +141,7 @@ export class GameScene extends Scene {
       this.bullets = new Bullets(this);
       this.bulletGroupComponent.setBulletGroup(this.bullets);
       new StarFieldSprite({ scene: this, scale: ClientConfig.MAP_OUTPUT_SCALE });
-      this.lava = new LavaFloorSprite({ scene: this, size: 400 });
+      this.lava = new LavaFloorSprite({ scene: this, size: ClientConfig.LAVA_RADIUS * 2 });
       this.createdSubject.next(true);
 
       const music = this.sound.add(Keys.MOON_AMBIENCE, { loop: true });

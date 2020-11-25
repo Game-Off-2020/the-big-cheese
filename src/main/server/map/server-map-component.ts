@@ -40,6 +40,7 @@ export class ServerMapComponent extends SharedMapComponent {
       this.clear();
 
       // Base cirlce
+      this.ctx.beginPath();
       this.ctx.globalCompositeOperation = 'source-over';
       this.ctx.fillStyle = '#ff0000';
       this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2);
@@ -69,13 +70,11 @@ export class ServerMapComponent extends SharedMapComponent {
       const maskView = new DataView(resizedNoiseCtx.getImageData(0, 0, this.canvasSize, this.canvasSize).data.buffer);
 
       const MASK_THRESHOLD = 128; // 0-255
-      for (let y = 0; y < this.canvasSize; y++) {
-         for (let x = 0; x < this.canvasSize; x++) {
-            const offset = 4 * (x + y * this.canvasSize);
-            const brightness = (maskView.getUint32(offset) >> 24) & 0xff; // Red channel
-            if (brightness < MASK_THRESHOLD) {
-               targetView.setUint32(offset, 0);
-            }
+      for (let i = 0; i < this.canvasSize * this.canvasSize; i++) {
+         const offset = 4 * i;
+         const brightness = (maskView.getUint32(offset) >> 24) & 0xff; // Red channel
+         if (brightness < MASK_THRESHOLD) {
+            targetView.setUint32(offset, 0);
          }
       }
 

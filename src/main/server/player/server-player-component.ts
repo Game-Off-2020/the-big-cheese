@@ -73,7 +73,12 @@ export class ServerPlayerComponent {
    }
 
    resetPlayers(): void {
-      for (const [id, player] of Object.entries(this.store.getData())) {
+      Object.keys(this.store.getData()).forEach((id) => this.resetPlayer(id));
+   }
+
+   private resetPlayer(id: string): void {
+      const player = this.store.get(id);
+      if (player) {
          player.position = this.map.getRandomPositionAboveSurface(30);
          player.type = MathUtil.randomIntFromInterval(0, PLAYERS.length - 1);
          player.moving = false;
@@ -137,7 +142,6 @@ export class ServerPlayerComponent {
 
    private handlePlayerPositionChanged(playerId: string, position: Vector): void {
       this.collisionPhysics.updatePosition(playerId, position.x, position.y);
-      // TODO: Check lava distance and kill if closer
       this.ammo.pickupInRectangle(
          playerId,
          position.x,
@@ -145,5 +149,12 @@ export class ServerPlayerComponent {
          ServerConfig.PLAYER_WIDTH,
          ServerConfig.PLAYER_HEIGHT,
       );
+      if (this.lavaDistance2(position) <= ServerConfig.LAVA_RADIUS * ServerConfig.LAVA_RADIUS * 0.9) {
+         this.resetPlayer(playerId);
+      }
+   }
+
+   private lavaDistance2(position: Vector): number {
+      return position.x * position.x + position.y * position.y;
    }
 }
