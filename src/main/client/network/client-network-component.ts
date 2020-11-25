@@ -5,10 +5,11 @@ import {
    JoinRequest,
    JoinResponse,
    JoinResponseStatus,
+   MapUpdateResponse,
    NetworkEvent,
    NetworkMessage,
 } from '../../shared/network/shared-network-model';
-import { filter, map } from 'rxjs/internal/operators';
+import { filter, map, tap } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 import { BulletFireOptions } from '../bullet/default-bullet';
 import { AllStores } from '../../shared/models/all-stores';
@@ -22,18 +23,24 @@ export class ClientNetworkComponent {
    readonly joined$: Observable<JoinResponse>;
    readonly joinFailed$: Observable<JoinResponseStatus>;
    readonly dataStore$: Observable<{ [key: string]: AllStores }>;
+   readonly mapUpdate$: Observable<MapUpdateResponse>;
+   private joined = false;
 
    constructor(@Inject private readonly bufferedNetwork: ClientBufferedNetworkComponent) {
       this.connected$ = bufferedNetwork.connected$;
       this.disconnected$ = bufferedNetwork.disconnected$;
       this.event$ = bufferedNetwork.data$;
       this.joinResponse$ = this.onEvent<JoinResponse>(NetworkEvent.JOIN_RESPONSE);
-      this.joined$ = this.joinResponse$.pipe(filter((response) => response.status === JoinResponseStatus.JOINED));
+      this.joined$ = this.joinResponse$.pipe(
+         filter((response) => response.status === JoinResponseStatus.JOINED),
+         tap(() => (this.joined = true)),
+      );
       this.joinFailed$ = this.joinResponse$.pipe(
          filter((response) => response.status !== JoinResponseStatus.JOINED),
          map((response) => response.status),
       );
       this.dataStore$ = this.onEvent<{ [key: string]: AllStores }>(NetworkEvent.DATA_STORE);
+      this.mapUpdate$ = this.onEvent<MapUpdateResponse>(NetworkEvent.MAP_UPDATE);
    }
 
    private onEvent<T>(event: NetworkEvent): Observable<T> {
@@ -41,6 +48,10 @@ export class ClientNetworkComponent {
          filter((message) => message.event === event),
          map((message) => (message.value as unknown) as T),
       );
+   }
+
+   isJoined(): boolean {
+      return this.joined;
    }
 
    connect(): void {

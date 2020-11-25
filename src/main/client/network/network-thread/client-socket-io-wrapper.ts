@@ -13,7 +13,7 @@ export class ClientSocketIoWrapper<T> extends SharedSocketIoWrapper {
 
    constructor() {
       super();
-      this.socket = io(ClientConfig.SERVER_HOSTS[0].url);
+      this.socket = io(ClientConfig.SERVER_HOSTS[0].url, { autoConnect: false });
       this.connected$ = fromEvent(this.socket, ClientSocketIoWrapper.EVENT_CONNECTED).pipe(
          tap(() => console.log('Network connected')),
       ) as Observable<void>;
