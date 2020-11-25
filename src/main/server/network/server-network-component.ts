@@ -2,7 +2,13 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { ServerNetworkWrapper } from './server-network-wrapper';
 import { Observable } from 'rxjs';
 import { ServerNetworkMessage } from './server-network-model';
-import { JoinRequest, JoinResponse, NetworkEvent, ShootRequest } from '../../shared/network/shared-network-model';
+import {
+   JoinRequest,
+   JoinResponse,
+   MapUpdateResponse,
+   NetworkEvent,
+   ShootRequest,
+} from '../../shared/network/shared-network-model';
 import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 import { AllStores } from '../../shared/models/all-stores';
@@ -50,6 +56,17 @@ export class ServerNetworkComponent {
          this.wrapper.send(user, {
             event: NetworkEvent.DATA_STORE,
             value: Utils.keyValueObject(storeId, data),
+         }),
+      );
+   }
+
+   sendMapUpdate(users: string[], buffer: Buffer): void {
+      users.forEach((user) =>
+         this.wrapper.send(user, {
+            event: NetworkEvent.MAP_UPDATE,
+            value: {
+               buffer,
+            } as MapUpdateResponse,
          }),
       );
    }
