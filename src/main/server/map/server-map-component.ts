@@ -81,16 +81,13 @@ export class ServerMapComponent extends SharedMapComponent {
       this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, Math.floor(this.canvasSize / 2 / 1.1));
       this.ctx.fill();
 
+      // Can save the map or noise mask for testing purposes
       // fs.writeFileSync('perlin.png', this.canvas.toBuffer());
       // console.log('ok');
 
-      // Add some cheese for testing purposes
-      // for (let i = 0; i < 200; i++) {
-      //    const position = this.getRandomPositionAboveSurface(Math.random() * 20 - 10);
-      //    this.cheese.add(position.x, position.y);
-      // }
       this.updateData();
       this.maxMoonPixels = this.getMoonPixelCount();
+      this.updateMoonPixelPercentage();
    }
 
    getMap(): Buffer {
@@ -111,6 +108,10 @@ export class ServerMapComponent extends SharedMapComponent {
          this.moonPixels = moonPixels;
          this.moonPercentageChangeSubject.next(moonPixels);
       }
+   }
+
+   clearMoonPixels(): void {
+      this.maxMoonPixels = 0;
    }
 
    //

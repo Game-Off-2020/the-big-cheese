@@ -9,6 +9,7 @@ import { ClientConfig } from '../config/client-config';
 
 @Singleton
 export class ClientMapComponent extends SharedMapComponent {
+   private canvas: HTMLCanvasElement;
    protected ctx: CanvasRenderingContext2D;
    protected canvasSize: number;
 
@@ -24,15 +25,21 @@ export class ClientMapComponent extends SharedMapComponent {
    }
 
    initMap(size: number, buffer: Buffer): void {
-      this.canvasSize = size;
-      const canvas = document.createElement('canvas') as HTMLCanvasElement;
-      canvas.width = size;
-      canvas.height = size;
-      this.ctx = canvas.getContext('2d');
-
+      const newMap = !this.ctx;
+      if (newMap) {
+         this.canvasSize = size;
+         this.canvas = document.createElement('canvas') as HTMLCanvasElement;
+         this.canvas.width = size;
+         this.canvas.height = size;
+         this.ctx = this.canvas.getContext('2d');
+      }
       ImageUtil.createImageFromBuffer(buffer).then((image) => {
          this.ctx.drawImage(image, 0, 0);
-         this.mapLoadedSubject.next(canvas);
+         if (newMap) {
+            this.mapLoadedSubject.next(this.canvas);
+         } else {
+            this.updatedSubject.next();
+         }
       });
    }
 

@@ -15,5 +15,6 @@ export class ClientMapManager extends SharedMapManager {
       network.joined$.subscribe((response) => {
          component.initMap(response.map.size, response.map.buffer);
       });
+      // TODO: Update map
    }
 }
