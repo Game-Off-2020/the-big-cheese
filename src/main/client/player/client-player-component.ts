@@ -12,6 +12,8 @@ export class ClientPlayerComponent {
    readonly clientInit$ = this.clientInitSubject.asObservable();
    private readonly clientShootingSubject = new Subject<BulletFireOptions>();
    readonly clientShooting$ = this.clientShootingSubject.asObservable();
+   private readonly ammoChangedSubject = new Subject<number>();
+   readonly ammoChanged$ = this.ammoChangedSubject.asObservable();
 
    private clientId?: string;
    private clientPlayer: PlayerSprite;
@@ -44,6 +46,10 @@ export class ClientPlayerComponent {
 
    setMoving(moving: boolean): void {
       this.store.commit(this.clientId, { moving } as Player);
+   }
+
+   setAmmo(ammo: number): void {
+      this.ammoChangedSubject.next(ammo);
    }
 
    setPosition(position: Vector): void {
