@@ -44,7 +44,7 @@ export class MoonPercentageIndicator extends Phaser.GameObjects.Container {
       const position = Phaser.Math.Interpolation.SmoothStep(options.percentage, emptyPosition, fullPosition);
       shape.fillRect(0, position, options.scene.game.scale.width, options.scene.game.scale.height);
 
-      var mask = shape.createGeometryMask();
+      const mask = shape.createGeometryMask();
 
       fullMoon.setMask(mask);
 
