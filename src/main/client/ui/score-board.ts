@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { PlayerScore } from '../player/scoreboard/scoreboard-model';
+import { ClientConfig } from '../config/client-config';
 
 interface ScoreBoardOptions {
    readonly scene: Phaser.Scene;
@@ -12,9 +13,9 @@ export class ScoreBoard extends Phaser.GameObjects.Container {
    constructor(private readonly options: ScoreBoardOptions) {
       super(options.scene, 35, 170);
 
-      this.scoreLines.push(new PlayerScoreLine(options.scene, 0));
-      this.scoreLines.push(new PlayerScoreLine(options.scene, 1));
-      this.scoreLines.push(new PlayerScoreLine(options.scene, 2));
+      for (let i = 0; i < ClientConfig.SCOREBOARD_SIZE; i++) {
+         this.scoreLines.push(new PlayerScoreLine(options.scene, i));
+      }
       this.add(this.scoreLines);
 
       this.setScrollFactor(0, 0);
@@ -24,12 +25,13 @@ export class ScoreBoard extends Phaser.GameObjects.Container {
    }
 
    setScoreboard(scoreboard: PlayerScore[]): void {
-      const scores = Math.min(3, scoreboard.length);
+      // It will hide the scoreboard when only one player is in the room
+      const scores = scoreboard.length > 1 ? Math.min(ClientConfig.SCOREBOARD_SIZE, scoreboard.length) : 0;
       for (let i = 0; i < scores; i++) {
          this.scoreLines[i].setScore(scoreboard[i].name, scoreboard[i].count);
          this.scoreLines[i].setVisible(true);
       }
-      for (let i = scores; i < 3; i++) {
+      for (let i = scores; i < ClientConfig.SCOREBOARD_SIZE; i++) {
          this.scoreLines[i].setVisible(false);
       }
    }

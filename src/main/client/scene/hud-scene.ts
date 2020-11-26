@@ -46,7 +46,7 @@ export class HudScene extends Phaser.Scene {
 
       this.cheeseCounter = new CheeseCounter({
          scene: this,
-         count: 99,
+         count: 0,
       });
 
       this.ammoCounter = new AmmoCounter(this, ClientConfig.MAX_AMMO);
