@@ -67,8 +67,9 @@ export class BootScene extends Scene {
       this.load.image(Keys.BULLET, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun-bullet.png');
       this.load.image(Keys.MOON, ClientConfig.ASSET_FOLDER + 'moon/moon-texture.png');
       this.load.image(Keys.BASIC_GUN, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
-      this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
+      this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit.png');
       this.load.audio(Keys.CHEESE_EAT_SOUND, [ClientConfig.ASSET_FOLDER + 'cheese/cheese-eat.ogg']);
+      this.load.image(Keys.CHEESE_UNIT, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit.png');
       this.load.spritesheet(Keys.PLAYER_1, ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
          frameWidth: 73,
          frameHeight: 97,
@@ -92,6 +93,8 @@ export class BootScene extends Scene {
       this.load.audio(Keys.MOON_IMPACT, [ClientConfig.ASSET_FOLDER + 'moon/moon-impact.ogg']);
 
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
+      this.load.image(Keys.MOON_FULL_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-full.png');
+      this.load.image(Keys.MOON_EMPTY_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-empty.png');
       this.load.spritesheet(Keys.SMOKE_FIRE, ClientConfig.ASSET_FOLDER + 'smoke-fire.png', {
          frameWidth: 16,
          frameHeight: 16,

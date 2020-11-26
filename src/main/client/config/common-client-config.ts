@@ -10,9 +10,12 @@ interface ServerHost {
 export class CommonClientConfig extends SharedConfig {
    static readonly ASSET_FOLDER: string = 'asset/';
    static readonly AUTO_START: boolean = false;
-   static readonly SHOOT_INTERVAL: number = 200; // After every x ms
    static readonly INTERPOLATION_SIZE: number = 3;
    static readonly TIME_BETWEEN_TWO_JUMP_MS: number = 500;
+   static readonly TIME_BETWEEN_TWO_SHOOTS_MS: number = 200;
+   static readonly AMMO_RESTORE_PER_S: number = 2.2;
+   static readonly MAX_AMMO: number = 10;
+   static readonly SCOREBOARD_SIZE: number = 5;
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
          url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,
