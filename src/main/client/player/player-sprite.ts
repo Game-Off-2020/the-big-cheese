@@ -30,7 +30,7 @@ interface PlayerOptions {
 // Collision based on: http://jsfiddle.net/ksmbx3fz/7/
 
 const MAX_HORIZONTAL_SPEED = 1;
-const MAX_VERTICAL_SPEED = 10;
+const MAX_VERTICAL_SPEED = 8;
 export const PLAYER_HEIGHT = ClientConfig.PLAYER_HEIGHT;
 export const PLAYER_WIDTH = ClientConfig.PLAYER_WIDTH;
 
@@ -145,8 +145,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.lastJumpTimestamp = Date.now();
       }
 
-      this.verticalSpeed += 1;
-      // this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -MAX_VERTICAL_SPEED, MAX_VERTICAL_SPEED);
+      this.verticalSpeed += 0.5;
+      this.verticalSpeed = Phaser.Math.Clamp(this.verticalSpeed, -MAX_VERTICAL_SPEED, MAX_VERTICAL_SPEED * 0.3);
 
       for (let _ = 0; _ < Math.abs(this.verticalSpeed); _++) {
          if (this.verticalSpeed > 0) {

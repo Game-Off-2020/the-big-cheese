@@ -69,6 +69,7 @@ export class BootScene extends Scene {
       this.load.image(Keys.BASIC_GUN, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
       this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
       this.load.audio(Keys.CHEESE_EAT_SOUND, [ClientConfig.ASSET_FOLDER + 'cheese/cheese-eat.ogg']);
+      this.load.image(Keys.CHEESE_UNIT, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit.png');
       this.load.spritesheet(Keys.PLAYER_1, ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
          frameWidth: 73,
          frameHeight: 97,
