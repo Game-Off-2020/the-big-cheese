@@ -1,5 +1,4 @@
 import * as Phaser from 'phaser';
-import { Subject } from 'rxjs';
 import { GunSprite } from './gun-sprite';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
@@ -18,6 +17,7 @@ interface PlayerOptions {
       readonly onPositionChanged: (position: Vector) => void;
       readonly onDirectionChanged: (position: Vector) => void;
       readonly onShoot: (position: Phaser.Math.Vector2) => void;
+      readonly onAmmoChanged: (ammo: number) => void;
    };
    readonly physics: {
       readonly leftWallCollision: (player: PlayerSprite, width: number, height: number) => boolean;
@@ -36,8 +36,6 @@ export const PLAYER_WIDTH = ClientConfig.PLAYER_WIDTH;
 
 export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
-   private positionChangedSubject = new Subject<Vector2>();
-   readonly positionChanged$ = this.positionChangedSubject.asObservable();
    private readonly gun: GunSprite;
    private readonly character: Phaser.GameObjects.Sprite;
    private jumping = false;
@@ -45,7 +43,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    // private readonly debugger: HitBoxDebugger;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
    private readonly spriteSheetConfig: PlayerSpriteSheetConfig;
-   private lastJumptTimestamp = 0;
+   private lastJumpTimestamp = 0;
+   private ammo = ClientConfig.MAX_AMMO;
 
    constructor(private readonly options: PlayerOptions, private readonly playerType: PlayerType) {
       super(options.scene, 0, 0);
@@ -113,7 +112,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
 
       if (this.prevPosition.x !== this.x || this.prevPosition.y !== this.y) {
          this.prevPosition.set(this.x, this.y);
-         this.positionChangedSubject.next(this.prevPosition);
          this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
@@ -144,7 +142,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       if (this.options.cursorKeys.up.isDown && this.canJump()) {
          this.verticalSpeed = -MAX_VERTICAL_SPEED;
          this.jumping = true;
-         this.lastJumptTimestamp = Date.now();
+         this.lastJumpTimestamp = Date.now();
       }
 
       this.verticalSpeed += 0.5;
@@ -169,18 +167,22 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
 
       if (this.scene.input.activePointer.isDown) {
-         if (Date.now() > this.lastShootTimestamp + ClientConfig.SHOOT_INTERVAL) {
-            this.lastShootTimestamp = Date.now();
-            const gunPosition = new Vector2({ x: this.x, y: this.y }).add(
-               new Vector2({
-                  x: this.gun.x / ClientConfig.MAP_OUTPUT_SCALE,
-                  y: this.gun.y / ClientConfig.MAP_OUTPUT_SCALE,
-               }).rotate(this.rotation),
-            );
-            this.options.callbacks.onShoot(gunPosition);
+         if (Date.now() > this.lastShootTimestamp + ClientConfig.TIME_BETWEEN_TWO_SHOOTS_MS) {
+            if (this.ammo >= 1) {
+               this.lastShootTimestamp = Date.now();
+               this.ammo--;
+               const gunPosition = new Vector2({ x: this.x, y: this.y }).add(
+                  new Vector2({
+                     x: this.gun.x / ClientConfig.MAP_OUTPUT_SCALE,
+                     y: this.gun.y / ClientConfig.MAP_OUTPUT_SCALE,
+                  }).rotate(this.rotation),
+               );
+               this.options.callbacks.onShoot(gunPosition);
+            }
          }
       }
 
+      this.updateAmmo();
       this.gun.update();
       // this.debugger.update(this);
    }
@@ -206,6 +208,14 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    }
 
    private canJump(): boolean {
-      return !this.jumping && Date.now() > this.lastJumptTimestamp + ClientConfig.TIME_BETWEEN_TWO_JUMP_MS;
+      return !this.jumping && Date.now() > this.lastJumpTimestamp + ClientConfig.TIME_BETWEEN_TWO_JUMP_MS;
+   }
+
+   private updateAmmo(): void {
+      const newAmmo = Math.min(this.ammo + ClientConfig.AMMO_RESTORE_PER_S / 60, ClientConfig.MAX_AMMO);
+      if (newAmmo !== this.ammo) {
+         this.options.callbacks.onAmmoChanged(newAmmo);
+      }
+      this.ammo = newAmmo;
    }
 }

@@ -108,7 +108,7 @@ export class ServerPlayerComponent {
    private removeSomeCheese(id: string): number {
       const player = this.store.get(id);
       if (player) {
-         const cheese = Math.max(0, player.cheese - Math.ceil(player.cheese * 0.2));
+         const cheese = Math.max(0, player.cheese - Math.ceil(player.cheese * ServerConfig.DROP_CHEESE_PERCENTAGE));
          this.store.commit(id, { cheese } as Player);
          return player.cheese - cheese;
       }

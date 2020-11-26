@@ -89,6 +89,9 @@ export class GameScene extends Scene {
                onDirectionChanged: (direction) => {
                   this.playerComponent.setDirection(direction);
                },
+               onAmmoChanged: (ammo) => {
+                  this.playerComponent.setAmmo(ammo);
+               },
             },
             physics: {
                leftWallCollision: (player, width, height) => {
