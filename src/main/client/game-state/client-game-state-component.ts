@@ -12,6 +12,7 @@ export class ClientGameStateComponent {
    private readonly updated$: Observable<GameState>;
    readonly startPlaying$: Observable<void>;
    readonly finished$: Observable<void>;
+   readonly moonPercentageChanged$: Observable<number>;
 
    constructor(@Inject private readonly store: GameStateStore) {
       this.updated$ = store.onUpdatedId(GameStateStore.ENTITY_ID);
@@ -24,6 +25,10 @@ export class ClientGameStateComponent {
          filter((state) => state.phase === GamePhase.FINISHED),
          map(() => null),
          tap(() => console.log('Round finished, lets show the scoreboard')),
+      );
+      this.moonPercentageChanged$ = this.updated$.pipe(
+         filter((state) => state.moonPercentage !== undefined),
+         map((state) => state.moonPercentage),
       );
    }
 
