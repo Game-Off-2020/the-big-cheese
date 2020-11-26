@@ -1,13 +1,14 @@
 import { SceneUtil } from '../util/scene-util';
 import { Scene } from 'phaser';
 import { ClientConfig } from '../config/client-config';
+import { Keys } from '../config/client-constants';
 
 export class BootScene extends Scene {
    constructor() {
       super({
          active: false,
          visible: false,
-         key: 'Boot', // TODO: Extract key
+         key: Keys.BOOT_SCENE,
       });
    }
 
@@ -18,7 +19,13 @@ export class BootScene extends Scene {
       const progressBarHeight = 100;
       const progressBarWidth = 400;
 
-      const progressBarContainer = this.add.rectangle(halfWidth, halfHeight, progressBarWidth, progressBarHeight, 0x000000);
+      const progressBarContainer = this.add.rectangle(
+         halfWidth,
+         halfHeight,
+         progressBarWidth,
+         progressBarHeight,
+         0x000000,
+      );
       const progressBar = this.add.rectangle(
          halfWidth + 20 - progressBarContainer.width * 0.5,
          halfHeight,
@@ -34,7 +41,7 @@ export class BootScene extends Scene {
       this.load.on('progress', (progress: number) => {
          progressBar.width = (progressBarWidth - 30) * progress;
 
-         const percent = progress * 100;
+         const percent = Math.round(progress * 100);
          percentText.setText(`${percent}%`);
       });
 
@@ -45,7 +52,7 @@ export class BootScene extends Scene {
          progressBar.destroy();
          progressBarContainer.destroy();
 
-         this.scene.start('MainMenu'); // TODO: Extract key
+         this.scene.start(Keys.MAIN_MENU_SCENE); // TODO: Extract key
       });
 
       this.loadAssets();
@@ -57,7 +64,48 @@ export class BootScene extends Scene {
     * is currently active, so they can be accessed anywhere.
     */
    private loadAssets(): void {
-      // TODO: Extract file keys
-      this.load.image('character', ClientConfig.ASSET_FOLDER + 'poc-character.png');
+      this.load.image(Keys.BULLET, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun-bullet.png');
+      this.load.image(Keys.MOON, ClientConfig.ASSET_FOLDER + 'moon/moon-texture.png');
+      this.load.image(Keys.BASIC_GUN, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
+      this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit.png');
+      this.load.audio(Keys.CHEESE_EAT_SOUND, [ClientConfig.ASSET_FOLDER + 'cheese/cheese-eat.ogg']);
+      this.load.image(Keys.CHEESE_UNIT, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit.png');
+      this.load.spritesheet(Keys.PLAYER_1, ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
+         frameWidth: 73,
+         frameHeight: 97,
+         endFrame: 16,
+      });
+      this.load.spritesheet(Keys.PLAYER_2, ClientConfig.ASSET_FOLDER + 'players/p2-spritesheet.png', {
+         frameWidth: 71,
+         frameHeight: 95,
+         endFrame: 16,
+      });
+      this.load.spritesheet(Keys.PLAYER_3, ClientConfig.ASSET_FOLDER + 'players/p3-spritesheet.png', {
+         frameWidth: 73,
+         frameHeight: 97,
+         endFrame: 16,
+      });
+      this.load.audio(Keys.GUN_SOUND_1, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun1.mp3']);
+      this.load.audio(Keys.GUN_SOUND_2, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun2.mp3']);
+      this.load.audio(Keys.GUN_SOUND_3, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun3.mp3']);
+      this.load.audio(Keys.GUN_SOUND_4, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun4.mp3']);
+      this.load.audio(Keys.MOON_AMBIENCE, [ClientConfig.ASSET_FOLDER + 'moon/moon-ambience.ogg']);
+      this.load.audio(Keys.MOON_IMPACT, [ClientConfig.ASSET_FOLDER + 'moon/moon-impact.ogg']);
+
+      this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
+      this.load.image(Keys.MOON_FULL_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-full.png');
+      this.load.image(Keys.MOON_EMPTY_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-empty.png');
+      this.load.spritesheet(Keys.SMOKE_FIRE, ClientConfig.ASSET_FOLDER + 'smoke-fire.png', {
+         frameWidth: 16,
+         frameHeight: 16,
+         endFrame: 16,
+      });
+      this.load.image(Keys.LOGO, ClientConfig.ASSET_FOLDER + 'ui/logo.png');
+      this.load.atlas(
+         Keys.FLARES,
+         ClientConfig.ASSET_FOLDER + 'common/flares.png',
+         ClientConfig.ASSET_FOLDER + 'common/flares.json',
+      );
+      this.load.image(Keys.LAVA_SPIT, ClientConfig.ASSET_FOLDER + 'lava/lava-spit.png');
    }
 }

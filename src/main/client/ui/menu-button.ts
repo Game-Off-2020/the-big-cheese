@@ -1,53 +1,99 @@
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Text = Phaser.GameObjects.Text;
 
-export class MenuButton extends Rectangle {
-   private readonly label: Text;
-   private readonly padding = 10;
+interface MenuButtonOptions {
+   readonly scene: Phaser.Scene;
+   readonly x: number;
+   readonly y: number;
+   readonly text: string;
+   readonly onClick: () => void;
+   readonly colors: {
+      readonly label: {
+         readonly over: string;
+         readonly out: string;
+         readonly down: string;
+         readonly disabled: string;
+      };
+      readonly rectangle: {
+         readonly over: number;
+         readonly out: number;
+         readonly down: number;
+         readonly disabled: number;
+      };
+   };
+}
+
+export class MenuButton extends Phaser.GameObjects.Container {
    private readonly minimumWidth = 200;
    private readonly minimumHeight = 50;
+   private readonly rectangle: Rectangle;
+   private readonly disableRectangle: Rectangle;
 
-   constructor(scene: Phaser.Scene, x: number, y: number, text: string, onClick?: () => void) {
-      super(scene, x, y);
-      scene.add.existing(this);
-      this.setOrigin(0, 0);
+   constructor(options: MenuButtonOptions) {
+      super(options.scene, options.x, options.y);
 
-      this.label = scene.add
-         .text(x + this.padding, y + this.padding, text)
-         .setFontSize(18)
-         .setAlign('center');
+      const textLabel = new Text(options.scene, 0, 0, options.text, {
+         fontSize: '18px',
+         align: 'center',
+      }).setOrigin(0.5, 0.5);
 
-      const labelWidth = this.label.width + this.padding;
-      const labelHeight = this.label.height + this.padding;
+      const labelWidth = textLabel.width;
+      const labelHeight = textLabel.height;
 
-      this.width = labelWidth >= this.minimumWidth ? labelWidth : this.minimumWidth;
-      this.height = labelHeight >= this.minimumHeight ? labelHeight : this.minimumHeight;
+      this.rectangle = new Rectangle(
+         options.scene,
+         0,
+         0,
+         labelWidth >= this.minimumWidth ? labelWidth : this.minimumWidth,
+         labelHeight >= this.minimumHeight ? labelHeight : this.minimumHeight,
+      );
 
-      this.setInteractive({ useHandCursor: true })
-         .on('pointerover', this.enterMenuButtonHoverState)
-         .on('pointerout', this.enterMenuButtonRestState)
-         .on('pointerdown', this.enterMenuButtonActiveState)
-         .on('pointerup', this.enterMenuButtonHoverState);
+      this.disableRectangle = new Rectangle(
+         options.scene,
+         0,
+         0,
+         labelWidth >= this.minimumWidth ? labelWidth : this.minimumWidth,
+         labelHeight >= this.minimumHeight ? labelHeight : this.minimumHeight,
+         options.colors.rectangle.disabled,
+      ).setVisible(false);
 
-      if (onClick) {
-         this.on('pointerup', onClick);
+      this.add(this.rectangle);
+      this.add(this.disableRectangle);
+      this.add(textLabel);
+
+      this.rectangle
+         .setInteractive({ useHandCursor: true })
+         .on('pointerover', () => {
+            textLabel.setColor(options.colors.label.over);
+            this.rectangle.setFillStyle(options.colors.rectangle.over);
+         })
+         .on('pointerout', () => {
+            textLabel.setColor(options.colors.label.out);
+            this.rectangle.setFillStyle(options.colors.rectangle.out);
+         })
+         .on('pointerdown', () => {
+            textLabel.setColor(options.colors.label.down);
+            this.rectangle.setFillStyle(options.colors.rectangle.down);
+         })
+         .on('pointerup', () => {
+            textLabel.setColor(options.colors.label.out);
+            this.rectangle.setFillStyle(options.colors.rectangle.out);
+         });
+
+      this.rectangle.on('pointerup', options.onClick);
+
+      textLabel.setColor(options.colors.label.out);
+      this.rectangle.setFillStyle(options.colors.rectangle.out);
+      options.scene.add.existing(this);
+   }
+
+   update(disabled: boolean): void {
+      if (disabled) {
+         this.rectangle.setVisible(false);
+         this.disableRectangle.setVisible(true);
+      } else {
+         this.rectangle.setVisible(true);
+         this.disableRectangle.setVisible(false);
       }
-
-      this.enterMenuButtonRestState();
-   }
-
-   private enterMenuButtonHoverState(): void {
-      this.label.setColor('#000000');
-      this.setFillStyle(0x888888);
-   }
-
-   private enterMenuButtonRestState(): void {
-      this.label.setColor('#FFFFFF');
-      this.setFillStyle(0x888888);
-   }
-
-   private enterMenuButtonActiveState(): void {
-      this.label.setColor('#BBBBBB');
-      this.setFillStyle(0x444444);
    }
 }

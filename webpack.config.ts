@@ -15,6 +15,12 @@ import TerserPlugin from 'terser-webpack-plugin';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import GeneratePackageJsonPlugin from 'generate-package-json-webpack-plugin';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import ThreadsPlugin from 'threads-plugin';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import nodeExternals from 'webpack-node-externals';
 
 interface Target {
    readonly entry: string;
@@ -74,7 +80,11 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
       );
    }
    if (targetName === 'client') {
-      // plugins.push(new ThreadsPlugin()); // TODO: Enable when using workers for the network
+      plugins.push(
+         new ThreadsPlugin({
+            globalObject: 'self',
+         }),
+      );
       if (isProd()) {
          plugins.push(
             new ReplaceInFileWebpackPlugin([
@@ -108,6 +118,8 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             ]),
             new CopyWebpackPlugin({ patterns: [{ from: target.assetDir, to: target.distAssetDir }] }),
          );
+      } else {
+         plugins.push(new HotModuleReplacementPlugin());
       }
       plugins.push(
          new HtmlWebPackPlugin({
@@ -120,7 +132,7 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             },
          }),
       );
-   } else {
+   } else if (isProd()) {
       plugins.push(
          new GeneratePackageJsonPlugin({
             scripts: {
@@ -128,9 +140,6 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             },
          }),
       );
-   }
-   if (!isProd()) {
-      plugins.push(new HotModuleReplacementPlugin());
    }
 
    /*
@@ -172,11 +181,14 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
          pathinfo: false,
       },
       target: target.target,
-      //      externals: target.target === "node" ? [
-      //         nodeExternals({
-      //            whitelist: [/^three/, /^shared/]
-      //         })
-      //      ] : [],
+      externals:
+         target.target === 'node'
+            ? [
+                 nodeExternals({
+                    // whitelist: [/^three/, /^shared/],
+                 }),
+              ]
+            : [],
       devServer: {
          port: 8081,
       },

@@ -1,6 +1,29 @@
+import { SharedConfig } from '../../shared/config/shared-config';
+
+interface ServerHost {
+   readonly url: string;
+   readonly name: string;
+}
+
 // Set production (or for both production and development) properties here,
-// but import them via ClientConfig
-export class CommonClientConfig {
+// but import them via ServerConfig
+export class CommonClientConfig extends SharedConfig {
    static readonly ASSET_FOLDER: string = 'asset/';
    static readonly AUTO_START: boolean = false;
+   static readonly INTERPOLATION_SIZE: number = 3;
+   static readonly TIME_BETWEEN_TWO_JUMP_MS: number = 500;
+   static readonly TIME_BETWEEN_TWO_SHOOTS_MS: number = 200;
+   static readonly AMMO_RESTORE_PER_S: number = 2.2;
+   static readonly MAX_AMMO: number = 10;
+   static readonly SCOREBOARD_SIZE: number = 5;
+   static readonly SERVER_HOSTS: ServerHost[] = [
+      {
+         url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,
+         name: 'Europe West',
+      },
+      {
+         url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,
+         name: 'North America',
+      },
+   ];
 }
