@@ -4,6 +4,7 @@ export enum Keys {
    MAIN_MENU_SCENE = 'main-menu-scene',
    GAME_SCENE = 'game-scene',
    ERROR_SCENE = 'error-scene',
+   GUI_SCENE = 'gui-scene',
    // Game Objects
    BULLET = 'bullet',
    MOON = 'moon',
@@ -27,6 +28,7 @@ export enum Keys {
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
    CHEESE_EAT_SOUND = 'cheese-eat-sound',
+   CHEESE_UNIT = 'cheese-unit',
    // UI
    LOGO = 'logo',
    FLARES = 'flares',

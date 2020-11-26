@@ -7,6 +7,7 @@ import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { ErrorScene } from '../scene/error-scene';
 import { Keys } from '../config/client-constants';
 import { fromEvent, Observable } from 'rxjs';
+import { HudScene } from '../scene/hud-scene';
 
 @Singleton
 export class GameComponent {
@@ -21,7 +22,7 @@ export class GameComponent {
             width: window.innerWidth,
             height: window.innerHeight,
          },
-         scene: [BootScene, MainMenuScene, GameScene, ErrorScene],
+         scene: [BootScene, MainMenuScene, GameScene, ErrorScene, HudScene],
          physics: {
             default: 'arcade',
             arcade: {
@@ -54,5 +55,6 @@ export class GameComponent {
    showGameScene(): void {
       this.game.scene.stop(Keys.MAIN_MENU_SCENE);
       this.game.scene.start(Keys.GAME_SCENE);
+      this.game.scene.start(Keys.GUI_SCENE);
    }
 }
