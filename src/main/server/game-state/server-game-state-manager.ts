@@ -10,13 +10,13 @@ export class ServerGameStateManager {
       @Inject private readonly component: ServerGameStateComponent,
       @Inject private readonly map: ServerMapComponent,
    ) {
-      component.startPlaying();
       map.moonPercentageChange$.subscribe((moonPercentage) => {
          component.setMoonPercentage(moonPercentage);
-         if (moonPercentage <= ServerConfig.MOON_PERCENTAGE_TO_FINISH) {
+         if (moonPercentage === 0) {
             component.finish();
          }
       });
       component.finished$.pipe(delay(ServerConfig.GAME_RESTART_TIME_MS)).subscribe(() => component.startPlaying());
+      component.startPlaying();
    }
 }

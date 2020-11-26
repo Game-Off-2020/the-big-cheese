@@ -15,7 +15,7 @@ export class ServerMapComponent extends SharedMapComponent {
    protected ctx: CanvasRenderingContext2D;
    private data?: DataView;
    private maxMoonPixels: number;
-   private moonPixels = 0;
+   private moonPercentage = 0;
 
    private readonly moonPercentageChangeSubject = new Subject<number>();
    readonly moonPercentageChange$ = this.moonPercentageChangeSubject.asObservable();
@@ -118,10 +118,17 @@ export class ServerMapComponent extends SharedMapComponent {
    }
 
    updateMoonPixelPercentage(): void {
-      const moonPixels = this.getMoonPixelCount() / this.maxMoonPixels;
-      if (this.moonPixels !== moonPixels) {
-         this.moonPixels = moonPixels;
-         this.moonPercentageChangeSubject.next(moonPixels);
+      const moonPercentage = Math.max(
+         0,
+         Math.min(
+            1,
+            (this.getMoonPixelCount() - this.maxMoonPixels * ServerConfig.MOON_PERCENTAGE_TO_FINISH) /
+               (this.maxMoonPixels * (1 - ServerConfig.MOON_PERCENTAGE_TO_FINISH)),
+         ),
+      );
+      if (this.moonPercentage !== moonPercentage) {
+         this.moonPercentage = moonPercentage;
+         this.moonPercentageChangeSubject.next(moonPercentage);
       }
    }
 
