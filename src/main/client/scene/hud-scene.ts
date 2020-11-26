@@ -6,11 +6,13 @@ import { Inject } from 'typescript-ioc';
 import { ClientPlayerComponent } from '../player/client-player-component';
 import { AmmoCounter } from '../ui/ammo-counter';
 import { ClientConfig } from '../config/client-config';
+import { MoonPercentageIndicator } from '../ui/moon-percentage-indicator';
 
 export class HudScene extends Phaser.Scene {
    private scoreBoard?: ScoreBoard;
    private cheeseCounter?: CheeseCounter;
    private ammoCounter?: AmmoCounter;
+   private moonPercentageIndicator?: MoonPercentageIndicator;
 
    @Inject
    private readonly playerComponent: ClientPlayerComponent;
@@ -40,5 +42,10 @@ export class HudScene extends Phaser.Scene {
       });
 
       this.ammoCounter = new AmmoCounter(this, ClientConfig.MAX_AMMO);
+
+      this.moonPercentageIndicator = new MoonPercentageIndicator({
+         scene: this,
+         ratio: 0.5,
+      });
    }
 }

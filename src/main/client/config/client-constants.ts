@@ -22,6 +22,8 @@ export enum Keys {
    MOON_DUST_PARTICLE = 'moon-dust-particle',
    MOON_AMBIENCE = 'moon-ambience',
    MOON_IMPACT = 'moon-impact',
+   MOON_FULL_HUD = 'moon-full-hud',
+   MOON_EMPTY_HUD = 'moon-empty-hud',
    SMOKE_FIRE = 'smoke-fire',
    TERRAIN = 'terrain',
    LAVA = 'lava',

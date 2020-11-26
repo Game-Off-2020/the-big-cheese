@@ -93,6 +93,8 @@ export class BootScene extends Scene {
       this.load.audio(Keys.MOON_IMPACT, [ClientConfig.ASSET_FOLDER + 'moon/moon-impact.ogg']);
 
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
+      this.load.image(Keys.MOON_FULL_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-full.png');
+      this.load.image(Keys.MOON_EMPTY_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-empty.png');
       this.load.spritesheet(Keys.SMOKE_FIRE, ClientConfig.ASSET_FOLDER + 'smoke-fire.png', {
          frameWidth: 16,
          frameHeight: 16,
