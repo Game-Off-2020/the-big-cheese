@@ -10,7 +10,7 @@ export class CheeseCounter extends Phaser.GameObjects.Container {
    private readonly text: Phaser.GameObjects.Text;
 
    constructor(private readonly options: CheeseCounterOptions) {
-      super(options.scene, 100, 200);
+      super(options.scene, 50, 100);
 
       this.add(
          (this.text = new Phaser.GameObjects.Text(options.scene, 70, 0, options.count.toString(), {
