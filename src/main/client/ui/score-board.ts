@@ -31,6 +31,4 @@ export class ScoreBoard extends Phaser.GameObjects.Container {
 
       options.scene.add.existing(this);
    }
-
-   update(): void {}
 }

@@ -2,10 +2,15 @@
 import { Keys } from '../config/client-constants';
 import { CheeseCounter } from '../ui/cheese-counter';
 import { ScoreBoard } from '../ui/score-board';
+import { Inject } from 'typescript-ioc';
+import { ClientPlayerComponent } from '../player/client-player-component';
 
 export class HudScene extends Phaser.Scene {
    private cheeseCounter?: CheeseCounter;
    private scoreBoard?: ScoreBoard;
+
+   @Inject
+   private readonly playerComponent: ClientPlayerComponent;
 
    constructor() {
       super({
@@ -13,6 +18,9 @@ export class HudScene extends Phaser.Scene {
          visible: false,
          key: Keys.GUI_SCENE,
       });
+      this.playerComponent.clientCheeseCountChanged$.subscribe((cheeseCount) =>
+         this.cheeseCounter.setCount(cheeseCount),
+      );
    }
 
    create(): void {
@@ -24,10 +32,5 @@ export class HudScene extends Phaser.Scene {
       this.scoreBoard = new ScoreBoard({
          scene: this,
       });
-   }
-
-   update(): void {
-      this.cheeseCounter.update();
-      this.scoreBoard.update();
    }
 }
