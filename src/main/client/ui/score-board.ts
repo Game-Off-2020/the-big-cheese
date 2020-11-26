@@ -39,6 +39,7 @@ export class ScoreBoard extends Phaser.GameObjects.Container {
 
 class PlayerScoreLine extends Phaser.GameObjects.Container {
    private readonly text: Phaser.GameObjects.Text;
+   private static readonly MAX_SCORE_DIGIT = 4;
 
    constructor(protected readonly scene: Scene, protected readonly i: number) {
       super(scene, 0, 30 * i);
@@ -53,7 +54,7 @@ class PlayerScoreLine extends Phaser.GameObjects.Container {
 
    setScore(playerName: string, cheeseCount: number): void {
       let countText = cheeseCount.toString();
-      while (countText.length < 3) {
+      while (countText.length < PlayerScoreLine.MAX_SCORE_DIGIT) {
          countText = ' ' + countText;
       }
       this.text.setText(`${countText} | ${playerName}`);
