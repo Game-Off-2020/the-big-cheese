@@ -1,6 +1,6 @@
 import { SharedConfig } from '../../shared/config/shared-config';
 
-interface ServerHost {
+export interface ServerHost {
    readonly url: string;
    readonly name: string;
 }
@@ -18,12 +18,8 @@ export class CommonClientConfig extends SharedConfig {
    static readonly SCOREBOARD_SIZE: number = 5;
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
-         url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,
-         name: 'Europe West',
-      },
-      {
-         url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,
-         name: 'North America',
+         url: `https://game-off.glitch.me:${CommonClientConfig.SERVER_SOCKET_PORT}`,
+         name: 'Default',
       },
    ];
 }
