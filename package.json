@@ -9,7 +9,7 @@
       "start:dev:client": "webpack-dev-server --progress --content-base \"./\" --open-page \"index.html\" --mode development --projectTarget=client",
       "start:dev:server": "node --inspect dist/server/main.js --trace-warnings",
       "start:server": "node dist/server/main.js",
-      "start": "npm run start:dev:client",
+      "start": "npm run start:server",
       "test": "jest",
       "postinstall": "npm run build:prod:server",
       "prettier": "prettier -l \"src/**/*.{ts,scss,html}\"",
