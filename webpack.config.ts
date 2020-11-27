@@ -138,6 +138,9 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             scripts: {
                start: 'node main.js',
             },
+            dependencies: {
+               'socket.io': '3.0.1',
+            },
          }),
       );
    }
