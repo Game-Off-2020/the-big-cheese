@@ -52,7 +52,7 @@ export class MainMenuScene extends Phaser.Scene {
          x: 30,
          y: this.game.scale.height - 30,
          text: 'Made by Barnabas and Dolan. Source on GitHub',
-         link: 'https://github.com/Game-Off-2020/all',
+         link: 'https://github.com/Game-Off-2020/the-big-cheese',
          origin: { x: 0, y: 1 },
          style: {
             color: '#FFF',
