@@ -2,6 +2,9 @@
    "name": "the-big-cheese",
    "description": "",
    "license": "",
+   "engines": {
+      "node": "14.2.0"
+   },
    "scripts": {
       "build:dev:server": "webpack --mode development --projectTarget=server",
       "build:prod:server": "webpack --mode production --projectTarget=server",
