@@ -39,7 +39,7 @@ const targets: { client: Target; server: Target } = {
       distDir: 'dist/client',
       output: 'main.js',
       target: 'web',
-      title: 'Game Off 2020',
+      title: 'The Big Cheese - Game Off 2020',
       assetDir: 'src/asset',
       distAssetDir: 'asset',
       baseUrl: '.',
@@ -132,17 +132,6 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             },
          }),
       );
-   } else if (isProd()) {
-      plugins.push(
-         new GeneratePackageJsonPlugin({
-            scripts: {
-               start: 'node main.js',
-            },
-            dependencies: {
-               'socket.io': '3.0.1',
-            },
-         }),
-      );
    }
 
    /*
@@ -198,7 +187,7 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
       resolve: {
          extensions: [
             '.tsx',
-            ...(() => (isProd() ? ['.prod.ts'] : []))(), // This will override prod config
+            ...(() => (isProd() ? ['.prod.ts'] : []))(), // This will override dev config with prod
             '.ts',
             '.js',
          ],
@@ -273,7 +262,7 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
          ],
       },
       optimization: {
-         minimize: isProd(),
+         minimize: false, // isProd(),
          minimizer: minimizers,
       },
       plugins: plugins,

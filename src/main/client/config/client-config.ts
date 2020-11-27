@@ -6,8 +6,7 @@ export class ClientConfig extends CommonClientConfig {
    static readonly AUTO_START: boolean = false; // Skip main menu for development purposes
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
-         url: `https://the-big-cheese.herokuapp.com:3001`,
-         //url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,
+         url: `http://localhost:${CommonClientConfig.SERVER_SOCKET_PORT}`,
          name: 'Localhost',
       },
    ];

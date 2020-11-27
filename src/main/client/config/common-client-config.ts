@@ -18,7 +18,7 @@ export class CommonClientConfig extends SharedConfig {
    static readonly SCOREBOARD_SIZE: number = 5;
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
-         url: `https://the-big-cheese.herokuapp.com`, // Dont need to set port, glitch.com will forward it appropriately.
+         url: `https://the-big-cheese.herokuapp.com`,
          name: 'Default',
       },
    ];
