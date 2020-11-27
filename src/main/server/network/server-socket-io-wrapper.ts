@@ -21,5 +21,6 @@ export class ServerSocketIoWrapper extends SharedSocketIoWrapper {
          this.connectedSubject.next(socket);
       });
       this.httpServer.listen(ServerConfig.SERVER_SOCKET_PORT);
+      console.log(`Socket listening on port ${ServerConfig.SERVER_SOCKET_PORT}`);
    }
 }
