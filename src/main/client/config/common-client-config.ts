@@ -18,7 +18,7 @@ export class CommonClientConfig extends SharedConfig {
    static readonly SCOREBOARD_SIZE: number = 5;
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
-         url: `https://game-off.glitch.me:${CommonClientConfig.SERVER_SOCKET_PORT}`,
+         url: `https://game-off.glitch.me`,
          name: 'Default',
       },
    ];
