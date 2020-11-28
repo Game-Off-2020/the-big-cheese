@@ -151,11 +151,11 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             parallel: false,
             terserOptions: {
                ecma: 2015,
-               //keep_classnames: false,
-               //keep_fnames: false,
-               //compress: {
-               //    drop_console: true,
-               //},
+               keep_classnames: false,
+               keep_fnames: false,
+               compress: {
+                  drop_console: true,
+               },
             },
          }),
       );
@@ -259,7 +259,7 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
          ],
       },
       optimization: {
-         minimize: isProd(),
+         minimize: false, // isProd(),
          minimizer: minimizers,
       },
       plugins: plugins,
