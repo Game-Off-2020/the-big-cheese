@@ -3,7 +3,7 @@ import { Observable, Subject } from 'rxjs';
 import { JoinRequest } from '../../shared/network/shared-network-model';
 import { GameStateStore } from '../../shared/game-state/game-state-store';
 import { GamePhase, GameState } from '../../shared/game-state/game-state-model';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 @Singleton
 export class ClientGameStateComponent {
@@ -19,12 +19,10 @@ export class ClientGameStateComponent {
       this.startPlaying$ = this.updated$.pipe(
          filter((state) => state.phase === GamePhase.PLAYING),
          map(() => null),
-         tap(() => console.log('Round started, lets play')),
       );
       this.finished$ = this.updated$.pipe(
          filter((state) => state.phase === GamePhase.FINISHED),
          map(() => null),
-         tap(() => console.log('Round finished, lets show the scoreboard')),
       );
       this.moonPercentageChanged$ = this.updated$.pipe(
          filter((state) => state.moonPercentage !== undefined),
