@@ -48,5 +48,5 @@ First, you need to run the dev build that will listen to the changes and will bu
 
 # Special Thanks
 
-Kenny Assets for the Assets (Sprites and Sounds) - https://www.kenney.nl/assets
-Free sound for sounds - https://freesound.org/
+- Kenny Assets for the Assets (Sprites and Sounds) - https://www.kenney.nl/assets
+- Free sound for sounds - https://freesound.org/
