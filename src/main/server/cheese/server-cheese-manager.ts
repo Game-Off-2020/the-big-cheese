@@ -30,20 +30,20 @@ export class ServerCheeseManager {
    private addRandom(position: Vector): void {
       let type = CheeseType.CHEESE;
       const rand = MathUtil.randomIntFromInterval(0, 1000);
-      if (rand < 20) {
-         // 2.0% chance
+      if (rand < 15) {
+         // 1.5% chance
          type = CheeseType.DOUBLE_BARREL;
       }
-      if (rand >= 20 && rand < 40) {
-         // 2.0% chance
+      if (rand >= 15 && rand < 30) {
+         // 1.5% chance
          type = CheeseType.CHEESE_DOUBLE;
       }
-      if (rand >= 40 && rand < 60) {
-         // 2.0% chance
+      if (rand >= 30 && rand < 45) {
+         // 1.5% chance
          type = CheeseType.CHEESE_HALF;
       }
-      if (rand >= 60 && rand < 80) {
-         // 2.0% chance
+      if (rand >= 45 && rand < 60) {
+         // 1.5% chance
          type = CheeseType.BOMB;
       }
       this.add(position, 1, 1, type);
