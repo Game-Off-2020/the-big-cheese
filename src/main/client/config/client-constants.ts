@@ -29,8 +29,8 @@ export enum Keys {
    LAVA = 'lava',
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
+   CHEESE_GLOW = 'cheese-glow',
    CHEESE_EAT_SOUND = 'cheese-eat-sound',
-   CHEESE_UNIT = 'cheese-unit',
    // UI
    LOGO = 'logo',
    FLARES = 'flares',
