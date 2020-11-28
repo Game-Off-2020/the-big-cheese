@@ -67,8 +67,11 @@ export class BootScene extends Scene {
       this.load.image(Keys.BULLET, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun-bullet.png');
       this.load.image(Keys.MOON, ClientConfig.ASSET_FOLDER + 'moon/moon-texture.png');
       this.load.image(Keys.BASIC_GUN, ClientConfig.ASSET_FOLDER + 'weapons/basic-gun.png');
+      this.load.image(Keys.DOUBLE_BARREL, ClientConfig.ASSET_FOLDER + 'weapons/double-barrel.png');
       this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit.png');
+      this.load.image(Keys.CHEESE_GREEN, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit-green.png');
       this.load.image(Keys.CHEESE_GLOW, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit-glow.png');
+      this.load.image(Keys.CHEESE_GREEN_GLOW, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit-green-glow.png');
       this.load.audio(Keys.CHEESE_EAT_SOUND, [ClientConfig.ASSET_FOLDER + 'cheese/cheese-eat.ogg']);
       this.load.spritesheet(Keys.PLAYER_1, ClientConfig.ASSET_FOLDER + 'players/p1-spritesheet.png', {
          frameWidth: 73,

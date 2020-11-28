@@ -3,12 +3,13 @@ import { CollisionPhysics } from '../player/collision-physics/collision-physics'
 import { CheeseStore } from '../../shared/cheese/cheese-store';
 import { Subject } from 'rxjs';
 import { Utils } from '../../shared/util/utils';
+import { CheeseType, PickupCheese } from '../../shared/cheese/cheese-model';
 
 const CHEESE_SIZE = 20;
 
 @Singleton
 export class ServerCheeseComponent {
-   private readonly pickupSubject = new Subject<string>();
+   private readonly pickupSubject = new Subject<PickupCheese>();
    readonly pickup$ = this.pickupSubject.asObservable();
 
    constructor(
@@ -16,10 +17,11 @@ export class ServerCheeseComponent {
       @Inject private readonly collisionPhysics: CollisionPhysics,
    ) {}
 
-   add(x: number, y: number): void {
+   add(x: number, y: number, type: CheeseType): void {
       const id = Utils.generateId();
       this.store.commit(id, {
          position: { x, y },
+         type,
       });
       this.collisionPhysics.add(id, x, y, CHEESE_SIZE, CHEESE_SIZE);
    }
@@ -35,9 +37,13 @@ export class ServerCheeseComponent {
    }
 
    private pickup(id: string, playerId: string): void {
-      if (this.store.get(id)) {
+      const cheese = this.store.get(id);
+      if (cheese) {
          this.remove(id);
-         this.pickupSubject.next(playerId);
+         this.pickupSubject.next({
+            playerId,
+            type: cheese.type,
+         });
       }
    }
 

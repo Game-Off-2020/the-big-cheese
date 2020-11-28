@@ -216,7 +216,10 @@ export class GameScene extends Scene {
 
    private initCheeseSubscriptions(): void {
       this.created$.pipe(switchMap(() => this.cheeseComponent.added$)).subscribe((cheeseEntity) => {
-         this.cheeses.set(cheeseEntity.id, new CheeseSprite(this, cheeseEntity.value.position));
+         this.cheeses.set(
+            cheeseEntity.id,
+            new CheeseSprite({ scene: this, position: cheeseEntity.value.position, type: cheeseEntity.value.type }),
+         );
       });
       this.cheeseComponent.removed$.subscribe((id) => {
          const sprite = this.cheeses.get(id);
