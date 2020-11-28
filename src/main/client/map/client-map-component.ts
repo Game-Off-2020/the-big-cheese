@@ -69,13 +69,13 @@ export class ClientMapComponent extends SharedMapComponent {
    }
 
    shake(intensity: number): void {
-      this.mapSprite.shake(0.0002 * intensity);
+      this.mapSprite?.shake(0.0002 * intensity);
    }
 
    private handleDestructionEffect(destruction: Destruction): void {
       const volume = this.clientPlayer.getVolume(destruction.position);
       if (volume) {
-         this.mapSprite.destructionEffect(destruction, volume);
+         this.mapSprite?.destructionEffect(destruction, volume);
       }
    }
 }
