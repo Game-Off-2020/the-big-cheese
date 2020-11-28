@@ -1,15 +1,19 @@
 import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { GunSprite } from './gun-sprite';
-import { PlayerType } from '../../shared/player/player-model';
+import { Player } from '../../shared/player/player-model';
 import { Vector } from '../../shared/bullet/vector-model';
 import { CatmullRomInterpolation } from '../util/catmull-rom-interpolation';
 import { ClientConfig } from '../config/client-config';
 import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PLAYERS } from '../../shared/config/shared-constants';
 
+export interface OtherPlayerOptions {
+   readonly scene: Scene;
+   readonly player: Player;
+}
+
 export class OtherPlayerSprite extends Phaser.GameObjects.Container {
-   private readonly gun: GunSprite;
    private readonly character: Phaser.GameObjects.Sprite;
    private readonly positionInterpolation = new CatmullRomInterpolation(
       ClientConfig.NETWORK_TICK_RATE,
@@ -21,38 +25,21 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
    );
    private readonly spriteSheetConfig: PlayerSpriteSheetConfig;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+   private gun: GunSprite;
 
-   constructor(protected readonly scene: Scene, private readonly playerType: PlayerType) {
-      super(scene);
-      this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
-      scene.add.existing(this);
+   constructor(private readonly options: OtherPlayerOptions) {
+      super(options.scene);
+      this.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE);
+      options.scene.add.existing(this);
 
-      this.spriteSheetConfig = PLAYERS[playerType];
-      this.character = scene.make.sprite({ key: this.spriteSheetConfig.spriteSheet });
+      this.spriteSheetConfig = PLAYERS[options.player.type];
+      this.character = options.scene.make.sprite({ key: this.spriteSheetConfig.spriteSheet });
       this.character.setOrigin(0.5, 1);
       this.add(this.character);
 
-      this.add(
-         (this.gun = new GunSprite({
-            scene,
-            character: this.character,
-            x: 30,
-            y: -30,
-         })),
-      );
-
-      const particle = scene.add.particles(Keys.SMOKE_FIRE);
-      this.dustEmitter = particle.createEmitter({
-         speed: { min: -20, max: 20 },
-         angle: { min: 0, max: 360 },
-         scale: { start: 0, end: 0.7 / ClientConfig.MAP_OUTPUT_SCALE },
-         alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
-         gravityY: 0,
-         lifespan: 200,
-         follow: this,
-      });
-      this.dustEmitter.reserve(1000);
-      this.dustEmitter.stop();
+      this.initGun();
+      this.initDustParticleEffect();
+      this.addPlayerName();
    }
 
    tickPosition(position: Vector): void {
@@ -98,5 +85,40 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
          this.gun.flip(false);
          this.gun.setPosition(30, -30);
       }
+   }
+
+   private initGun() {
+      this.add(
+         (this.gun = new GunSprite({
+            scene: this.options.scene,
+            character: this.character,
+            x: 30,
+            y: -30,
+         })),
+      );
+   }
+
+   private initDustParticleEffect(): void {
+      const particle = this.options.scene.add.particles(Keys.SMOKE_FIRE);
+      this.dustEmitter = particle.createEmitter({
+         speed: { min: -20, max: 20 },
+         angle: { min: 0, max: 360 },
+         scale: { start: 0, end: 0.7 / ClientConfig.MAP_OUTPUT_SCALE },
+         alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
+         gravityY: 0,
+         lifespan: 200,
+         follow: this,
+      });
+      this.dustEmitter.reserve(1000);
+      this.dustEmitter.stop();
+   }
+
+   private addPlayerName(): void {
+      this.add(
+         new Phaser.GameObjects.Text(this.options.scene, 0, -120, this.options.player.name, {
+            color: '#FFF',
+            fontSize: '17px',
+         }).setOrigin(0.5),
+      );
    }
 }
