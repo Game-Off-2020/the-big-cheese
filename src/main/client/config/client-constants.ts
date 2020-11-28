@@ -9,6 +9,7 @@ export enum Keys {
    BULLET = 'bullet',
    MOON = 'moon',
    BASIC_GUN = 'basic-gun',
+   DOUBLE_BARREL = 'double-barrel',
    PLAYER_1 = 'player1',
    PLAYER_1_WALK = 'player1-walk',
    PLAYER_2 = 'player2',

@@ -41,6 +41,9 @@ export class HudScene extends Phaser.Scene {
       this.playerComponent.ammoChanged$.subscribe((ammo) => {
          this.ammoCounter.setAmmo(Math.floor(ammo));
       });
+      this.playerComponent.doubleBarrelChanged$.subscribe((doubleBarrel) => {
+         this.ammoCounter.setGunType(doubleBarrel ? Keys.DOUBLE_BARREL : Keys.BASIC_GUN);
+      });
       this.gameStateComponent.moonPercentageChanged$.subscribe((percentage) => {
          if (this.moonPercentageIndicator) {
             this.moonPercentageIndicator.destroy();

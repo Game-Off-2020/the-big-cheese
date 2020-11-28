@@ -46,6 +46,7 @@ export class ServerPlayerComponent {
          moving: false,
          cheese: 0.0,
          type: MathUtil.randomIntFromInterval(0, PLAYERS.length - 1),
+         doubleBarrel: false,
       });
       // Width and height must be switched for some reason
       this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_HEIGHT, ServerConfig.PLAYER_WIDTH);
@@ -83,6 +84,7 @@ export class ServerPlayerComponent {
          player.type = MathUtil.randomIntFromInterval(0, PLAYERS.length - 1);
          player.moving = false;
          player.cheese = 0;
+         player.doubleBarrel = false;
          this.store.commit(id, player);
       }
    }
@@ -120,6 +122,10 @@ export class ServerPlayerComponent {
       if (player) {
          this.store.commit(id, { cheese: ++player.cheese } as Player);
       }
+   }
+
+   enableDoubleBarrel(id: string): void {
+      this.store.commit(id, { doubleBarrel: true } as Player);
    }
 
    private getUniqueName(name: string): string {
