@@ -20,7 +20,7 @@ export class CheeseCounter extends Phaser.GameObjects.Container {
       );
       this.text.setOrigin(0, 0.5);
 
-      const cheese = new Phaser.GameObjects.Image(options.scene, 0, 0, Keys.CHEESE_UNIT);
+      const cheese = new Phaser.GameObjects.Image(options.scene, 0, 0, Keys.CHEESE);
       cheese.setScale(0.2);
       cheese.setOrigin(0, 0.5);
       this.add(cheese);
