@@ -221,7 +221,12 @@ export class GameScene extends Scene {
       this.cheeseComponent.removed$.subscribe((id) => {
          const sprite = this.cheeses.get(id);
          if (sprite) {
-            sprite.destroy();
+            sprite.destroyWithSound(
+               this.playerComponent.getVolume({
+                  x: sprite.x,
+                  y: sprite.y,
+               }),
+            );
             this.cheeses.delete(id);
          }
       });

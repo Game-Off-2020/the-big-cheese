@@ -5,6 +5,7 @@ import { ImageUtil } from '../util/image-util';
 import { SharedMapComponent } from '../../shared/map/shared-map-component';
 import { Destruction } from '../../shared/map/map-model';
 import { MapSprite } from './map-sprite';
+import { ClientPlayerComponent } from '../player/client-player-component';
 
 @Singleton
 export class ClientMapComponent extends SharedMapComponent {
@@ -26,7 +27,10 @@ export class ClientMapComponent extends SharedMapComponent {
 
    private mapSprite: MapSprite;
 
-   constructor(@Inject protected readonly store: MapStore) {
+   constructor(
+      @Inject protected readonly store: MapStore,
+      @Inject private readonly clientPlayer: ClientPlayerComponent,
+   ) {
       super(store);
    }
 
@@ -57,12 +61,21 @@ export class ClientMapComponent extends SharedMapComponent {
 
    drawDestruction(destruction: Destruction): void {
       super.drawDestruction(destruction);
-      this.mapSprite.destructionEffect(destruction);
+
+      this.handleDestructionEffect(destruction);
+
       this.destructionSubject.next(destruction);
       this.updatedSubject.next();
    }
 
    shake(intensity: number): void {
       this.mapSprite.shake(0.0002 * intensity);
+   }
+
+   private handleDestructionEffect(destruction: Destruction): void {
+      const volume = this.clientPlayer.getVolume(destruction.position);
+      if (volume) {
+         this.mapSprite.destructionEffect(destruction, volume);
+      }
    }
 }

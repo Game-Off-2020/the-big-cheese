@@ -1,14 +1,13 @@
-// Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 import * as Phaser from 'phaser';
-import { Scene } from 'phaser';
 import { Keys } from '../config/client-constants';
 import { MathUtil } from '../util/math-util';
 import { ClientConfig } from '../config/client-config';
-import BaseSound = Phaser.Sound.BaseSound;
 
+// Documentation: https://phaser.io/examples/v3/view/physics/arcade/bullets-group
 export interface BulletFireOptions {
    readonly position: Phaser.Math.Vector2;
    readonly direction: Phaser.Math.Vector2;
+   readonly volume: number;
 }
 
 const DEFAULT_BULLET_SPEED = 0.85; // It needs to be synced with the server
@@ -48,10 +47,10 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
 }
 
 export class Bullets extends Phaser.Physics.Arcade.Group {
-   private bulletSounds: Phaser.Sound.BaseSound[];
+   private readonly bulletSoundKeys: string[] = [];
    private cache: { [key: string]: DefaultBullet } = {};
 
-   constructor(scene: Phaser.Scene) {
+   constructor(readonly scene: Phaser.Scene) {
       super(scene.physics.world, scene);
 
       this.createMultiple({
@@ -62,36 +61,7 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
          classType: DefaultBullet,
       });
 
-      this.bulletSounds = [
-         ...this.varySound(scene, Keys.GUN_SOUND_1),
-         ...this.varySound(scene, Keys.GUN_SOUND_2),
-         ...this.varySound(scene, Keys.GUN_SOUND_3),
-         ...this.varySound(scene, Keys.GUN_SOUND_4),
-      ];
-   }
-
-   private varySound(scene: Scene, key: string): BaseSound[] {
-      return [
-         scene.sound.add(key, {
-            volume: 0.3,
-         }),
-         scene.sound.add(key, {
-            volume: 0.3,
-            detune: -100,
-         }),
-         scene.sound.add(key, {
-            volume: 0.3,
-            detune: -50,
-         }),
-         scene.sound.add(key, {
-            volume: 0.3,
-            detune: 50,
-         }),
-         scene.sound.add(key, {
-            volume: 0.3,
-            detune: 100,
-         }),
-      ];
+      this.bulletSoundKeys = [Keys.GUN_SOUND_1, Keys.GUN_SOUND_2, Keys.GUN_SOUND_3, Keys.GUN_SOUND_4];
    }
 
    fireBullet(id: string, options: BulletFireOptions): void {
@@ -100,7 +70,12 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
          bullet.setScale(1 / ClientConfig.MAP_OUTPUT_SCALE, 1 / ClientConfig.MAP_OUTPUT_SCALE);
          this.cache[id] = bullet;
          bullet.fire(options);
-         this.bulletSounds[MathUtil.randomIntFromInterval(0, this.bulletSounds.length - 1)].play();
+         this.scene.sound
+            .add(this.bulletSoundKeys[MathUtil.randomIntFromInterval(0, this.bulletSoundKeys.length - 1)], {
+               volume: 0.3 * options.volume,
+               detune: 100 * Math.random() * 2 - 1,
+            })
+            .play();
       }
    }
 
