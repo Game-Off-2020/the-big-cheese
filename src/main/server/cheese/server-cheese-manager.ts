@@ -35,8 +35,7 @@ export class ServerCheeseManager {
          // 3% chance
          type = CheeseType.CHEESE_DOUBLE;
       }
-      if (rand < 20) {
-         // if (rand >= 6 && rand < 9) {
+      if (rand >= 6 && rand < 9) {
          // 3% chance
          type = CheeseType.CHEESE_HALF;
       }
