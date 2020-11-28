@@ -45,7 +45,6 @@
       "css-loader": "^4.2.1",
       "eslint": "^7.12.1",
       "file-loader": "^6.0.0",
-      "generate-package-json-webpack-plugin": "^2.1.0",
       "gltf-webpack-loader": "^1.0.6",
       "html-loader": "^1.1.0",
       "html-webpack-plugin": "^4.3.0",

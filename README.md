@@ -45,3 +45,8 @@ First, you need to run the dev build that will listen to the changes and will bu
 
 [github-actions-deploy-workflow-image]: https://github.com/Game-Off-2020/the-big-cheese/workflows/Deploy/badge.svg
 [github-actions-deploy-workflow-url]: https://github.com/Game-Off-2020/the-big-cheese/actions
+
+# Special Thanks
+
+Kenny Assets for the Assets (Sprites and Sounds) - https://www.kenney.nl/assets
+Free sound for sounds - https://freesound.org/
