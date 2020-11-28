@@ -34,16 +34,16 @@ export class ServerCheeseManager {
          // 1.5% chance
          type = CheeseType.DOUBLE_BARREL;
       }
-      if (rand >= 15 && rand < 30) {
+      if (rand >= 20 && rand < 35) {
          // 1.5% chance
          type = CheeseType.CHEESE_DOUBLE;
       }
-      if (rand >= 30 && rand < 45) {
-         // 1.5% chance
+      if (rand >= 40 && rand < 58) {
+         // 1.8% chance
          type = CheeseType.CHEESE_HALF;
       }
-      if (rand >= 45 && rand < 60) {
-         // 1.5% chance
+      if (rand >= 60 && rand < 78) {
+         // 1.8% chance
          type = CheeseType.BOMB;
       }
       this.add(position, 1, 1, type);
