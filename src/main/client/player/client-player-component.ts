@@ -104,9 +104,6 @@ export class ClientPlayerComponent {
          if (player.position) {
             this.clientPlayer.setPosition(player.position.x, player.position.y);
          }
-         if (player.cheese !== undefined) {
-            console.log(`My amount of cheese is changed to ${player.cheese}`);
-         }
       });
    }
 }

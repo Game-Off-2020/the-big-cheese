@@ -53,9 +53,7 @@ export class HudScene extends Phaser.Scene {
    }
 
    create(): void {
-      this.scoreBoard = new ScoreBoard({
-         scene: this,
-      });
+      this.scoreBoard = new ScoreBoard(this);
 
       this.cheeseCounter = new CheeseCounter({
          scene: this,

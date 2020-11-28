@@ -191,7 +191,7 @@ export class GameScene extends Scene {
 
    private initOtherPlayerSubscriptions(): void {
       this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
-         const sprite = new OtherPlayerSprite(this, player.type);
+         const sprite = new OtherPlayerSprite({ scene: this, player });
          this.otherPlayers.set(player.id, sprite);
          this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
             if (updatedPlayer.position) {

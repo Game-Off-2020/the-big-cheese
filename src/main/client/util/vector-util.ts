@@ -32,7 +32,6 @@ export class VectorUtil {
       sprite: Phaser.GameObjects.Components.Transform,
       relativePoint: Phaser.Math.Vector2,
    ): Phaser.Math.Vector2 {
-      console.log(relativePoint, { x: sprite.x, y: sprite.y });
       return relativePoint.scale(-1).add(new Phaser.Math.Vector2({ x: sprite.x, y: sprite.y }));
    }
 
