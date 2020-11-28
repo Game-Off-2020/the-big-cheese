@@ -117,7 +117,10 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
       this.add(
          new Phaser.GameObjects.Text(this.options.scene, 0, -120, this.options.player.name, {
             color: '#FFF',
-            fontSize: '17px',
+            fontSize: '28px',
+            fontFamily: 'CactusStory',
+            stroke: '#000000',
+            strokeThickness: 6,
          }).setOrigin(0.5),
       );
    }

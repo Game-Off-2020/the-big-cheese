@@ -43,7 +43,8 @@ export class MainMenuScene extends Phaser.Scene {
          origin: { x: 1, y: 1 },
          style: {
             color: '#FFF',
-            fontSize: '16px',
+            fontSize: '24px',
+            fontFamily: 'CactusStory',
          },
       });
 
@@ -56,7 +57,8 @@ export class MainMenuScene extends Phaser.Scene {
          origin: { x: 0, y: 1 },
          style: {
             color: '#FFF',
-            fontSize: '16px',
+            fontSize: '24px',
+            fontFamily: 'CactusStory',
          },
       });
 
@@ -118,7 +120,7 @@ export class MainMenuScene extends Phaser.Scene {
          },
          colors: {
             label: {
-               over: '#000000',
+               over: '#FFFFFF',
                out: '#FFFFFF',
                down: '#BBBBBB',
                disabled: '#FFFFFF',

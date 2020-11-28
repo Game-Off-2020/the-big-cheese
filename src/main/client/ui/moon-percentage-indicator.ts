@@ -19,7 +19,10 @@ export class MoonPercentageIndicator extends Phaser.GameObjects.Container {
       this.add(
          (this.text = new Phaser.GameObjects.Text(options.scene, -70, 0, Math.round(options.percentage * 100) + '%', {
             color: '#FFF',
-            fontSize: '30px',
+            fontSize: '40px',
+            fontFamily: 'CactusStory',
+            stroke: '#000000',
+            strokeThickness: 6,
          })),
       );
       this.text.setOrigin(1, 0.5);

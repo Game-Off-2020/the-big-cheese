@@ -18,17 +18,19 @@ export class InputBox extends Phaser.GameObjects.Container {
       super(options.scene, options.x, options.y);
 
       const textLabel = new Text(options.scene, 0, 0, options.placeholder, {
-         fontSize: '18px',
+         fontSize: '26px',
          align: 'center',
          color: '#bfbfbf',
+         fontFamily: 'CactusStory',
       }).setOrigin(0.5, 0.5);
 
       const rectangle = new Rectangle(options.scene, 0, 0, 300, 50, 0xffffff);
 
       this.textEntry = new Text(options.scene, 0, 0, '', {
-         fontSize: '18px',
+         fontSize: '26px',
          align: 'center',
          color: '#000000',
+         fontFamily: 'CactusStory',
       }).setOrigin(0.5, 0.5);
 
       fromEvent(this.scene.input.keyboard, 'keydown').subscribe((event: KeyboardEvent) => {

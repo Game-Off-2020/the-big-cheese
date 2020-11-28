@@ -18,6 +18,9 @@ import ThreadsPlugin from 'threads-plugin';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import nodeExternals from 'webpack-node-externals';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import HtmlWebpackPartialsPlugin from 'html-webpack-partials-plugin';
 
 interface Target {
    readonly entry: string;
@@ -127,6 +130,12 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
                viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no',
                'theme-color': '#000000',
             },
+         }),
+      );
+
+      plugins.push(
+         new HtmlWebpackPartialsPlugin({
+            path: './src/main/client/index.partial.html',
          }),
       );
    }

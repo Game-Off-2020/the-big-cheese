@@ -1,5 +1,12 @@
+@font-face {
+   font-family: 'CactusStory';
+   font-weight: normal;
+   src: url('../../asset/fonts/Cactus Story.ttf');
+}
+
 body {
    cursor: url('../../asset/ui/crosshair-cursor.png') 16 16, pointer;
+   font-family: 'CactusStory';
    margin: 0;
    overflow: hidden;
    padding: 0;
