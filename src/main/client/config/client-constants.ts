@@ -31,6 +31,7 @@ export enum Keys {
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
    CHEESE_GREEN = 'cheese-green',
+   CHEESE_BOMB = 'cheese-bomb',
    CHEESE_GLOW = 'cheese-glow',
    CHEESE_GREEN_GLOW = 'cheese-green-glow',
    CHEESE_EAT_SOUND = 'cheese-eat-sound',

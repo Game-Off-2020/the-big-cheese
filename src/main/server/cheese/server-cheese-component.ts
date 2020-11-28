@@ -4,6 +4,7 @@ import { CheeseStore } from '../../shared/cheese/cheese-store';
 import { Subject } from 'rxjs';
 import { Utils } from '../../shared/util/utils';
 import { CheeseType, PickupCheese } from '../../shared/cheese/cheese-model';
+import { Vector } from '../../shared/bullet/vector-model';
 
 const CHEESE_SIZE = 20;
 
@@ -33,16 +34,17 @@ export class ServerCheeseComponent {
    }
 
    pickupInRectangle(playerId: string, x: number, y: number, w: number, h: number): void {
-      this.collisionPhysics.getIdsInRectangle(x, y, w, h).forEach((id) => this.pickup(id, playerId));
+      this.collisionPhysics.getIdsInRectangle(x, y, w, h).forEach((id) => this.pickup(id, playerId, { x, y }));
    }
 
-   private pickup(id: string, playerId: string): void {
+   private pickup(id: string, playerId: string, position: Vector): void {
       const cheese = this.store.get(id);
       if (cheese) {
          this.remove(id);
          this.pickupSubject.next({
             playerId,
             type: cheese.type,
+            position,
          });
       }
    }
