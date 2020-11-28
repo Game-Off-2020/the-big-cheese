@@ -32,6 +32,7 @@ export enum Keys {
    CHEESE = 'cheese',
    CHEESE_GREEN = 'cheese-green',
    CHEESE_BOMB = 'cheese-bomb',
+   CHEESE_BOMB_EXPLOSION = 'cheese-bomb-explosion',
    CHEESE_GLOW = 'cheese-glow',
    CHEESE_GREEN_GLOW = 'cheese-green-glow',
    CHEESE_EAT_SOUND = 'cheese-eat-sound',

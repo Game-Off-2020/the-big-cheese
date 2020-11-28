@@ -71,6 +71,7 @@ export class BootScene extends Scene {
       this.load.image(Keys.CHEESE, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit.png');
       this.load.image(Keys.CHEESE_GREEN, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit-green.png');
       this.load.image(Keys.CHEESE_BOMB, ClientConfig.ASSET_FOLDER + 'cheese/bomb.png');
+      this.load.audio(Keys.CHEESE_BOMB_EXPLOSION, [ClientConfig.ASSET_FOLDER + 'cheese/bomb-explosion.ogg']);
       this.load.image(Keys.CHEESE_GLOW, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit-glow.png');
       this.load.image(Keys.CHEESE_GREEN_GLOW, ClientConfig.ASSET_FOLDER + 'cheese/cheese-unit-green-glow.png');
       this.load.audio(Keys.CHEESE_EAT_SOUND, [ClientConfig.ASSET_FOLDER + 'cheese/cheese-eat.ogg']);
