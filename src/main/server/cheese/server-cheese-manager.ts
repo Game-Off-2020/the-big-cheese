@@ -24,7 +24,7 @@ export class ServerCheeseManager {
       gameState.finished$.subscribe(() => component.removeAll());
       component.pickup$
          .pipe(filter((pickup) => pickup.type === CheeseType.BOMB))
-         .subscribe((pickup) => this.add(pickup.position, 30, 4, CheeseType.CHEESE));
+         .subscribe((pickup) => this.add(pickup.position, ServerConfig.CHEESE_BOMB_COUNT, 4, CheeseType.CHEESE));
    }
 
    private addRandom(position: Vector): void {
