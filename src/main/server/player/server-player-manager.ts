@@ -39,6 +39,9 @@ export class ServerPlayerManager {
             case CheeseType.CHEESE_DOUBLE:
                component.doubleCheese(pickup.playerId);
                break;
+            case CheeseType.CHEESE_HALF:
+               component.halfCheese(pickup.playerId);
+               break;
          }
       });
       setTimeout(() => {

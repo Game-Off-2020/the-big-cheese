@@ -126,8 +126,15 @@ export class ServerPlayerComponent {
 
    doubleCheese(id: string): void {
       const player = this.store.get(id);
-      if (player) {
+      if (player && player.cheese) {
          this.store.commit(id, { cheese: player.cheese * 2 } as Player);
+      }
+   }
+
+   halfCheese(id: string): void {
+      const player = this.store.get(id);
+      if (player && player.cheese) {
+         this.store.commit(id, { cheese: Math.floor(player.cheese / 2) } as Player);
       }
    }
 

@@ -30,7 +30,9 @@ export enum Keys {
    LAVA = 'lava',
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
+   CHEESE_GREEN = 'cheese-green',
    CHEESE_GLOW = 'cheese-glow',
+   CHEESE_GREEN_GLOW = 'cheese-green-glow',
    CHEESE_EAT_SOUND = 'cheese-eat-sound',
    // UI
    LOGO = 'logo',

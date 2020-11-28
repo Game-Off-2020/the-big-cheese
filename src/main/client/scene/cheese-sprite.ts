@@ -11,22 +11,60 @@ export interface CheeseOptions {
    readonly type: CheeseType;
 }
 
+interface CheeseTypeOptions {
+   key: string;
+   glowKey: string;
+   scale: number;
+   glowScale: number;
+}
+
 export class CheeseSprite extends Phaser.GameObjects.Container {
-   private static readonly ICON_SCALE: { [key: string]: [string, number, number] } = {
-      0: ['cheese', 0.035, 1.4],
-      1: ['double-barrel', 0.3, 0],
-      2: ['cheese', 0.04, 1.6],
+   private static readonly ICON_SCALE: { [key: number]: CheeseTypeOptions } = {
+      0: {
+         key: Keys.CHEESE,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.035,
+         glowScale: 1.4,
+      },
+      1: {
+         key: Keys.DOUBLE_BARREL,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.3,
+         glowScale: 0,
+      },
+      2: {
+         key: Keys.CHEESE,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.04,
+         glowScale: 1.6,
+      },
+      3: {
+         key: Keys.CHEESE_GREEN,
+         glowKey: Keys.CHEESE_GREEN_GLOW,
+         scale: 0.035,
+         glowScale: 1.4,
+      },
    };
 
    constructor(private readonly options: CheeseOptions) {
       super(options.scene, options.position.x, options.position.y);
-      this.setScale(CheeseSprite.ICON_SCALE[options.type][1]);
+      this.setScale(CheeseSprite.ICON_SCALE[options.type].scale);
 
-      const glowSprite = new Phaser.GameObjects.Sprite(options.scene, 0, 0, Keys.CHEESE_GLOW);
-      const cheeseSprite = new Phaser.GameObjects.Sprite(options.scene, 0, 0, CheeseSprite.ICON_SCALE[options.type][0]);
+      const glowSprite = new Phaser.GameObjects.Sprite(
+         options.scene,
+         0,
+         0,
+         CheeseSprite.ICON_SCALE[options.type].glowKey,
+      );
+      const cheeseSprite = new Phaser.GameObjects.Sprite(
+         options.scene,
+         0,
+         0,
+         CheeseSprite.ICON_SCALE[options.type].key,
+      );
       this.add(glowSprite);
       this.add(cheeseSprite);
-      glowSprite.setScale(CheeseSprite.ICON_SCALE[options.type][2]);
+      glowSprite.setScale(CheeseSprite.ICON_SCALE[options.type].glowScale);
 
       const downVector = VectorUtil.getDownwardVector(this).scale(3);
       const floorVector = VectorUtil.getFloorVector(this).scale(-1);

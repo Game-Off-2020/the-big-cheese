@@ -4,6 +4,7 @@ export enum CheeseType {
    CHEESE,
    DOUBLE_BARREL,
    CHEESE_DOUBLE,
+   CHEESE_HALF,
 }
 
 export interface Cheese {
