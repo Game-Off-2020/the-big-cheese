@@ -1,18 +1,20 @@
 // Based off of: https://labs.phaser.io/edit.html?src=src\input\keyboard\text%20entry.js
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Text = Phaser.GameObjects.Text;
+import { fromEvent } from 'rxjs';
 
 interface InputBoxOptions {
    readonly scene: Phaser.Scene;
    readonly x: number;
    readonly y: number;
    readonly placeholder: string;
+   readonly maxLength: number;
 }
 
 export class InputBox extends Phaser.GameObjects.Container {
    private readonly textEntry: Text;
 
-   constructor(options: InputBoxOptions) {
+   constructor(private readonly options: InputBoxOptions) {
       super(options.scene, options.x, options.y);
 
       const textLabel = new Text(options.scene, 0, 0, options.placeholder, {
@@ -29,11 +31,11 @@ export class InputBox extends Phaser.GameObjects.Container {
          color: '#000000',
       }).setOrigin(0.5, 0.5);
 
-      this.scene.input.keyboard.on('keydown', (event: KeyboardEvent) => {
+      fromEvent(this.scene.input.keyboard, 'keydown').subscribe((event: KeyboardEvent) => {
          if (event.keyCode === 8 && this.textEntry.text.length > 0) {
             this.textEntry.text = this.textEntry.text.substr(0, this.textEntry.text.length - 1);
          } else if (event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) {
-            if (this.textEntry.text.length > 20) {
+            if (this.textEntry.text.length > options.maxLength) {
                return;
             }
             this.textEntry.text += event.key;

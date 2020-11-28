@@ -65,6 +65,7 @@ export class MainMenuScene extends Phaser.Scene {
          x: this.game.scale.width / 2,
          y: this.game.scale.height / 2 + 85,
          placeholder: 'Enter your name here',
+         maxLength: ClientConfig.MAX_PLAYER_NAME_LENGTH,
       });
 
       this.selectedServer = ClientConfig.SERVER_HOSTS[0];
@@ -162,7 +163,11 @@ export class MainMenuScene extends Phaser.Scene {
       //   button.update(this.selectedServer);
       //    this.joinGameButton.update(!this.selectedServer || this.nameInput.getValue().length === 0);
       //}
-      this.joinGameButton.update(this.nameInput.getValue().length === 0);
+      this.joinGameButton.update(this.getNameInputValue().length === 0);
+   }
+
+   private getNameInputValue(): string {
+      return this.nameInput.getValue().trim();
    }
 
    private startGame(): void {
