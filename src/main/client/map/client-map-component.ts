@@ -5,7 +5,6 @@ import { ImageUtil } from '../util/image-util';
 import { SharedMapComponent } from '../../shared/map/shared-map-component';
 import { Destruction } from '../../shared/map/map-model';
 import { MapSprite } from './map-sprite';
-import { ClientConfig } from '../config/client-config';
 
 @Singleton
 export class ClientMapComponent extends SharedMapComponent {
@@ -21,6 +20,9 @@ export class ClientMapComponent extends SharedMapComponent {
 
    private readonly reInitSubject = new Subject<void>();
    readonly reInit$ = this.reInitSubject.asObservable();
+
+   private readonly destructionSubject = new Subject<Destruction>();
+   readonly destruction$ = this.destructionSubject.asObservable();
 
    private mapSprite: MapSprite;
 
@@ -56,13 +58,11 @@ export class ClientMapComponent extends SharedMapComponent {
    drawDestruction(destruction: Destruction): void {
       super.drawDestruction(destruction);
       this.mapSprite.destructionEffect(destruction);
-      this.shake(destruction);
+      this.destructionSubject.next(destruction);
       this.updatedSubject.next();
    }
 
-   private shake(destruction: Destruction): void {
-      if (destruction.radius > ClientConfig.SHAKE_LIMIT) {
-         this.mapSprite.shake((0.0002 * destruction.radius) / ClientConfig.SHAKE_LIMIT);
-      }
+   shake(intensity: number): void {
+      this.mapSprite.shake(0.0002 * intensity);
    }
 }
