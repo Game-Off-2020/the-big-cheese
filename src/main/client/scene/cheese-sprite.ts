@@ -44,7 +44,7 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
       const floorVector = VectorUtil.getFloorVector(this);
 
       this.setRotation(-floorVector.angle());
-      console.log(downVector);
+
       scene.tweens.add({
          targets: this,
          x: this.x + downVector.x,
