@@ -3,25 +3,81 @@ import { Scene } from 'phaser';
 import { Keys } from '../config/client-constants';
 import { Vector } from '../../shared/bullet/vector-model';
 import { VectorUtil } from '../util/vector-util';
+import { CheeseType } from '../../shared/cheese/cheese-model';
+
+export interface CheeseOptions {
+   readonly scene: Scene;
+   readonly position: Vector;
+   readonly type: CheeseType;
+}
+
+interface CheeseTypeOptions {
+   key: string;
+   glowKey: string;
+   scale: number;
+   glowScale: number;
+}
 
 export class CheeseSprite extends Phaser.GameObjects.Container {
-   constructor(protected readonly scene: Scene, position: Vector) {
-      super(scene, position.x, position.y);
+   private static readonly ICON_SCALE: { [key: number]: CheeseTypeOptions } = {
+      0: {
+         key: Keys.CHEESE,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.035,
+         glowScale: 1.4,
+      },
+      1: {
+         key: Keys.DOUBLE_BARREL,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.3,
+         glowScale: 0,
+      },
+      2: {
+         key: Keys.CHEESE,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.04,
+         glowScale: 1.6,
+      },
+      3: {
+         key: Keys.CHEESE_GREEN,
+         glowKey: Keys.CHEESE_GREEN_GLOW,
+         scale: 0.035,
+         glowScale: 1.4,
+      },
+      4: {
+         key: Keys.CHEESE_BOMB,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.25,
+         glowScale: 0,
+      },
+   };
 
-      const glowSprite = new Phaser.GameObjects.Sprite(scene, 0, 0, Keys.CHEESE_GLOW);
-      const cheeseSprite = new Phaser.GameObjects.Sprite(scene, 0, 0, Keys.CHEESE);
+   constructor(private readonly options: CheeseOptions) {
+      super(options.scene, options.position.x, options.position.y);
+      this.setScale(CheeseSprite.ICON_SCALE[options.type].scale);
+
+      const glowSprite = new Phaser.GameObjects.Sprite(
+         options.scene,
+         0,
+         0,
+         CheeseSprite.ICON_SCALE[options.type].glowKey,
+      );
+      const cheeseSprite = new Phaser.GameObjects.Sprite(
+         options.scene,
+         0,
+         0,
+         CheeseSprite.ICON_SCALE[options.type].key,
+      );
       this.add(glowSprite);
       this.add(cheeseSprite);
-      glowSprite.setScale(1.4);
-
-      this.setScale(0.035);
+      glowSprite.setScale(CheeseSprite.ICON_SCALE[options.type].glowScale);
 
       const downVector = VectorUtil.getDownwardVector(this).scale(3);
       const floorVector = VectorUtil.getFloorVector(this).scale(-1);
 
       this.setRotation(floorVector.angle());
 
-      scene.tweens.add({
+      options.scene.tweens.add({
          targets: this,
          x: this.x + downVector.x,
          y: this.y + downVector.y,
@@ -31,7 +87,7 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
          yoyo: true,
       });
 
-      scene.tweens.add({
+      options.scene.tweens.add({
          targets: glowSprite,
          alpha: { from: 0.3, to: 0.1 },
          duration: 600,
@@ -40,7 +96,16 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
          yoyo: true,
       });
 
-      scene.add.existing(this);
+      if (options.type === CheeseType.CHEESE_DOUBLE) {
+         options.scene.tweens.add({
+            targets: [cheeseSprite, glowSprite],
+            duration: 1500,
+            repeat: -1,
+            angle: 360,
+         });
+      }
+
+      options.scene.add.existing(this);
    }
 
    destroyWithSound(volume: number): void {

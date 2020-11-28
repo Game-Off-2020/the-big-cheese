@@ -9,6 +9,7 @@ export enum Keys {
    BULLET = 'bullet',
    MOON = 'moon',
    BASIC_GUN = 'basic-gun',
+   DOUBLE_BARREL = 'double-barrel',
    PLAYER_1 = 'player1',
    PLAYER_1_WALK = 'player1-walk',
    PLAYER_2 = 'player2',
@@ -29,7 +30,10 @@ export enum Keys {
    LAVA = 'lava',
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
+   CHEESE_GREEN = 'cheese-green',
+   CHEESE_BOMB = 'cheese-bomb',
    CHEESE_GLOW = 'cheese-glow',
+   CHEESE_GREEN_GLOW = 'cheese-green-glow',
    CHEESE_EAT_SOUND = 'cheese-eat-sound',
    // UI
    LOGO = 'logo',

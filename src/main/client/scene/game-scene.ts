@@ -75,7 +75,7 @@ export class GameScene extends Scene {
                onShoot: (position) => {
                   const randomRotation = Math.random() * 0.15 - 0.075;
                   const direction = VectorUtil.getRelativeMouseDirection(this, this.character).rotate(randomRotation);
-                  this.playerComponent.shoot({ position, direction });
+                  this.playerComponent.shoot({ position, direction, volume: 1 });
                },
                onStartMoving: () => {
                   this.playerComponent.setMoving(true);
@@ -191,7 +191,7 @@ export class GameScene extends Scene {
 
    private initOtherPlayerSubscriptions(): void {
       this.created$.pipe(switchMap(() => this.otherPlayersComponent.added$)).subscribe((player) => {
-         const sprite = new OtherPlayerSprite(this, player.type);
+         const sprite = new OtherPlayerSprite({ scene: this, player });
          this.otherPlayers.set(player.id, sprite);
          this.playerStore.onUpdatedId(player.id).subscribe((updatedPlayer) => {
             if (updatedPlayer.position) {
@@ -216,7 +216,10 @@ export class GameScene extends Scene {
 
    private initCheeseSubscriptions(): void {
       this.created$.pipe(switchMap(() => this.cheeseComponent.added$)).subscribe((cheeseEntity) => {
-         this.cheeses.set(cheeseEntity.id, new CheeseSprite(this, cheeseEntity.value.position));
+         this.cheeses.set(
+            cheeseEntity.id,
+            new CheeseSprite({ scene: this, position: cheeseEntity.value.position, type: cheeseEntity.value.type }),
+         );
       });
       this.cheeseComponent.removed$.subscribe((id) => {
          const sprite = this.cheeses.get(id);

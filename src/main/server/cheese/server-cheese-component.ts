@@ -3,12 +3,14 @@ import { CollisionPhysics } from '../player/collision-physics/collision-physics'
 import { CheeseStore } from '../../shared/cheese/cheese-store';
 import { Subject } from 'rxjs';
 import { Utils } from '../../shared/util/utils';
+import { CheeseType, PickupCheese } from '../../shared/cheese/cheese-model';
+import { Vector } from '../../shared/bullet/vector-model';
 
 const CHEESE_SIZE = 20;
 
 @Singleton
 export class ServerCheeseComponent {
-   private readonly pickupSubject = new Subject<string>();
+   private readonly pickupSubject = new Subject<PickupCheese>();
    readonly pickup$ = this.pickupSubject.asObservable();
 
    constructor(
@@ -16,10 +18,11 @@ export class ServerCheeseComponent {
       @Inject private readonly collisionPhysics: CollisionPhysics,
    ) {}
 
-   add(x: number, y: number): void {
+   add(x: number, y: number, type: CheeseType): void {
       const id = Utils.generateId();
       this.store.commit(id, {
          position: { x, y },
+         type,
       });
       this.collisionPhysics.add(id, x, y, CHEESE_SIZE, CHEESE_SIZE);
    }
@@ -31,13 +34,18 @@ export class ServerCheeseComponent {
    }
 
    pickupInRectangle(playerId: string, x: number, y: number, w: number, h: number): void {
-      this.collisionPhysics.getIdsInRectangle(x, y, w, h).forEach((id) => this.pickup(id, playerId));
+      this.collisionPhysics.getIdsInRectangle(x, y, w, h).forEach((id) => this.pickup(id, playerId, { x, y }));
    }
 
-   private pickup(id: string, playerId: string): void {
-      if (this.store.get(id)) {
+   private pickup(id: string, playerId: string, position: Vector): void {
+      const cheese = this.store.get(id);
+      if (cheese) {
          this.remove(id);
-         this.pickupSubject.next(playerId);
+         this.pickupSubject.next({
+            playerId,
+            type: cheese.type,
+            position,
+         });
       }
    }
 

@@ -8,8 +8,11 @@ export interface Player {
    moving: boolean;
    cheese: number;
    type: PlayerType;
+   doubleBarrel: boolean;
 }
 
 export enum PlayerType {
-   GREEN,
+   A,
+   B,
+   C,
 }

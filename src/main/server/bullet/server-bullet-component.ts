@@ -29,13 +29,16 @@ export class ServerBulletComponent {
    shoot(playerId: string, shootRequest: ShootRequest): void {
       const player = this.players.get(playerId);
       if (player) {
-         this.createBullet(
-            playerId,
-            shootRequest.position.x,
-            shootRequest.position.y,
-            shootRequest.direction.x,
-            shootRequest.direction.y,
-         );
+         const angle = Math.atan2(shootRequest.direction.y, shootRequest.direction.x);
+         const randomPlusAngle = Math.random() * 0.15 - 0.075;
+         const nrOfBullets = player.doubleBarrel ? 2 : 1;
+         for (let i = 0; i < nrOfBullets; i++) {
+            const direction: Vector = {
+               x: Math.cos(angle + randomPlusAngle + 0.12 * i),
+               y: Math.sin(angle + randomPlusAngle + 0.12 * i),
+            };
+            this.createBullet(playerId, shootRequest.position.x, shootRequest.position.y, direction.x, direction.y);
+         }
       }
    }
 

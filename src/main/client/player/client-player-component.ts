@@ -5,7 +5,6 @@ import { Subject } from 'rxjs';
 import { PlayerSprite } from './player-sprite';
 import { BulletFireOptions } from '../bullet/default-bullet';
 import { Vector } from '../../shared/bullet/vector-model';
-import { filter } from 'rxjs/operators';
 import { VectorUtil } from '../util/vector-util';
 import { ClientConfig } from '../config/client-config';
 
@@ -24,6 +23,9 @@ export class ClientPlayerComponent {
    private readonly clientCheeseCountChangedSubject = new Subject<number>();
    readonly clientCheeseCountChanged$ = this.clientCheeseCountChangedSubject.asObservable();
 
+   private readonly doubleBarrelChanged = new Subject<boolean>();
+   readonly doubleBarrelChanged$ = this.doubleBarrelChanged.asObservable();
+
    constructor(@Inject private readonly store: PlayerStore) {}
 
    setClientPlayer(player: Player): void {
@@ -31,10 +33,14 @@ export class ClientPlayerComponent {
       this.store.commit(player.id, player);
       this.clientInitSubject.next(player);
       this.store.update(player.id, player);
-      this.store
-         .onUpdatedId(player.id)
-         .pipe(filter((player) => player.cheese !== undefined))
-         .subscribe((player) => this.clientCheeseCountChangedSubject.next(player.cheese));
+      this.store.onUpdatedId(player.id).subscribe((player) => {
+         if (player.cheese !== undefined) {
+            this.clientCheeseCountChangedSubject.next(player.cheese);
+         }
+         if (player.doubleBarrel !== undefined) {
+            this.doubleBarrelChanged.next(player.doubleBarrel);
+         }
+      });
       this.subscribeOnUpdateToPlayerSprite();
    }
 
@@ -97,9 +103,6 @@ export class ClientPlayerComponent {
       this.store.onUpdatedId(this.clientId).subscribe((player) => {
          if (player.position) {
             this.clientPlayer.setPosition(player.position.x, player.position.y);
-         }
-         if (player.cheese !== undefined) {
-            console.log(`My amount of cheese is changed to ${player.cheese}`);
          }
       });
    }

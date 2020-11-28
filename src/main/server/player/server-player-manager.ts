@@ -6,6 +6,7 @@ import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { ServerCheeseComponent } from '../cheese/server-cheese-component';
 import { ServerBulletComponent } from '../bullet/server-bullet-component';
 import { ServerGameStateComponent } from '../game-state/server-game-state-component';
+import { CheeseType } from '../../shared/cheese/cheese-model';
 
 @Singleton
 export class ServerPlayerManager {
@@ -18,16 +19,31 @@ export class ServerPlayerManager {
    ) {
       network.joinRequest$.subscribe((requestMessage) => {
          if (component.getNrOfPlayers() < ServerConfig.MAX_NR_OF_PLAYERS) {
-            const name = requestMessage.user?.trim();
-            if (name && name.length) {
-               component.add(name, requestMessage.value.userName);
+            const name = requestMessage.value?.userName?.trim();
+            if (requestMessage.user && name.length) {
+               component.add(requestMessage.user, name);
             }
          } else {
             this.sendServerIsFullJoinResponse(requestMessage.user);
          }
       });
       network.clientDisconnectedId$.subscribe((playerId) => component.remove(playerId));
-      cheese.pickup$.subscribe((playerId) => component.addCheese(playerId));
+      cheese.pickup$.subscribe((pickup) => {
+         switch (pickup.type) {
+            case CheeseType.CHEESE:
+               component.addCheese(pickup.playerId);
+               break;
+            case CheeseType.DOUBLE_BARREL:
+               component.enableDoubleBarrel(pickup.playerId);
+               break;
+            case CheeseType.CHEESE_DOUBLE:
+               component.doubleCheese(pickup.playerId);
+               break;
+            case CheeseType.CHEESE_HALF:
+               component.halfCheese(pickup.playerId);
+               break;
+         }
+      });
       setTimeout(() => {
          // Need to subscribe after ServerCheeseManager lol
          bullet.damage$.subscribe((damage) => component.dealDamage(damage));
