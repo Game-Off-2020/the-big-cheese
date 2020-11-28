@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Vector } from '../../shared/bullet/vector-model';
 
 export class VectorUtil {
    static getRelativeMouseDirection(
@@ -84,5 +85,9 @@ export class VectorUtil {
             const newDownVector = vector.clone().scale(i);
             return new Phaser.Geom.Point(newDownVector.x, newDownVector.y);
          });
+   }
+
+   static distanceTo(v1: Vector, v2: Vector): number {
+      return Math.sqrt(Math.pow(v1.x - v2.x, 2) + Math.pow(v1.y - v2.y, 2));
    }
 }

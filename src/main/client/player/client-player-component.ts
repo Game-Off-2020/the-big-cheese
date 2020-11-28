@@ -6,6 +6,8 @@ import { PlayerSprite } from './player-sprite';
 import { BulletFireOptions } from '../bullet/default-bullet';
 import { Vector } from '../../shared/bullet/vector-model';
 import { filter } from 'rxjs/operators';
+import { VectorUtil } from '../util/vector-util';
+import { ClientConfig } from '../config/client-config';
 
 @Singleton
 export class ClientPlayerComponent {
@@ -46,6 +48,18 @@ export class ClientPlayerComponent {
 
    getClient(): Player {
       return this.store.get(this.clientId);
+   }
+
+   getVolume(position: Vector): number {
+      return Math.max(
+         0,
+         Math.min(
+            1,
+            1 -
+               VectorUtil.distanceTo(position, this.getClient().position) /
+                  ((window.innerWidth / ClientConfig.MAP_OUTPUT_SCALE) * 2),
+         ),
+      );
    }
 
    shoot(options: BulletFireOptions): void {

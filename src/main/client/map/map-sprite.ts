@@ -3,7 +3,6 @@ import * as Phaser from 'phaser';
 import { Destruction } from '../../shared/map/map-model';
 import { PLAYER_HEIGHT, PLAYER_WIDTH } from '../player/player-sprite';
 import { Keys } from '../config/client-constants';
-import { MathUtil } from '../util/math-util';
 
 interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
@@ -21,7 +20,6 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
    private terrainTexture: Phaser.Textures.CanvasTexture;
    private readonly radius: number;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
-   private impactSounds: Phaser.Sound.BaseSound[];
    private readonly moonTexture: HTMLImageElement;
 
    constructor(options: MapSpriteOptions) {
@@ -49,22 +47,6 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter.reserve(1000);
       this.dustEmitter.stop();
       particle.setDepth(100);
-
-      this.impactSounds = [
-         options.scene.sound.add(Keys.MOON_IMPACT, {}),
-         options.scene.sound.add(Keys.MOON_IMPACT, {
-            detune: -200,
-         }),
-         options.scene.sound.add(Keys.MOON_IMPACT, {
-            detune: -100,
-         }),
-         options.scene.sound.add(Keys.MOON_IMPACT, {
-            detune: 100,
-         }),
-         options.scene.sound.add(Keys.MOON_IMPACT, {
-            detune: 200,
-         }),
-      ];
    }
 
    hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -88,13 +70,18 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       super.update();
    }
 
-   destructionEffect(destruction: Destruction): void {
+   destructionEffect(destruction: Destruction, volume: number): void {
       this.dustEmitter
          .setScale({ start: 0, end: destruction.radius / 5 })
          .setSpeed({ min: destruction.radius, max: destruction.radius })
          .explode(5, destruction.position.x, destruction.position.y);
 
-      this.impactSounds[MathUtil.randomIntFromInterval(0, this.impactSounds.length - 1)].play();
+      this.scene.sound
+         .add(Keys.MOON_IMPACT, {
+            volume,
+            detune: 100 * Math.random() * 2 - 1,
+         })
+         .play();
    }
 
    shake(intensity: number): void {
@@ -108,19 +95,12 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
       const pixel = this.getPixelColor(localX, localY, canvasData);
-
-      if (pixel && pixel.alpha > 0) {
-         return true;
-      } else {
-         return false;
-      }
+      return pixel && pixel.alpha > 0;
    }
 
    private getPixelColor(localX: number, localY: number, canvasData: ImageData): Color {
       if (localX < 0 || localY < 0 || localX > canvasData.width || localY > canvasData.height) return;
-
       const index = (localY * canvasData.width + localX) * 4;
-
       return {
          red: canvasData.data[index],
          green: canvasData.data[index + 1],
