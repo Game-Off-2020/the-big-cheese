@@ -14,7 +14,6 @@ import ReplaceInFileWebpackPlugin from 'replace-in-file-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import GeneratePackageJsonPlugin from 'generate-package-json-webpack-plugin';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import ThreadsPlugin from 'threads-plugin';
@@ -154,11 +153,11 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             parallel: false,
             terserOptions: {
                ecma: 2015,
-               keep_classnames: false,
-               keep_fnames: false,
-               compress: {
-                  drop_console: true,
-               },
+               //keep_classnames: false,
+               //keep_fnames: false,
+               //compress: {
+               //    drop_console: true,
+               //},
             },
          }),
       );
@@ -262,7 +261,7 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
          ],
       },
       optimization: {
-         minimize: false, // isProd(),
+         minimize: isProd(),
          minimizer: minimizers,
       },
       plugins: plugins,
