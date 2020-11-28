@@ -19,9 +19,9 @@ export class ServerPlayerManager {
    ) {
       network.joinRequest$.subscribe((requestMessage) => {
          if (component.getNrOfPlayers() < ServerConfig.MAX_NR_OF_PLAYERS) {
-            const name = requestMessage.user?.trim();
-            if (name && name.length) {
-               component.add(name, requestMessage.value.userName);
+            const name = requestMessage.value?.userName?.trim();
+            if (requestMessage.user && name.length) {
+               component.add(requestMessage.user, name);
             }
          } else {
             this.sendServerIsFullJoinResponse(requestMessage.user);
