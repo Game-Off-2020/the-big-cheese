@@ -81,7 +81,6 @@ export class ServerPlayerComponent {
       const player = this.store.get(id);
       if (player) {
          player.position = this.map.getRandomPositionAboveSurface(30);
-         player.type = MathUtil.randomIntFromInterval(0, PLAYERS.length - 1);
          player.moving = false;
          player.cheese = 0;
          player.doubleBarrel = false;
