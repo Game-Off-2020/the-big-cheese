@@ -87,7 +87,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
       }
    }
 
-   private initGun() {
+   private initGun(): void {
       this.add(
          (this.gun = new GunSprite({
             scene: this.options.scene,
