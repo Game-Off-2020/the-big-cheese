@@ -153,8 +153,8 @@ export class MainMenuScene extends Phaser.Scene {
                );
             }*/
 
-            gameOffText.setPosition(this.game.scale.width - 30, this.game.scale.height - 30);
-            creditsText.setPosition(30, this.game.scale.height - 30);
+            gameOffText.setPosition(gameSize.width - 30, gameSize.height - 30);
+            creditsText.setPosition(30, gameSize.height - 30);
          },
          this,
       );

@@ -6,13 +6,15 @@ const FULL_COLOR = Phaser.Display.Color.HexStringToColor('#32a852');
 const EMPTY_COLOR = Phaser.Display.Color.HexStringToColor('#a83232');
 const BAR_LENGTH = 200;
 const GUN_ICON_OFFSET = 75;
+const Y_POSITION = 200;
+const X_POSITION = 100;
 
 export class AmmoCounter extends Phaser.GameObjects.Container {
    private gunIcon: Phaser.GameObjects.Image;
    private readonly rectangle: Phaser.GameObjects.Rectangle;
 
    constructor(protected readonly scene: Scene, private readonly fullValue: number) {
-      super(scene, scene.game.scale.width - 100, 200);
+      super(scene, scene.game.scale.width - X_POSITION, Y_POSITION);
 
       this.rectangle = new Phaser.GameObjects.Rectangle(
          scene,
@@ -29,6 +31,14 @@ export class AmmoCounter extends Phaser.GameObjects.Container {
       this.setDepth(300);
       this.setGunType(Keys.BASIC_GUN);
       scene.add.existing(this);
+
+      scene.scale.on(
+         'resize',
+         (gameSize: Phaser.Structs.Size) => {
+            this.setPosition(gameSize.width - X_POSITION, Y_POSITION);
+         },
+         this,
+      );
    }
 
    setAmmo(ammo: number): void {
@@ -41,7 +51,6 @@ export class AmmoCounter extends Phaser.GameObjects.Container {
          (ammo / this.fullValue) * 100,
       );
       const newColor = new Phaser.Display.Color(colorObject.r, colorObject.g, colorObject.b);
-      console.log(colorObject, (ammo / this.fullValue) * 100);
       this.rectangle.fillColor = newColor.color;
       this.rectangle.setX(-this.rectangle.width - GUN_ICON_OFFSET);
    }

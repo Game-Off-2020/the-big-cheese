@@ -55,5 +55,14 @@ export class MoonPercentageIndicator extends Phaser.GameObjects.Container {
       this.setDepth(300);
 
       options.scene.add.existing(this);
+
+      options.scene.scale.on(
+         'resize',
+         (gameSize: Phaser.Structs.Size) => {
+            this.setPosition(gameSize.width - X_POSITION, Y_POSITION);
+            shape.fillRect(0, position, gameSize.width, gameSize.height);
+         },
+         this,
+      );
    }
 }

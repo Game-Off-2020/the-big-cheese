@@ -22,6 +22,34 @@ export class StarFieldSprite extends Phaser.GameObjects.Sprite {
       super(options.scene, options.scene.game.scale.width / 2, options.scene.game.scale.height / 2, id);
       this.setScale(1 / options.scale, 1 / options.scale);
 
+      this.generateStars(texture, canvas, canvas.width, canvas.height);
+
+      this.setScrollFactor(0, 0);
+      this.setDepth(-100);
+
+      options.scene.add.existing(this);
+
+      options.scene.scale.on(
+         'resize',
+         (gameSize: Phaser.Structs.Size) => {
+            const largestSide = Math.max(gameSize.width, gameSize.height);
+
+            canvas.width = largestSide * 2;
+            canvas.height = largestSide * 2;
+            this.generateStars(texture, canvas, canvas.width, canvas.height);
+         },
+         this,
+      );
+   }
+
+   private generateStars(
+      texture: Phaser.Textures.CanvasTexture,
+      canvas: HTMLCanvasElement,
+      width: number,
+      height: number,
+   ): void {
+      texture.clear();
+      texture.setSize(width, height);
       for (let i = 0; i < 2000; i++) {
          const radius = MathUtil.randomFloatFromInterval(0.2, 2);
          const x = MathUtil.randomIntFromInterval(1, canvas.width);
@@ -35,9 +63,5 @@ export class StarFieldSprite extends Phaser.GameObjects.Sprite {
       }
 
       this.starFieldTexture.refresh();
-      this.setScrollFactor(0, 0);
-      this.setDepth(-100);
-
-      options.scene.add.existing(this);
    }
 }

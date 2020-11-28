@@ -44,6 +44,7 @@ export class GameComponent {
    }
 
    refreshScale(): void {
+      this.game.scale.resize(window.innerWidth, window.innerHeight);
       this.game.scale.refresh();
    }
 
