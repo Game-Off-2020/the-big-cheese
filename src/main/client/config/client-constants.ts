@@ -10,6 +10,7 @@ export enum Keys {
    MOON = 'moon',
    BASIC_GUN = 'basic-gun',
    DOUBLE_BARREL = 'double-barrel',
+   DOUBLE_BARREL_COLLECT = 'double-barrel-collect',
    PLAYER_1 = 'player1',
    PLAYER_1_WALK = 'player1-walk',
    PLAYER_2 = 'player2',
@@ -31,15 +32,17 @@ export enum Keys {
    STAR_FIELD = 'star-field',
    CHEESE = 'cheese',
    CHEESE_GREEN = 'cheese-green',
+   CHEESE_GREEN_EAT = 'cheese-green-eat',
    CHEESE_BOMB = 'cheese-bomb',
    CHEESE_BOMB_EXPLOSION = 'cheese-bomb-explosion',
    CHEESE_GLOW = 'cheese-glow',
    CHEESE_GREEN_GLOW = 'cheese-green-glow',
    CHEESE_EAT_SOUND = 'cheese-eat-sound',
-   // UI
-   LOGO = 'logo',
+   CHEESE_DOUBLE_EAT_SOUND = 'cheese-double-eat-sound',
    FLARES = 'flares',
    LAVA_SPIT = 'lava-spit',
+   // UI
+   LOGO = 'logo',
 }
 
 export interface PlayerSpriteSheetConfig {

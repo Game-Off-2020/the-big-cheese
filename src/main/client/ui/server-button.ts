@@ -34,13 +34,19 @@ export class ServerButton extends Phaser.GameObjects.Container {
       super(options.scene, options.x, options.y);
 
       const textLabel = new Text(options.scene, 0, 0, options.text, {
-         fontSize: '18px',
+         fontSize: '26px',
          align: 'center',
+         fontFamily: 'CactusStory',
+         stroke: '#000000',
+         strokeThickness: 6,
       }).setOrigin(0.5, 0.5);
 
       const subTextLabel = new Text(options.scene, 0, 30, options.subText, {
-         fontSize: '14px',
+         fontSize: '20px',
          align: 'center',
+         fontFamily: 'CactusStory',
+         stroke: '#000000',
+         strokeThickness: 6,
       }).setOrigin(0.5, 0.5);
 
       const rectangle = new Rectangle(options.scene, 0, 0, BUTTON_SIZE, BUTTON_SIZE);
@@ -82,7 +88,7 @@ export class ServerButton extends Phaser.GameObjects.Container {
       this.graphics.clear();
 
       if (this.options.serverConfig === serverConfig) {
-         this.graphics.lineStyle(4, 0xffff00, 1);
+         this.graphics.lineStyle(4, 0xffffff, 1);
          this.graphics.strokeRect(-BUTTON_SIZE / 2, -BUTTON_SIZE / 2, BUTTON_SIZE, BUTTON_SIZE);
       }
    }
