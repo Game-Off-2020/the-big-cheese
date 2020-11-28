@@ -124,6 +124,13 @@ export class ServerPlayerComponent {
       }
    }
 
+   doubleCheese(id: string): void {
+      const player = this.store.get(id);
+      if (player) {
+         this.store.commit(id, { cheese: player.cheese * 2 } as Player);
+      }
+   }
+
    enableDoubleBarrel(id: string): void {
       this.store.commit(id, { doubleBarrel: true } as Player);
    }

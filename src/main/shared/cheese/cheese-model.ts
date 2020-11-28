@@ -3,6 +3,7 @@ import { Vector } from '../bullet/vector-model';
 export enum CheeseType {
    CHEESE,
    DOUBLE_BARREL,
+   CHEESE_DOUBLE,
 }
 
 export interface Cheese {

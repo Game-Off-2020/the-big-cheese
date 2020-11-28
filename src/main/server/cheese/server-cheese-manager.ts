@@ -31,6 +31,10 @@ export class ServerCheeseManager {
          // 3% chance
          type = CheeseType.DOUBLE_BARREL;
       }
+      if (rand >= 3 && rand < 6) {
+         // 3% chance
+         type = CheeseType.CHEESE_DOUBLE;
+      }
       this.add(position, 1, 1, type);
    }
 

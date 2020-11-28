@@ -36,6 +36,9 @@ export class ServerPlayerManager {
             case CheeseType.DOUBLE_BARREL:
                component.enableDoubleBarrel(pickup.playerId);
                break;
+            case CheeseType.CHEESE_DOUBLE:
+               component.doubleCheese(pickup.playerId);
+               break;
          }
       });
       setTimeout(() => {

@@ -15,6 +15,7 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
    private static readonly ICON_SCALE: { [key: string]: [string, number, number] } = {
       0: ['cheese', 0.035, 1.4],
       1: ['double-barrel', 0.3, 0],
+      2: ['cheese', 0.04, 1.6],
    };
 
    constructor(private readonly options: CheeseOptions) {
@@ -50,6 +51,15 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
          repeat: -1,
          yoyo: true,
       });
+
+      if (options.type === CheeseType.CHEESE_DOUBLE) {
+         options.scene.tweens.add({
+            targets: [cheeseSprite, glowSprite],
+            duration: 1500,
+            repeat: -1,
+            angle: 360,
+         });
+      }
 
       options.scene.add.existing(this);
    }
