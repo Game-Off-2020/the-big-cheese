@@ -22,23 +22,29 @@ export class ServerCheeseManager {
          .subscribe((damage) => this.addRandom(damage.position));
       players.dropCheese$.subscribe((drop) => this.add(drop.position, drop.amount, 2, CheeseType.CHEESE));
       gameState.finished$.subscribe(() => component.removeAll());
+      component.pickup$
+         .pipe(filter((pickup) => pickup.type === CheeseType.BOMB))
+         .subscribe((pickup) => this.add(pickup.position, 30, 4, CheeseType.CHEESE));
    }
 
    private addRandom(position: Vector): void {
       let type = CheeseType.CHEESE;
-      const rand = MathUtil.randomIntFromInterval(0, 100);
-      if (rand < 3) {
-         // 3% chance
+      const rand = MathUtil.randomIntFromInterval(0, 1000);
+      if (rand < 25) {
+         // 2.5% chance
          type = CheeseType.DOUBLE_BARREL;
       }
-      if (rand >= 3 && rand < 6) {
-         // 3% chance
+      if (rand >= 25 && rand < 50) {
+         // 2.5% chance
          type = CheeseType.CHEESE_DOUBLE;
       }
-      if (rand < 20) {
-         // if (rand >= 6 && rand < 9) {
-         // 3% chance
+      if (rand >= 50 && rand < 75) {
+         // 2.5% chance
          type = CheeseType.CHEESE_HALF;
+      }
+      if (rand >= 75 && rand < 100) {
+         // 2.5% chance
+         type = CheeseType.BOMB;
       }
       this.add(position, 1, 1, type);
    }

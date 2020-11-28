@@ -57,12 +57,14 @@ export class ServerNetworkManager {
             map((storeData) => Array.from(Object.entries(storeData))),
          )
          .subscribe((storeDataEntries) => {
-            storeDataEntries.forEach(([id, value]) => {
-               // console.log(`Store ${store.getId()} received entity ${id}:`, value);
-               if (value !== null) {
-                  store.update(id, value as T);
-               }
-            });
+            storeDataEntries
+               .filter(([id, _]) => !!store.get(id))
+               .forEach(([id, value]) => {
+                  // console.log(`Store ${store.getId()} received entity ${id}:`, value);
+                  if (value !== null) {
+                     store.update(id, value as T);
+                  }
+               });
          });
    }
 

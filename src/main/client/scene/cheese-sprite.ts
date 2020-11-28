@@ -44,6 +44,12 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
          scale: 0.035,
          glowScale: 1.4,
       },
+      4: {
+         key: Keys.CHEESE_BOMB,
+         glowKey: Keys.CHEESE_GLOW,
+         scale: 0.25,
+         glowScale: 0,
+      },
    };
 
    constructor(private readonly options: CheeseOptions) {

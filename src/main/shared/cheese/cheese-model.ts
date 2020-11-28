@@ -5,6 +5,7 @@ export enum CheeseType {
    DOUBLE_BARREL,
    CHEESE_DOUBLE,
    CHEESE_HALF,
+   BOMB,
 }
 
 export interface Cheese {
@@ -19,5 +20,6 @@ export interface DropCheese {
 
 export interface PickupCheese {
    playerId: string;
+   position: Vector;
    type: CheeseType;
 }
