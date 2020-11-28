@@ -11,6 +11,12 @@ import Vector2 = Phaser.Math.Vector2;
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
    readonly cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
+   readonly wasdKeys: {
+      keyW: Phaser.Input.Keyboard.Key;
+      keyA: Phaser.Input.Keyboard.Key;
+      keyS: Phaser.Input.Keyboard.Key;
+      keyD: Phaser.Input.Keyboard.Key;
+   };
    readonly callbacks: {
       readonly onStartMoving: () => void;
       readonly onStartStanding: () => void;
@@ -115,7 +121,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
-      if (this.options.cursorKeys.left.isDown) {
+      if (this.options.cursorKeys.left.isDown || this.options.wasdKeys.keyA.isDown) {
          this.moving();
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
             if (!this.options.physics.leftWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
@@ -125,7 +131,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
                VectorUtil.applyGroundReactionForce(this);
             }
          }
-      } else if (this.options.cursorKeys.right.isDown) {
+      } else if (this.options.cursorKeys.right.isDown || this.options.wasdKeys.keyD.isDown) {
          this.moving();
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
             if (!this.options.physics.rightWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
@@ -139,7 +145,12 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.standing();
       }
 
-      if (this.options.cursorKeys.up.isDown && this.canJump()) {
+      if (
+         (this.options.cursorKeys.up.isDown ||
+            this.options.wasdKeys.keyW.isDown ||
+            this.options.cursorKeys.space.isDown) &&
+         this.canJump()
+      ) {
          this.verticalSpeed = -MAX_VERTICAL_SPEED;
          this.jumping = true;
          this.lastJumpTimestamp = Date.now();
