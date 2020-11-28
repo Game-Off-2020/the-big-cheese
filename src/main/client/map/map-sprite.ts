@@ -95,19 +95,12 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 
    private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
       const pixel = this.getPixelColor(localX, localY, canvasData);
-
-      if (pixel && pixel.alpha > 0) {
-         return true;
-      } else {
-         return false;
-      }
+      return pixel && pixel.alpha > 0;
    }
 
    private getPixelColor(localX: number, localY: number, canvasData: ImageData): Color {
       if (localX < 0 || localY < 0 || localX > canvasData.width || localY > canvasData.height) return;
-
       const index = (localY * canvasData.width + localX) * 4;
-
       return {
          red: canvasData.data[index],
          green: canvasData.data[index + 1],
