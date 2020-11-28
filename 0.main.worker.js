@@ -25200,6 +25200,7 @@ var CommonClientConfig = function (_super) {
   CommonClientConfig.AMMO_RESTORE_PER_S = 2.2;
   CommonClientConfig.MAX_AMMO = 10;
   CommonClientConfig.SCOREBOARD_SIZE = 5;
+  CommonClientConfig.MAX_PLAYER_NAME_LENGTH = 10;
   CommonClientConfig.SERVER_HOSTS = [{
     url: "https://the-big-cheese.herokuapp.com",
     name: 'Default'
