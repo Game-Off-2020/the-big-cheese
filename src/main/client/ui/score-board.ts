@@ -3,28 +3,34 @@ import { Scene } from 'phaser';
 import { PlayerScore } from '../player/scoreboard/scoreboard-model';
 import { ClientConfig } from '../config/client-config';
 
-interface ScoreBoardOptions {
-   readonly scene: Phaser.Scene;
-}
-
 export class ScoreBoard extends Phaser.GameObjects.Container {
    private readonly scoreLines: PlayerScoreLine[] = [];
+   private readonly playersCounter: Phaser.GameObjects.Text;
 
-   constructor(private readonly options: ScoreBoardOptions) {
-      super(options.scene, 35, 170);
+   constructor(protected readonly scene: Scene) {
+      super(scene, 35, 170);
 
       for (let i = 0; i < ClientConfig.SCOREBOARD_SIZE; i++) {
-         this.scoreLines.push(new PlayerScoreLine(options.scene, i));
+         this.scoreLines.push(new PlayerScoreLine(scene, i));
       }
       this.add(this.scoreLines);
 
+      this.add(
+         (this.playersCounter = new Phaser.GameObjects.Text(scene, 0, 0, '', {
+            color: '#FFF',
+            fontSize: '20px',
+         })),
+      );
       this.setScrollFactor(0, 0);
       this.setDepth(300);
 
-      options.scene.add.existing(this);
+      scene.add.existing(this);
    }
 
    setScoreboard(scoreboard: PlayerScore[]): void {
+      this.playersCounter.setText(`Out of ${scoreboard.length} players`);
+      this.playersCounter.setVisible(scoreboard.length > 1);
+
       // It will hide the scoreboard when only one player is in the room
       const scores = scoreboard.length > 1 ? Math.min(ClientConfig.SCOREBOARD_SIZE, scoreboard.length) : 0;
       for (let i = 0; i < scores; i++) {
@@ -42,7 +48,7 @@ class PlayerScoreLine extends Phaser.GameObjects.Container {
    private static readonly MAX_SCORE_DIGIT = 4;
 
    constructor(protected readonly scene: Scene, protected readonly i: number) {
-      super(scene, 0, 30 * i);
+      super(scene, 0, 35 + 30 * i);
       this.add(
          (this.text = new Phaser.GameObjects.Text(scene, 0, 0, '', {
             color: '#FFF',
