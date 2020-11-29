@@ -38,7 +38,7 @@ export class BootScene extends Scene {
          this.scene.start(Keys.MAIN_MENU_SCENE);
       });
 
-      this.cameras.main.setBackgroundColor('#ebd798')
+      this.cameras.main.setBackgroundColor('#ebd798');
 
       this.loadAssets();
    }
