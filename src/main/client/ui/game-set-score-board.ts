@@ -11,12 +11,11 @@ interface PlayerScoreRow {
 
 const ROW_OFFSET_Y = 55;
 const ROW_OFFSET_X = 230;
-const GAME_RESTART_TIME_SECS = Math.floor(ClientConfig.GAME_RESTART_TIME_MS / 1000);
 
 export class GameSetScoreboard extends Phaser.GameObjects.Container {
    private readonly playerScoreRows: PlayerScoreRow[];
    private readonly nextGameInText: Phaser.GameObjects.Text;
-   private nextGameCounter = GAME_RESTART_TIME_SECS;
+   private nextGameCounter = 0;
 
    constructor(scene: Phaser.Scene) {
       super(scene, scene.game.scale.width / 2, scene.game.scale.height / 2);
@@ -96,7 +95,7 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
    }
 
    restartTimer(): void {
-      this.nextGameCounter = GAME_RESTART_TIME_SECS;
+      this.nextGameCounter = Math.floor(ClientConfig.GAME_RESTART_TIME_MS / 1000);
       this.updateNextGameInText();
    }
 
