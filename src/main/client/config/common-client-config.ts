@@ -19,8 +19,12 @@ export class CommonClientConfig extends SharedConfig {
    static readonly MAX_PLAYER_NAME_LENGTH: number = 10;
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
-         url: `https://the-big-cheese.herokuapp.com`,
-         name: 'Default',
+         url: `https://the-big-cheese-eu.herokuapp.com`,
+         name: 'Europe',
+      },
+      {
+         url: `https://the-big-cheese-us.herokuapp.com`,
+         name: 'North America',
       },
    ];
 }
