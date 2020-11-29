@@ -247,7 +247,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private justLanded(): void {
       // The player's speed is high enough for it to make impact effects
       if (this.verticalSpeed > 2) {
-         console.log('landed', this.verticalSpeed);
          this.scene.sound
             .add(MOON_LAND_SOUND_KEYS[MathUtil.randomIntFromInterval(0, MOON_LAND_SOUND_KEYS.length - 1)], {
                volume: 0.05,
