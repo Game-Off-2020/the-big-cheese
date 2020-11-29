@@ -89,7 +89,7 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
    }
 
    setScores(playerScores: PlayerScore[]): void {
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < Math.min(3, playerScores.length); i++) {
          this.playerScoreRows[i].name.setText(playerScores[i].name);
          this.playerScoreRows[i].score.setText(playerScores[i].count.toString());
       }
