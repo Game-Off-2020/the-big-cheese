@@ -12004,12 +12004,13 @@ var CommonSharedConfig = function () {
   CommonSharedConfig.MAP_OUTPUT_SCALE = 4;
   CommonSharedConfig.BULLET_BASE_SPEED = 70 * 1000 / 60 / CommonSharedConfig.MAP_OUTPUT_SCALE;
   CommonSharedConfig.BULLET_MAX_AGE_MS = 3000;
+  CommonSharedConfig.MAX_NR_OF_PLAYERS = 20;
   CommonSharedConfig.PLAYER_WIDTH = 10;
   CommonSharedConfig.PLAYER_HEIGHT = 20;
   CommonSharedConfig.RANDOM_START_POSITION = true;
   CommonSharedConfig.SHAKE_LIMIT = 46 / CommonSharedConfig.MAP_OUTPUT_SCALE;
   CommonSharedConfig.MOON_PERCENTAGE_TO_FINISH = 0.5;
-  CommonSharedConfig.GAME_RESTART_TIME_MS = 2000;
+  CommonSharedConfig.GAME_RESTART_TIME_MS = 10000;
   CommonSharedConfig.LAVA_RADIUS = 200;
   return CommonSharedConfig;
 }();
@@ -25202,8 +25203,11 @@ var CommonClientConfig = function (_super) {
   CommonClientConfig.SCOREBOARD_SIZE = 5;
   CommonClientConfig.MAX_PLAYER_NAME_LENGTH = 10;
   CommonClientConfig.SERVER_HOSTS = [{
-    url: "https://the-big-cheese.herokuapp.com",
-    name: 'Default'
+    url: "https://the-big-cheese-eu.herokuapp.com",
+    name: 'Europe'
+  }, {
+    url: "https://the-big-cheese-us.herokuapp.com",
+    name: 'North America'
   }];
   return CommonClientConfig;
 }(SharedConfig);
