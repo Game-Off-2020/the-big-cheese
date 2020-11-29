@@ -35,7 +35,7 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
       gameSetText.setOrigin(0.5, 1);
       this.add(gameSetText);
 
-      this.nextGameInText = new Phaser.GameObjects.Text(scene, 0, 200, 'Next Game in 0 secs', {
+      this.nextGameInText = new Phaser.GameObjects.Text(scene, 0, 200, '', {
          color: '#FFF',
          fontSize: '70px',
          fontFamily: 'CactusStory',
@@ -84,7 +84,7 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
             return;
          }
          this.nextGameCounter--;
-         this.nextGameInText.setText(`Next Game in ${this.nextGameCounter} secs`);
+         this.updateNextGameInText();
       }, 1000);
    }
 
@@ -97,6 +97,10 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
 
    restartTimer(): void {
       this.nextGameCounter = GAME_RESTART_TIME_SECS;
+      this.updateNextGameInText();
+   }
+
+   private updateNextGameInText(): void {
       this.nextGameInText.setText(`Next Game in ${this.nextGameCounter} secs`);
    }
 }
