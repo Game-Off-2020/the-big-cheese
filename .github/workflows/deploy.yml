@@ -60,13 +60,13 @@ jobs:
               name: dist-client
               path: dist
          - name: Deploy 🚀
-         uses: josephbmanley/butler-publish-itchio-action@master
-            env:
-               BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-               CHANNEL: 'html5'
-               ITCH_GAME: the-big-cheese
-               ITCH_USER: dolanmiu
-               PACKAGE: dist/client
+           uses: josephbmanley/butler-publish-itchio-action@master
+           env:
+              BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+              CHANNEL: 'html5'
+              ITCH_GAME: the-big-cheese
+              ITCH_USER: dolanmiu
+              PACKAGE: dist/client
    deploy-glitch-back-end:
       name: Deploy Glitch Back-End
       needs: [build-front-end, build-back-end]
