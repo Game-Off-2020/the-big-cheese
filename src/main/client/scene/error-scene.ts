@@ -23,11 +23,11 @@ export class LoadingScene extends Phaser.Scene {
       });
    }
 
-   create(settings: { status: JoinResponseStatus }): void {
+   create(): void {
       new StarFieldSprite({ scene: this, scale: 1 });
 
       this.errorText = this.add
-         .text(this.game.scale.width / 2, this.game.scale.height / 2, this.getErrorMessage(settings.status), {
+         .text(this.game.scale.width / 2, this.game.scale.height / 2, '', {
             color: '#FFF',
             fontSize: '40px',
             fontFamily: 'CactusStory',
@@ -96,9 +96,11 @@ export class LoadingScene extends Phaser.Scene {
    }
 
    showErrorScreen(joinResponseStatus: JoinResponseStatus): void {
+      this.loadingText.setText('Oops');
       this.errorText.setText(this.getErrorMessage(joinResponseStatus));
       this.errorText.setVisible(true);
       this.backButton.setVisible(true);
+      this.loadingSpinner.setVisible(false);
    }
 
    update(): void {

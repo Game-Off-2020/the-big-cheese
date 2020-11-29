@@ -3,7 +3,6 @@ import Phaser, { Game } from 'phaser';
 import { BootScene } from '../scene/boot-scene';
 import { MainMenuScene } from '../scene/main-menu-scene';
 import { GameScene } from '../scene/game-scene';
-import { JoinResponseStatus } from '../../shared/network/shared-network-model';
 import { LoadingScene } from '../scene/error-scene';
 import { Keys } from '../config/client-constants';
 import { fromEvent, Observable } from 'rxjs';
