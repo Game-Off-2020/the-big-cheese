@@ -125,5 +125,7 @@ export class BootScene extends Scene {
       this.load.image(Keys.LAVA_SPIT, ClientConfig.ASSET_FOLDER + 'lava/lava-spit.png');
       this.load.image(Keys.SCORE_BOARD, ClientConfig.ASSET_FOLDER + 'ui/game-set-score-board.png');
       this.load.image(Keys.EARTH, ClientConfig.ASSET_FOLDER + 'star-field/earth.png');
+      this.load.image(Keys.MOON_LOADING, ClientConfig.ASSET_FOLDER + 'ui/moon-loading.png');
+      this.load.image(Keys.ROCKET_LOADING, ClientConfig.ASSET_FOLDER + 'ui/rocket-loading.png');
    }
 }

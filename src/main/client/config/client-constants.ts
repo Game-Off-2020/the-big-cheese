@@ -55,6 +55,8 @@ export enum Keys {
    // UI
    LOGO = 'logo',
    SCORE_BOARD = 'score-board',
+   MOON_LOADING = 'moon-loading',
+   ROCKET_LOADING = 'rocket-loading',
 }
 
 export interface PlayerSpriteSheetConfig {
