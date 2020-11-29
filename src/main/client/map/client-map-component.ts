@@ -60,10 +60,11 @@ export class ClientMapComponent extends SharedMapComponent {
    }
 
    drawDestruction(destruction: Destruction): void {
+      if (!this.canvas) {
+         return;
+      }
       super.drawDestruction(destruction);
-
       this.handleDestructionEffect(destruction);
-
       this.destructionSubject.next(destruction);
       this.updatedSubject.next();
    }
