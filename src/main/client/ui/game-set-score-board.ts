@@ -47,14 +47,14 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
 
       this.playerScoreRows = [...Array(3).keys()].map((index) => {
          return {
-            name: new Phaser.GameObjects.Text(scene, -ROW_OFFSET_X, index * 70 - ROW_OFFSET_Y, 'test', {
+            name: new Phaser.GameObjects.Text(scene, -ROW_OFFSET_X, index * 70 - ROW_OFFSET_Y, '', {
                color: '#FFF',
                fontSize: '50px',
                fontFamily: 'CactusStory',
                stroke: '#000000',
                strokeThickness: 7,
             }).setOrigin(0, 0.5),
-            score: new Phaser.GameObjects.Text(scene, ROW_OFFSET_X, index * 70 - ROW_OFFSET_Y, `${index * 100}`, {
+            score: new Phaser.GameObjects.Text(scene, ROW_OFFSET_X, index * 70 - ROW_OFFSET_Y, '', {
                color: '#FFF',
                fontSize: '55px',
                fontFamily: 'CactusStory',
