@@ -51,7 +51,7 @@ jobs:
               BRANCH: gh-pages
               FOLDER: dist
    deploy-glitch-back-end:
-      name: Deploy Back-End
+      name: Deploy Glitch Back-End
       needs: [build-front-end, build-back-end]
       runs-on: ubuntu-latest
       steps:
@@ -73,15 +73,17 @@ jobs:
               git commit -m "Deploying Server"
               git push
    deploy-eu-back-end:
+      name: Deploy Heroku EU Back-End
       runs-on: ubuntu-latest
       steps:
          - uses: actions/checkout@v2
          - uses: akhileshns/heroku-deploy@v3.6.8
            with:
-              heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+              heroku_api_key: ${{ secrets.HEROKU_API_KEY_2 }}
               heroku_app_name: 'the-big-cheese-eu'
               heroku_email: 'actions@github.com'
    deploy-us-back-end:
+      name: Deploy Heroku US Back-End
       runs-on: ubuntu-latest
       steps:
          - uses: actions/checkout@v2
