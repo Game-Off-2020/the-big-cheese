@@ -1,4 +1,3 @@
-import { SceneUtil } from '../util/scene-util';
 import { Scene } from 'phaser';
 import { ClientConfig } from '../config/client-config';
 import { Keys } from '../config/client-constants';
@@ -13,47 +12,33 @@ export class BootScene extends Scene {
    }
 
    preload(): void {
-      const halfWidth = SceneUtil.getWidth(this) * 0.5;
-      const halfHeight = SceneUtil.getHeight(this) * 0.5;
+      const progressBar = this.add.rectangle(0, 0, 0, this.scale.height, 0xebc034);
+      progressBar.setOrigin(0, 0);
 
-      const progressBarHeight = 100;
-      const progressBarWidth = 400;
-
-      const progressBarContainer = this.add.rectangle(
-         halfWidth,
-         halfHeight,
-         progressBarWidth,
-         progressBarHeight,
-         0x000000,
-      );
-      const progressBar = this.add.rectangle(
-         halfWidth + 20 - progressBarContainer.width * 0.5,
-         halfHeight,
-         10,
-         progressBarHeight - 20,
-         0x888888,
-      );
-
-      const loadingText = this.add.text(halfWidth - 75, halfHeight - 100, 'Loading...').setFontSize(24);
-      const percentText = this.add.text(halfWidth - 25, halfHeight, '0%').setFontSize(24);
-      const assetText = this.add.text(halfWidth - 25, halfHeight + 100, '').setFontSize(24);
+      const percentText = this.add.text(this.scale.width / 2, this.scale.height / 2, '0%', {
+         color: '#FFF',
+         fontSize: '50px',
+         fontFamily: 'CactusStory',
+         stroke: '#000000',
+         strokeThickness: 7,
+      });
+      percentText.setOrigin(0.5, 0.5);
 
       this.load.on('progress', (progress: number) => {
-         progressBar.width = (progressBarWidth - 30) * progress;
+         progressBar.width = this.scale.width * progress;
 
          const percent = Math.round(progress * 100);
          percentText.setText(`${percent}%`);
       });
 
       this.load.on('complete', () => {
-         loadingText.destroy();
          percentText.destroy();
-         assetText.destroy();
          progressBar.destroy();
-         progressBarContainer.destroy();
 
-         this.scene.start(Keys.MAIN_MENU_SCENE); // TODO: Extract key
+         this.scene.start(Keys.MAIN_MENU_SCENE);
       });
+
+      this.cameras.main.setBackgroundColor('#ebd798')
 
       this.loadAssets();
    }
