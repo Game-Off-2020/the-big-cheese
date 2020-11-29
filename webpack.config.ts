@@ -203,11 +203,11 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
          rules: [
             {
                test: /\.css$/,
-               use: ['style-loader', 'css-loader'],
+               use: ['style-loader', 'css-loader?-url'],
             },
             {
                test: /\.scss$/,
-               use: ['style-loader', 'css-loader', 'sass-loader'],
+               use: ['style-loader', 'css-loader?-url', 'sass-loader'],
             },
             {
                test: /\.tsx?$/,
