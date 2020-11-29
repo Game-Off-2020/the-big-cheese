@@ -1,29 +1,30 @@
-import { ClientConfig } from '../../config/client-config';
-import { fromEvent, Observable } from 'rxjs';
+import { fromEvent, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { SharedSocketIoWrapper } from '../../../shared/network/shared-socket-io-wrapper';
 import { tap } from 'rxjs/operators';
 
 export class ClientSocketIoWrapper<T> extends SharedSocketIoWrapper {
-   readonly connected$: Observable<void>;
-   readonly disconnected$: Observable<void>;
-   readonly data$: Observable<T>;
+   private readonly connectedSubject = new Subject<void>();
+   readonly connected$ = this.connectedSubject.asObservable();
+   private readonly disconnectedSubject = new Subject<void>();
+   readonly disconnected$ = this.disconnectedSubject.asObservable();
+   private readonly dataSubject = new Subject<T>();
+   readonly data$ = this.dataSubject.asObservable();
 
-   private readonly socket: Socket;
+   private socket?: Socket;
 
-   constructor() {
-      super();
-      this.socket = io(ClientConfig.SERVER_HOSTS[0].url, { autoConnect: false });
-      this.connected$ = fromEvent(this.socket, ClientSocketIoWrapper.EVENT_CONNECTED).pipe(
-         tap(() => console.log('Network connected')),
-      ) as Observable<void>;
-      this.disconnected$ = fromEvent(this.socket, ClientSocketIoWrapper.EVENT_DISCONNECTED).pipe(
-         tap(() => console.log('Network disconnected')),
-      ) as Observable<void>;
-      this.data$ = fromEvent(this.socket, ClientSocketIoWrapper.EVENT_DATA);
-   }
-
-   connect(): void {
+   connect(host: string): void {
+      if (this.socket) {
+         this.socket.disconnect();
+      }
+      this.socket = io(host, { autoConnect: false });
+      fromEvent(this.socket, ClientSocketIoWrapper.EVENT_CONNECTED)
+         .pipe(tap(() => console.log('Network connected')))
+         .subscribe(() => this.connectedSubject.next());
+      fromEvent(this.socket, ClientSocketIoWrapper.EVENT_DISCONNECTED)
+         .pipe(tap(() => console.log('Network disconnected')))
+         .subscribe(() => this.disconnectedSubject.next());
+      fromEvent(this.socket, ClientSocketIoWrapper.EVENT_DATA).subscribe((data: T) => this.dataSubject.next(data));
       this.socket.connect();
    }
 

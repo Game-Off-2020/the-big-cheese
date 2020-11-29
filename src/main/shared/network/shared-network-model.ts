@@ -18,6 +18,7 @@ export interface NetworkMessage<T = NetworkPayload> {
 
 export interface JoinRequest {
    userName: string;
+   host: string;
 }
 
 export enum JoinResponseStatus {

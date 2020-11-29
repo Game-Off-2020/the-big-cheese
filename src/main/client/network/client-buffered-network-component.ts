@@ -42,11 +42,11 @@ export class ClientBufferedNetworkComponent {
       this.initNetworkThreadSubject.next();
    }
 
-   connect(): void {
+   connect(host: string): void {
       console.log('Waiting for Network thread to be initialized..');
       this.initNetworkThread$.subscribe(() => {
          console.log('Calling network connect..');
-         this.networkThread.connect();
+         this.networkThread.connect(host);
       });
    }
 

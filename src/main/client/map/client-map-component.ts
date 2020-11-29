@@ -26,6 +26,7 @@ export class ClientMapComponent extends SharedMapComponent {
    readonly destruction$ = this.destructionSubject.asObservable();
 
    private mapSprite: MapSprite;
+   private loaded = false;
 
    constructor(
       @Inject protected readonly store: MapStore,
@@ -42,15 +43,18 @@ export class ClientMapComponent extends SharedMapComponent {
       this.ctx = this.canvas.getContext('2d');
       ImageUtil.createImageFromBuffer(buffer).then((image) => {
          this.ctx.drawImage(image, 0, 0);
+         this.loaded = true;
          this.mapLoadedSubject.next(this.canvas);
       });
    }
 
    updateMap(buffer: Buffer): void {
+      this.loaded = false;
       ImageUtil.createImageFromBuffer(buffer).then((image) => {
          this.clear();
          this.ctx.globalCompositeOperation = 'source-over';
          this.ctx.drawImage(image, 0, 0);
+         this.loaded = true;
          this.reInitSubject.next();
       });
    }
@@ -60,19 +64,26 @@ export class ClientMapComponent extends SharedMapComponent {
    }
 
    drawDestruction(destruction: Destruction): void {
+      if (!this.loaded) {
+         return;
+      }
       super.drawDestruction(destruction);
-
       this.handleDestructionEffect(destruction);
-
       this.destructionSubject.next(destruction);
       this.updatedSubject.next();
    }
 
    shake(intensity: number): void {
+      if (!this.loaded) {
+         return;
+      }
       this.mapSprite?.shake(0.0002 * intensity);
    }
 
    private handleDestructionEffect(destruction: Destruction): void {
+      if (!this.loaded) {
+         return;
+      }
       const volume = this.clientPlayer.getVolume(destruction.position);
       if (volume) {
          this.mapSprite?.destructionEffect(destruction, volume);
