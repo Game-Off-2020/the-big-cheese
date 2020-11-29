@@ -8,7 +8,7 @@ export class ScoreBoard extends Phaser.GameObjects.Container {
    private readonly playersCounter: Phaser.GameObjects.Text;
 
    constructor(protected readonly scene: Scene) {
-      super(scene, 35, 170);
+      super(scene, 50, 170);
 
       for (let i = 0; i < ClientConfig.SCOREBOARD_SIZE; i++) {
          this.scoreLines.push(new PlayerScoreLine(scene, i));
@@ -18,7 +18,10 @@ export class ScoreBoard extends Phaser.GameObjects.Container {
       this.add(
          (this.playersCounter = new Phaser.GameObjects.Text(scene, 0, 0, '', {
             color: '#FFF',
-            fontSize: '20px',
+            fontSize: '30px',
+            fontFamily: 'CactusStory',
+            stroke: '#000000',
+            strokeThickness: 6,
          })),
       );
       this.setScrollFactor(0, 0);
@@ -52,7 +55,10 @@ class PlayerScoreLine extends Phaser.GameObjects.Container {
       this.add(
          (this.text = new Phaser.GameObjects.Text(scene, 0, 0, '', {
             color: '#FFF',
-            fontSize: '20px',
+            fontSize: '30px',
+            fontFamily: 'CactusStory',
+            stroke: '#000000',
+            strokeThickness: 6,
          })),
       );
       scene.add.existing(this);

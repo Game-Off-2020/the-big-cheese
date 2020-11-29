@@ -7,10 +7,17 @@ import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PlayerType } from '../../shared/player/player-model';
 import { PLAYERS } from '../../shared/config/shared-constants';
 import Vector2 = Phaser.Math.Vector2;
+import { MathUtil } from '../util/math-util';
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
    readonly cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
+   readonly wasdKeys: {
+      keyW: Phaser.Input.Keyboard.Key;
+      keyA: Phaser.Input.Keyboard.Key;
+      keyS: Phaser.Input.Keyboard.Key;
+      keyD: Phaser.Input.Keyboard.Key;
+   };
    readonly callbacks: {
       readonly onStartMoving: () => void;
       readonly onStartStanding: () => void;
@@ -27,6 +34,18 @@ interface PlayerOptions {
    };
 }
 
+const MOON_LAND_SOUND_KEYS = [
+   Keys.MOON_LAND_SOUND_0,
+   Keys.MOON_LAND_SOUND_1,
+   Keys.MOON_LAND_SOUND_2,
+   Keys.MOON_LAND_SOUND_3,
+   Keys.MOON_LAND_SOUND_4,
+   Keys.MOON_LAND_SOUND_5,
+   Keys.MOON_LAND_SOUND_6,
+   Keys.MOON_LAND_SOUND_7,
+   Keys.MOON_LAND_SOUND_8,
+];
+
 // Collision based on: http://jsfiddle.net/ksmbx3fz/7/
 
 const MAX_HORIZONTAL_SPEED = 1;
@@ -38,10 +57,11 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private prevPosition = new Vector2();
    private readonly gun: GunSprite;
    private readonly character: Phaser.GameObjects.Sprite;
-   private jumping = false;
+   private isInTheAir = false;
    private verticalSpeed = 0;
    // private readonly debugger: HitBoxDebugger;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+   private landingDustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
    private readonly spriteSheetConfig: PlayerSpriteSheetConfig;
    private lastJumpTimestamp = 0;
    private ammo = ClientConfig.MAX_AMMO;
@@ -62,6 +82,17 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       });
       this.dustEmitter.reserve(1000);
       this.dustEmitter.stop();
+
+      this.landingDustEmitter = particle.createEmitter({
+         speed: { min: -20, max: 20 },
+         angle: { min: 0, max: 360 },
+         scale: { start: 0, end: 2 / ClientConfig.MAP_OUTPUT_SCALE },
+         alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
+         gravityY: 0,
+         lifespan: 300,
+      });
+      this.landingDustEmitter.reserve(1000);
+      this.landingDustEmitter.stop();
 
       this.spriteSheetConfig = PLAYERS[playerType];
       this.character = options.scene.make.sprite({ key: this.spriteSheetConfig.spriteSheet });
@@ -115,7 +146,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
-      if (this.options.cursorKeys.left.isDown) {
+      if (this.options.cursorKeys.left.isDown || this.options.wasdKeys.keyA.isDown) {
          this.moving();
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
             if (!this.options.physics.leftWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
@@ -125,7 +156,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
                VectorUtil.applyGroundReactionForce(this);
             }
          }
-      } else if (this.options.cursorKeys.right.isDown) {
+      } else if (this.options.cursorKeys.right.isDown || this.options.wasdKeys.keyD.isDown) {
          this.moving();
          for (let _ = 0; _ < MAX_HORIZONTAL_SPEED; _++) {
             if (!this.options.physics.rightWallCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
@@ -139,9 +170,14 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.standing();
       }
 
-      if (this.options.cursorKeys.up.isDown && this.canJump()) {
+      if (
+         (this.options.cursorKeys.up.isDown ||
+            this.options.wasdKeys.keyW.isDown ||
+            this.options.cursorKeys.space.isDown) &&
+         this.canJump()
+      ) {
          this.verticalSpeed = -MAX_VERTICAL_SPEED;
-         this.jumping = true;
+         this.isInTheAir = true;
          this.lastJumpTimestamp = Date.now();
       }
 
@@ -154,7 +190,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
             if (!this.options.physics.floorCollision(this, PLAYER_WIDTH, PLAYER_HEIGHT)) {
                VectorUtil.applyGravity(this);
             } else {
-               this.jumping = false;
+               this.isInTheAir = false;
+               this.justLanded();
                this.verticalSpeed = 0;
             }
          } else {
@@ -207,8 +244,21 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       }
    }
 
+   private justLanded(): void {
+      // The player's speed is high enough for it to make impact effects
+      if (this.verticalSpeed > 2) {
+         this.scene.sound
+            .add(MOON_LAND_SOUND_KEYS[MathUtil.randomIntFromInterval(0, MOON_LAND_SOUND_KEYS.length - 1)], {
+               volume: 0.05,
+               detune: 250 * Math.random() * 2 - 1,
+            })
+            .play();
+         this.landingDustEmitter.explode(10, this.x, this.y);
+      }
+   }
+
    private canJump(): boolean {
-      return !this.jumping && Date.now() > this.lastJumpTimestamp + ClientConfig.TIME_BETWEEN_TWO_JUMP_MS;
+      return !this.isInTheAir && Date.now() > this.lastJumpTimestamp + ClientConfig.TIME_BETWEEN_TWO_JUMP_MS;
    }
 
    private updateAmmo(): void {

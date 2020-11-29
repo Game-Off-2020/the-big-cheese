@@ -33,8 +33,11 @@ export class MenuButton extends Phaser.GameObjects.Container {
       super(options.scene, options.x, options.y);
 
       const textLabel = new Text(options.scene, 0, 0, options.text, {
-         fontSize: '18px',
+         fontSize: '30px',
          align: 'center',
+         fontFamily: 'CactusStory',
+         stroke: '#000000',
+         strokeThickness: 6,
       }).setOrigin(0.5, 0.5);
 
       const labelWidth = textLabel.width;

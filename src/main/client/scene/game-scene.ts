@@ -71,6 +71,12 @@ export class GameScene extends Scene {
          {
             scene: this,
             cursorKeys: this.cursorKeys,
+            wasdKeys: {
+               keyW: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+               keyA: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+               keyS: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+               keyD: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+            },
             callbacks: {
                onShoot: (position) => {
                   const randomRotation = Math.random() * 0.15 - 0.075;

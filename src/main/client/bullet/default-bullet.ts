@@ -11,6 +11,7 @@ export interface BulletFireOptions {
 }
 
 const DEFAULT_BULLET_SPEED = 0.85; // It needs to be synced with the server
+const BULLET_SOUND_KEYS = [Keys.GUN_SOUND_1, Keys.GUN_SOUND_2, Keys.GUN_SOUND_3, Keys.GUN_SOUND_4];
 
 class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
    private timeAlive = 0;
@@ -47,7 +48,6 @@ class DefaultBullet extends Phaser.Physics.Arcade.Sprite {
 }
 
 export class Bullets extends Phaser.Physics.Arcade.Group {
-   private readonly bulletSoundKeys: string[] = [];
    private cache: { [key: string]: DefaultBullet } = {};
 
    constructor(readonly scene: Phaser.Scene) {
@@ -60,8 +60,6 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
          visible: false,
          classType: DefaultBullet,
       });
-
-      this.bulletSoundKeys = [Keys.GUN_SOUND_1, Keys.GUN_SOUND_2, Keys.GUN_SOUND_3, Keys.GUN_SOUND_4];
    }
 
    fireBullet(id: string, options: BulletFireOptions): void {
@@ -71,7 +69,7 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
          this.cache[id] = bullet;
          bullet.fire(options);
          this.scene.sound
-            .add(this.bulletSoundKeys[MathUtil.randomIntFromInterval(0, this.bulletSoundKeys.length - 1)], {
+            .add(BULLET_SOUND_KEYS[MathUtil.randomIntFromInterval(0, BULLET_SOUND_KEYS.length - 1)], {
                volume: 0.3 * options.volume,
                detune: 100 * Math.random() * 2 - 1,
             })
