@@ -3,7 +3,7 @@ import Phaser, { Game } from 'phaser';
 import { BootScene } from '../scene/boot-scene';
 import { MainMenuScene } from '../scene/main-menu-scene';
 import { GameScene } from '../scene/game-scene';
-import { LoadingScene } from '../scene/error-scene';
+import { LoadingScene } from '../scene/loading-scene';
 import { Keys } from '../config/client-constants';
 import { fromEvent, Observable } from 'rxjs';
 import { HudScene } from '../scene/hud-scene';
