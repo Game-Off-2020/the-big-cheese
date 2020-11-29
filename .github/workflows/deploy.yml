@@ -74,6 +74,7 @@ jobs:
               git push
    deploy-eu-back-end:
       name: Deploy Heroku EU Back-End
+      needs: [build-front-end, build-back-end]
       runs-on: ubuntu-latest
       steps:
          - uses: actions/checkout@v2
@@ -84,6 +85,7 @@ jobs:
               heroku_email: 'actions@github.com'
    deploy-us-back-end:
       name: Deploy Heroku US Back-End
+      needs: [build-front-end, build-back-end, deploy-eu-back-end]
       runs-on: ubuntu-latest
       steps:
          - uses: actions/checkout@v2
