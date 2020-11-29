@@ -67,7 +67,7 @@ jobs:
               CHANNEL: 'html5'
               ITCH_GAME: the-big-cheese
               ITCH_USER: dolanmiu
-              PACKAGE: dist/client
+              PACKAGE: dist
    deploy-glitch-back-end:
       name: Deploy Glitch Back-End
       needs: [build-front-end, build-back-end]
