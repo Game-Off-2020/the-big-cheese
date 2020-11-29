@@ -14,7 +14,7 @@ export class MainMenuScene extends Phaser.Scene {
    @Inject
    private gameState: ClientGameStateComponent;
 
-   private selectedServer: ServerConfig;
+   private selectedServer: ServerConfig = ClientConfig.SERVER_HOSTS[0];
    private serverButtons: ServerButton[];
    private joinGameButton: MenuButton;
    private nameInput: InputBox;
