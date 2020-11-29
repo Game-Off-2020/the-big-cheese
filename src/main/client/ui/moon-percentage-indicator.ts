@@ -19,7 +19,10 @@ export class MoonPercentageIndicator extends Phaser.GameObjects.Container {
       this.add(
          (this.text = new Phaser.GameObjects.Text(options.scene, -70, 0, Math.round(options.percentage * 100) + '%', {
             color: '#FFF',
-            fontSize: '30px',
+            fontSize: '40px',
+            fontFamily: 'CactusStory',
+            stroke: '#000000',
+            strokeThickness: 6,
          })),
       );
       this.text.setOrigin(1, 0.5);
@@ -52,5 +55,14 @@ export class MoonPercentageIndicator extends Phaser.GameObjects.Container {
       this.setDepth(300);
 
       options.scene.add.existing(this);
+
+      options.scene.scale.on(
+         'resize',
+         (gameSize: Phaser.Structs.Size) => {
+            this.setPosition(gameSize.width - X_POSITION, Y_POSITION);
+            shape.fillRect(0, position, gameSize.width, gameSize.height);
+         },
+         this,
+      );
    }
 }

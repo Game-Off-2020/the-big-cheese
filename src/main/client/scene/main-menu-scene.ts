@@ -7,15 +7,19 @@ import { StarFieldSprite } from './star-field-sprite';
 import { InputBox } from '../ui/input-box';
 import { ServerConfig } from '../../server/config/server-config';
 import { TextLink } from '../ui/text-link';
+import { ServerButton } from '../ui/server-button';
+import { LoadingSpinner } from '../ui/loading-spinner';
 
 export class MainMenuScene extends Phaser.Scene {
    @Inject
    private gameState: ClientGameStateComponent;
 
-   private selectedServer: ServerConfig;
-   // private serverButtons: ServerButton[];
+   private selectedServer: ServerConfig = ClientConfig.SERVER_HOSTS[0];
+   private serverButtons: ServerButton[];
    private joinGameButton: MenuButton;
    private nameInput: InputBox;
+   private enterKey: Phaser.Input.Keyboard.Key;
+   private loadingSpinner: LoadingSpinner;
 
    constructor() {
       super({
@@ -30,9 +34,11 @@ export class MainMenuScene extends Phaser.Scene {
          return this.startGame();
       }
 
+      this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
       new StarFieldSprite({ scene: this, scale: 1 });
 
-      const logo = this.add.image(this.game.scale.width / 2, this.game.scale.height / 2 - 150, Keys.LOGO).setScale(0.4);
+      const logo = this.add.image(this.game.scale.width / 2, this.game.scale.height / 2 - 200, Keys.LOGO).setScale(0.4);
 
       const gameOffText = new TextLink({
          scene: this,
@@ -43,7 +49,8 @@ export class MainMenuScene extends Phaser.Scene {
          origin: { x: 1, y: 1 },
          style: {
             color: '#FFF',
-            fontSize: '16px',
+            fontSize: '24px',
+            fontFamily: 'CactusStory',
          },
       });
 
@@ -56,21 +63,19 @@ export class MainMenuScene extends Phaser.Scene {
          origin: { x: 0, y: 1 },
          style: {
             color: '#FFF',
-            fontSize: '16px',
+            fontSize: '24px',
+            fontFamily: 'CactusStory',
          },
       });
 
       this.nameInput = new InputBox({
          scene: this,
          x: this.game.scale.width / 2,
-         y: this.game.scale.height / 2 + 85,
+         y: this.game.scale.height / 2,
          placeholder: 'Enter your name here',
          maxLength: ClientConfig.MAX_PLAYER_NAME_LENGTH,
       });
 
-      this.selectedServer = ClientConfig.SERVER_HOSTS[0];
-
-      /*
       const buttonWidth = 200;
 
       this.serverButtons = ClientConfig.SERVER_HOSTS.map(
@@ -83,42 +88,42 @@ export class MainMenuScene extends Phaser.Scene {
                   ((ClientConfig.SERVER_HOSTS.length - 1) * buttonWidth) / 2,
                y: this.game.scale.height / 2 + 150,
                text: host.name,
-               subText: '0/40',
+               subText: '', // '0/40',
                serverConfig: ClientConfig.SERVER_HOSTS[i],
                onClick: () => {
                   this.selectedServer = ClientConfig.SERVER_HOSTS[i];
                },
                colors: {
                   label: {
-                     over: '#000000',
+                     over: '#FFFFFF',
                      out: '#FFFFFF',
                      down: '#BBBBBB',
                   },
                   rectangle: {
-                     over: 0x636363,
-                     out: 0x888888,
+                     over: 0xffffff,
+                     out: 0x4287f5,
                      down: 0x444444,
                   },
                },
             }),
       );
-      */
 
       this.joinGameButton = new MenuButton({
          scene: this,
          x: this.game.scale.width / 2,
-         y: this.game.scale.height / 2 + 180,
+         y: this.game.scale.height / 2 + 300,
          text: 'Join Game',
          onClick: () => {
             if (!this.selectedServer || this.nameInput.getValue().length === 0) {
                return;
             }
-
+            this.loadingSpinner.setVisible(true);
+            this.joinGameButton.setVisible(false);
             this.startGame();
          },
          colors: {
             label: {
-               over: '#000000',
+               over: '#FFFFFF',
                out: '#FFFFFF',
                down: '#BBBBBB',
                disabled: '#FFFFFF',
@@ -132,6 +137,13 @@ export class MainMenuScene extends Phaser.Scene {
          },
       });
 
+      this.loadingSpinner = new LoadingSpinner({
+         scene: this,
+         x: this.game.scale.width / 2,
+         y: this.game.scale.height / 2 + 300,
+      });
+      this.loadingSpinner.setVisible(false);
+
       this.scale.on(
          'resize',
          (gameSize: Phaser.Structs.Size) => {
@@ -139,31 +151,41 @@ export class MainMenuScene extends Phaser.Scene {
             const height = gameSize.height;
 
             this.cameras.resize(width, height);
-            logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 220);
+            logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 200);
             this.joinGameButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 300);
+            this.loadingSpinner.setPosition(gameSize.width / 2, gameSize.height / 2 + 300);
             this.nameInput.setPosition(gameSize.width / 2, gameSize.height / 2);
 
-            /*
             for (let i = 0; i < this.serverButtons.length; i++) {
                this.serverButtons[i].setPosition(
                   gameSize.width / 2 + buttonWidth * i - ((this.serverButtons.length - 1) * buttonWidth) / 2,
                   gameSize.height / 2 + 150,
                );
-            }*/
+            }
 
-            gameOffText.setPosition(this.game.scale.width - 30, this.game.scale.height - 30);
-            creditsText.setPosition(30, this.game.scale.height - 30);
+            gameOffText.setPosition(gameSize.width - 30, gameSize.height - 30);
+            creditsText.setPosition(30, gameSize.height - 30);
          },
          this,
       );
    }
 
    update(): void {
-      //for (const button of this.serverButtons) {
-      //   button.update(this.selectedServer);
-      //    this.joinGameButton.update(!this.selectedServer || this.nameInput.getValue().length === 0);
-      //}
-      this.joinGameButton.update(this.getNameInputValue().length === 0);
+      for (const button of this.serverButtons) {
+         button.update(this.selectedServer);
+         this.joinGameButton.update(!this.selectedServer || this.nameInput.getValue().length === 0);
+      }
+      this.joinGameButton.update(this.getNameInputValue().length === 0 || !this.selectedServer);
+
+      if (this.enterKey.isDown) {
+         if (!this.selectedServer || this.nameInput.getValue().length === 0) {
+            return;
+         }
+
+         this.startGame();
+      }
+
+      this.loadingSpinner.update();
    }
 
    private getNameInputValue(): string {

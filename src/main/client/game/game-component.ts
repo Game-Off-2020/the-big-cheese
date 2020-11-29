@@ -8,6 +8,7 @@ import { ErrorScene } from '../scene/error-scene';
 import { Keys } from '../config/client-constants';
 import { fromEvent, Observable } from 'rxjs';
 import { HudScene } from '../scene/hud-scene';
+import { ScoreBoardScene } from '../scene/score-board-scene';
 
 @Singleton
 export class GameComponent {
@@ -22,7 +23,7 @@ export class GameComponent {
             width: window.innerWidth,
             height: window.innerHeight,
          },
-         scene: [BootScene, MainMenuScene, GameScene, ErrorScene, HudScene],
+         scene: [BootScene, MainMenuScene, GameScene, ErrorScene, HudScene, ScoreBoardScene],
          physics: {
             default: 'arcade',
             arcade: {
@@ -44,6 +45,7 @@ export class GameComponent {
    }
 
    refreshScale(): void {
+      this.game.scale.resize(window.innerWidth, window.innerHeight);
       this.game.scale.refresh();
    }
 
@@ -56,5 +58,6 @@ export class GameComponent {
       this.game.scene.stop(Keys.MAIN_MENU_SCENE);
       this.game.scene.start(Keys.GAME_SCENE);
       this.game.scene.start(Keys.GUI_SCENE);
+      this.game.scene.start(Keys.SCORE_BOARD_SCENE);
    }
 }

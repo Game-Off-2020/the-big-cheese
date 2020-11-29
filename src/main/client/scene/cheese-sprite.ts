@@ -110,12 +110,47 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
 
    destroyWithSound(volume: number): void {
       if (volume) {
-         this.scene.sound
-            .add(Keys.CHEESE_EAT_SOUND, {
-               volume: 0.3 * volume,
-               detune: 250 * Math.random() * 2 - 1,
-            })
-            .play();
+         switch (this.options.type) {
+            case CheeseType.BOMB:
+               this.scene.sound
+                  .add(Keys.CHEESE_BOMB_EXPLOSION, {
+                     volume: 0.5 * volume,
+                     detune: 250 * Math.random() * 2 - 1,
+                  })
+                  .play();
+               break;
+            case CheeseType.CHEESE_HALF:
+               this.scene.sound
+                  .add(Keys.CHEESE_GREEN_EAT, {
+                     volume: 0.3 * volume,
+                     detune: 250 * Math.random() * 2 - 1,
+                  })
+                  .play();
+               break;
+            case CheeseType.DOUBLE_BARREL:
+               this.scene.sound
+                  .add(Keys.DOUBLE_BARREL_COLLECT, {
+                     volume: 0.3 * volume,
+                     detune: 250 * Math.random() * 2 - 1,
+                  })
+                  .play();
+               break;
+            case CheeseType.CHEESE_DOUBLE:
+               this.scene.sound
+                  .add(Keys.CHEESE_DOUBLE_EAT_SOUND, {
+                     volume: 0.3 * volume,
+                     detune: 250 * Math.random() * 2 - 1,
+                  })
+                  .play();
+               break;
+            default:
+               this.scene.sound
+                  .add(Keys.CHEESE_EAT_SOUND, {
+                     volume: 0.3 * volume,
+                     detune: 250 * Math.random() * 2 - 1,
+                  })
+                  .play();
+         }
       }
       super.destroy();
    }

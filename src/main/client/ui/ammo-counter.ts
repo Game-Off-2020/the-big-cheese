@@ -2,27 +2,57 @@ import * as Phaser from 'phaser';
 import { Scene } from 'phaser';
 import { Keys } from '../config/client-constants';
 
-export class AmmoCounter extends Phaser.GameObjects.Container {
-   private readonly text: Phaser.GameObjects.Text;
-   private gunIcon: Phaser.GameObjects.Image;
+const FULL_COLOR = Phaser.Display.Color.HexStringToColor('#32a852');
+const EMPTY_COLOR = Phaser.Display.Color.HexStringToColor('#a83232');
+const BAR_LENGTH = 200;
+const GUN_ICON_OFFSET = 75;
+const Y_POSITION = 200;
+const X_POSITION = 100;
 
-   constructor(protected readonly scene: Scene, protected readonly defaultValue: number) {
-      super(scene, scene.game.scale.width - 100, 200);
-      this.add(
-         (this.text = new Phaser.GameObjects.Text(scene, -70, 0, defaultValue.toString(), {
-            color: '#FFF',
-            fontSize: '30px',
-         })),
+export class AmmoCounter extends Phaser.GameObjects.Container {
+   private gunIcon: Phaser.GameObjects.Image;
+   private readonly rectangle: Phaser.GameObjects.Rectangle;
+
+   constructor(protected readonly scene: Scene, private readonly fullValue: number) {
+      super(scene, scene.game.scale.width - X_POSITION, Y_POSITION);
+
+      this.rectangle = new Phaser.GameObjects.Rectangle(
+         scene,
+         -BAR_LENGTH - GUN_ICON_OFFSET,
+         0,
+         BAR_LENGTH,
+         30,
+         FULL_COLOR.color,
       );
-      this.text.setOrigin(1, 0.5);
+      this.rectangle.setOrigin(0, 0.5);
+      this.add(this.rectangle);
+
       this.setScrollFactor(0, 0);
       this.setDepth(300);
       this.setGunType(Keys.BASIC_GUN);
       scene.add.existing(this);
+
+      scene.scale.on(
+         'resize',
+         (gameSize: Phaser.Structs.Size) => {
+            this.setPosition(gameSize.width - X_POSITION, Y_POSITION);
+         },
+         this,
+      );
    }
 
    setAmmo(ammo: number): void {
-      this.text.setText(ammo.toString());
+      this.rectangle.width = (ammo / this.fullValue) * BAR_LENGTH;
+      // 100 for 100%
+      const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+         EMPTY_COLOR,
+         FULL_COLOR,
+         100,
+         (ammo / this.fullValue) * 100,
+      );
+      const newColor = new Phaser.Display.Color(colorObject.r, colorObject.g, colorObject.b);
+      this.rectangle.fillColor = newColor.color;
+      this.rectangle.setX(-this.rectangle.width - GUN_ICON_OFFSET);
    }
 
    setGunType(type: string): void {

@@ -18,6 +18,9 @@ import ThreadsPlugin from 'threads-plugin';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import nodeExternals from 'webpack-node-externals';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import HtmlWebpackPartialsPlugin from 'html-webpack-partials-plugin';
 
 interface Target {
    readonly entry: string;
@@ -129,6 +132,12 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
             },
          }),
       );
+
+      plugins.push(
+         new HtmlWebpackPartialsPlugin({
+            path: './src/main/client/index.partial.html',
+         }),
+      );
    }
 
    /*
@@ -194,11 +203,11 @@ module.exports = (env: string, argv: { [key: string]: string }): Configuration =
          rules: [
             {
                test: /\.css$/,
-               use: ['style-loader', 'css-loader'],
+               use: ['style-loader', 'css-loader?-url'],
             },
             {
                test: /\.scss$/,
-               use: ['style-loader', 'css-loader', 'sass-loader'],
+               use: ['style-loader', 'css-loader?-url', 'sass-loader'],
             },
             {
                test: /\.tsx?$/,
