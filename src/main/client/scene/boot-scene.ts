@@ -99,7 +99,15 @@ export class BootScene extends Scene {
       this.load.audio(Keys.GUN_SOUND_4, [ClientConfig.ASSET_FOLDER + 'weapons/basic-gun4.mp3']);
       this.load.audio(Keys.MOON_AMBIENCE, [ClientConfig.ASSET_FOLDER + 'moon/moon-ambience.ogg']);
       this.load.audio(Keys.MOON_IMPACT, [ClientConfig.ASSET_FOLDER + 'moon/moon-impact.ogg']);
-
+      this.load.audio(Keys.MOON_LAND_SOUND_0, [ClientConfig.ASSET_FOLDER + 'moon/moon-land0.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_1, [ClientConfig.ASSET_FOLDER + 'moon/moon-land1.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_2, [ClientConfig.ASSET_FOLDER + 'moon/moon-land2.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_3, [ClientConfig.ASSET_FOLDER + 'moon/moon-land3.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_4, [ClientConfig.ASSET_FOLDER + 'moon/moon-land4.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_5, [ClientConfig.ASSET_FOLDER + 'moon/moon-land5.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_6, [ClientConfig.ASSET_FOLDER + 'moon/moon-land6.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_7, [ClientConfig.ASSET_FOLDER + 'moon/moon-land7.ogg']);
+      this.load.audio(Keys.MOON_LAND_SOUND_8, [ClientConfig.ASSET_FOLDER + 'moon/moon-land8.ogg']);
       this.load.image(Keys.MOON_DUST_PARTICLE, ClientConfig.ASSET_FOLDER + 'moon/moon-dust-particle.png');
       this.load.image(Keys.MOON_FULL_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-full.png');
       this.load.image(Keys.MOON_EMPTY_HUD, ClientConfig.ASSET_FOLDER + 'moon/moon-empty.png');
