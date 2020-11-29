@@ -53,6 +53,7 @@ jobs:
    deploy-itch-io-front-end:
       name: Deploy Itch IO Front-End
       needs: [build-front-end]
+      runs-on: ubuntu-latest
       steps:
          - name: Download Artifact
            uses: actions/download-artifact@master
