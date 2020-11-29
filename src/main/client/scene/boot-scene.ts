@@ -115,5 +115,6 @@ export class BootScene extends Scene {
          ClientConfig.ASSET_FOLDER + 'common/flares.json',
       );
       this.load.image(Keys.LAVA_SPIT, ClientConfig.ASSET_FOLDER + 'lava/lava-spit.png');
+      this.load.image(Keys.SCORE_BOARD, ClientConfig.ASSET_FOLDER + 'ui/game-set-score-board.png');
    }
 }

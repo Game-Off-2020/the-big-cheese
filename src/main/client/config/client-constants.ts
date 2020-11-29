@@ -5,6 +5,7 @@ export enum Keys {
    GAME_SCENE = 'game-scene',
    ERROR_SCENE = 'error-scene',
    GUI_SCENE = 'gui-scene',
+   SCORE_BOARD_SCENE = 'score-board-scene',
    // Game Objects
    BULLET = 'bullet',
    MOON = 'moon',
@@ -43,6 +44,7 @@ export enum Keys {
    LAVA_SPIT = 'lava-spit',
    // UI
    LOGO = 'logo',
+   SCORE_BOARD = 'score-board',
 }
 
 export interface PlayerSpriteSheetConfig {
