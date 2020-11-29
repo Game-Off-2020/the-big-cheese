@@ -3,7 +3,7 @@ export enum Keys {
    BOOT_SCENE = 'boot-scene',
    MAIN_MENU_SCENE = 'main-menu-scene',
    GAME_SCENE = 'game-scene',
-   ERROR_SCENE = 'error-scene',
+   LOADING_SCENE = 'loading-scene',
    GUI_SCENE = 'gui-scene',
    SCORE_BOARD_SCENE = 'score-board-scene',
    // Game Objects

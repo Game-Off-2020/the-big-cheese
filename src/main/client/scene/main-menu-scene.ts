@@ -7,7 +7,6 @@ import { StarFieldSprite } from './star-field-sprite';
 import { InputBox } from '../ui/input-box';
 import { TextLink } from '../ui/text-link';
 import { ServerButton } from '../ui/server-button';
-import { LoadingSpinner } from '../ui/loading-spinner';
 import { ServerHost } from '../config/common-client-config';
 
 export class MainMenuScene extends Phaser.Scene {
@@ -19,7 +18,6 @@ export class MainMenuScene extends Phaser.Scene {
    private joinGameButton: MenuButton;
    private nameInput: InputBox;
    private enterKey: Phaser.Input.Keyboard.Key;
-   private loadingSpinner: LoadingSpinner;
 
    constructor() {
       super({
@@ -117,8 +115,6 @@ export class MainMenuScene extends Phaser.Scene {
             if (!this.selectedServer || this.nameInput.getValue().length === 0) {
                return;
             }
-            this.loadingSpinner.setVisible(true);
-            this.joinGameButton.setVisible(false);
             this.startGame();
          },
          colors: {
@@ -137,13 +133,6 @@ export class MainMenuScene extends Phaser.Scene {
          },
       });
 
-      this.loadingSpinner = new LoadingSpinner({
-         scene: this,
-         x: this.game.scale.width / 2,
-         y: this.game.scale.height / 2 + 300,
-      });
-      this.loadingSpinner.setVisible(false);
-
       this.scale.on(
          'resize',
          (gameSize: Phaser.Structs.Size) => {
@@ -153,7 +142,6 @@ export class MainMenuScene extends Phaser.Scene {
             this.cameras.resize(width, height);
             logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 200);
             this.joinGameButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 300);
-            this.loadingSpinner.setPosition(gameSize.width / 2, gameSize.height / 2 + 300);
             this.nameInput.setPosition(gameSize.width / 2, gameSize.height / 2);
 
             for (let i = 0; i < this.serverButtons.length; i++) {
@@ -184,8 +172,6 @@ export class MainMenuScene extends Phaser.Scene {
 
          this.startGame();
       }
-
-      this.loadingSpinner.update();
    }
 
    private getNameInputValue(): string {
@@ -193,6 +179,8 @@ export class MainMenuScene extends Phaser.Scene {
    }
 
    private startGame(): void {
+      this.game.scene.stop(Keys.MAIN_MENU_SCENE);
+      this.game.scene.start(Keys.LOADING_SCENE, { status });
       this.gameState.joinGame(this.nameInput.getValue(), this.selectedServer.url);
    }
 }

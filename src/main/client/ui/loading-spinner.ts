@@ -13,7 +13,7 @@ export class LoadingSpinner extends Phaser.GameObjects.Container {
    constructor(options: LoadingSpinnerOptions) {
       super(options.scene, options.x, options.y);
       options.scene.add.existing(this);
-      this.setScale(0.5);
+      this.setScale(0.8);
 
       const moon = new Phaser.GameObjects.Sprite(options.scene, 0, 0, Keys.MOON_LOADING);
       this.rocket = new Phaser.GameObjects.Sprite(options.scene, 0, 0, Keys.ROCKET_LOADING);

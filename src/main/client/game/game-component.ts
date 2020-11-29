@@ -4,7 +4,7 @@ import { BootScene } from '../scene/boot-scene';
 import { MainMenuScene } from '../scene/main-menu-scene';
 import { GameScene } from '../scene/game-scene';
 import { JoinResponseStatus } from '../../shared/network/shared-network-model';
-import { ErrorScene } from '../scene/error-scene';
+import { LoadingScene } from '../scene/error-scene';
 import { Keys } from '../config/client-constants';
 import { fromEvent, Observable } from 'rxjs';
 import { HudScene } from '../scene/hud-scene';
@@ -23,7 +23,7 @@ export class GameComponent {
             width: window.innerWidth,
             height: window.innerHeight,
          },
-         scene: [BootScene, MainMenuScene, GameScene, ErrorScene, HudScene, ScoreBoardScene],
+         scene: [BootScene, MainMenuScene, GameScene, LoadingScene, HudScene, ScoreBoardScene],
          physics: {
             default: 'arcade',
             arcade: {
@@ -49,13 +49,9 @@ export class GameComponent {
       this.game.scale.refresh();
    }
 
-   showErrorScreen(status: JoinResponseStatus): void {
-      this.game.scene.stop(Keys.GAME_SCENE);
-      this.game.scene.start(Keys.ERROR_SCENE, { status });
-   }
-
    showGameScene(): void {
       this.game.scene.stop(Keys.MAIN_MENU_SCENE);
+      this.game.scene.stop(Keys.LOADING_SCENE);
       this.game.scene.start(Keys.GAME_SCENE);
       this.game.scene.start(Keys.GUI_SCENE);
       this.game.scene.start(Keys.SCORE_BOARD_SCENE);
