@@ -89,10 +89,7 @@ export class LoadingScene extends Phaser.Scene {
          this,
       );
 
-      this.network.joinFailed$.subscribe((status) => {
-         console.log(status);
-         this.showErrorScreen(status);
-      });
+      this.network.joinFailed$.subscribe((status) => this.showErrorScreen(status));
    }
 
    showErrorScreen(joinResponseStatus: JoinResponseStatus): void {
