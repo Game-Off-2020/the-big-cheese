@@ -88,7 +88,7 @@ export class MainMenuScene extends Phaser.Scene {
                   ((ClientConfig.SERVER_HOSTS.length - 1) * buttonWidth) / 2,
                y: this.game.scale.height / 2 + 150,
                text: host.name,
-               subText: '0/40',
+               subText: '', // '0/40',
                serverConfig: ClientConfig.SERVER_HOSTS[i],
                onClick: () => {
                   this.selectedServer = ClientConfig.SERVER_HOSTS[i];
