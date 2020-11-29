@@ -9,7 +9,7 @@ import {
    NetworkEvent,
    NetworkMessage,
 } from '../../shared/network/shared-network-model';
-import { filter, map, tap } from 'rxjs/internal/operators';
+import { filter, map } from 'rxjs/internal/operators';
 import { Utils } from '../../shared/util/utils';
 import { BulletFireOptions } from '../bullet/default-bullet';
 import { AllStores } from '../../shared/models/all-stores';
@@ -24,17 +24,13 @@ export class ClientNetworkComponent {
    readonly joinFailed$: Observable<JoinResponseStatus>;
    readonly dataStore$: Observable<{ [key: string]: AllStores }>;
    readonly mapUpdate$: Observable<MapUpdateResponse>;
-   private joined = false;
 
    constructor(@Inject private readonly bufferedNetwork: ClientBufferedNetworkComponent) {
       this.connected$ = bufferedNetwork.connected$;
       this.disconnected$ = bufferedNetwork.disconnected$;
       this.event$ = bufferedNetwork.data$;
       this.joinResponse$ = this.onEvent<JoinResponse>(NetworkEvent.JOIN_RESPONSE);
-      this.joined$ = this.joinResponse$.pipe(
-         filter((response) => response.status === JoinResponseStatus.JOINED),
-         tap(() => (this.joined = true)),
-      );
+      this.joined$ = this.joinResponse$.pipe(filter((response) => response.status === JoinResponseStatus.JOINED));
       this.joinFailed$ = this.joinResponse$.pipe(
          filter((response) => response.status !== JoinResponseStatus.JOINED),
          map((response) => response.status),
@@ -50,12 +46,8 @@ export class ClientNetworkComponent {
       );
    }
 
-   isJoined(): boolean {
-      return this.joined;
-   }
-
-   connect(): void {
-      this.bufferedNetwork.connect();
+   connect(host: string): void {
+      this.bufferedNetwork.connect(host);
    }
 
    sendDataStore<T>(storeId: string, id: string, value: T): void {

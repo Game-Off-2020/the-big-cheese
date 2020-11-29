@@ -11,12 +11,11 @@ interface PlayerScoreRow {
 
 const ROW_OFFSET_Y = 55;
 const ROW_OFFSET_X = 230;
-const GAME_RESTART_TIME_SECS = Math.floor(ClientConfig.GAME_RESTART_TIME_MS / 1000);
 
 export class GameSetScoreboard extends Phaser.GameObjects.Container {
    private readonly playerScoreRows: PlayerScoreRow[];
    private readonly nextGameInText: Phaser.GameObjects.Text;
-   private nextGameCounter = GAME_RESTART_TIME_SECS;
+   private nextGameCounter = 0;
 
    constructor(scene: Phaser.Scene) {
       super(scene, scene.game.scale.width / 2, scene.game.scale.height / 2);
@@ -35,7 +34,7 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
       gameSetText.setOrigin(0.5, 1);
       this.add(gameSetText);
 
-      this.nextGameInText = new Phaser.GameObjects.Text(scene, 0, 200, 'Next Game in 0 secs', {
+      this.nextGameInText = new Phaser.GameObjects.Text(scene, 0, 200, '', {
          color: '#FFF',
          fontSize: '70px',
          fontFamily: 'CactusStory',
@@ -84,19 +83,23 @@ export class GameSetScoreboard extends Phaser.GameObjects.Container {
             return;
          }
          this.nextGameCounter--;
-         this.nextGameInText.setText(`Next Game in ${this.nextGameCounter} secs`);
+         this.updateNextGameInText();
       }, 1000);
    }
 
    setScores(playerScores: PlayerScore[]): void {
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < Math.min(3, playerScores.length); i++) {
          this.playerScoreRows[i].name.setText(playerScores[i].name);
          this.playerScoreRows[i].score.setText(playerScores[i].count.toString());
       }
    }
 
    restartTimer(): void {
-      this.nextGameCounter = GAME_RESTART_TIME_SECS;
+      this.nextGameCounter = Math.floor(ClientConfig.GAME_RESTART_TIME_MS / 1000);
+      this.updateNextGameInText();
+   }
+
+   private updateNextGameInText(): void {
       this.nextGameInText.setText(`Next Game in ${this.nextGameCounter} secs`);
    }
 }

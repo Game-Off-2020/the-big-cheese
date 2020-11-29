@@ -30,7 +30,11 @@ export class ClientGameStateComponent {
       );
    }
 
-   joinGame(userName: string): void {
-      this.gameStartedSubject.next({ userName });
+   joinGame(userName: string, host: string): void {
+      this.gameStartedSubject.next({ userName, host });
+   }
+
+   leaveGame(): void {
+      document.location.reload();
    }
 }

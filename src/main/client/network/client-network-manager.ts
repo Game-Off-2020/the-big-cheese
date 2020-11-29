@@ -23,7 +23,7 @@ export class ClientNetworkManager {
       @Inject private readonly gameStateStore: GameStateStore,
    ) {
       gameState.joinGame$.subscribe((request) => {
-         component.connect();
+         component.connect(request.host);
          component.sendJoinRequest(request);
       });
       player.clientInit$.subscribe((player) => {

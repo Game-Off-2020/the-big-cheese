@@ -25,8 +25,8 @@ export class ClientNetworkThread {
       return this.wrapper.data$.pipe(map((buffer) => this.jsonEncoder.decode(buffer) as NetworkMessage));
    }
 
-   connect(): void {
-      this.wrapper.connect();
+   connect(host: string): void {
+      this.wrapper.connect(host);
    }
 
    isReady(): boolean {

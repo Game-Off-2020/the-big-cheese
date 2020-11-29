@@ -8,8 +8,8 @@ export class CommonSharedConfig {
    static readonly PLAYER_WIDTH: number = 10;
    static readonly PLAYER_HEIGHT: number = 20;
    static readonly RANDOM_START_POSITION: boolean = true;
-   static readonly SHAKE_LIMIT: number = 46 / CommonSharedConfig.MAP_OUTPUT_SCALE;
-   static readonly MOON_PERCENTAGE_TO_FINISH: number = 0.5;
+   static readonly SHAKE_LIMIT: number = 55 / CommonSharedConfig.MAP_OUTPUT_SCALE; // 55 means 50% drop chance if blast min-max is between 50-60
+   static readonly MOON_PERCENTAGE_TO_FINISH: number = 0.4;
    static readonly GAME_RESTART_TIME_MS: number = 10000;
    static readonly LAVA_RADIUS: number = 200;
 }

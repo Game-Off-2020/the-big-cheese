@@ -7,4 +7,6 @@ export class CommonServerConfig extends SharedConfig {
    static readonly DROP_CHEESE_PERCENTAGE: number = 0.15;
    static readonly MAX_DROP_CHEESE: number = 15;
    static readonly CHEESE_BOMB_COUNT: number = 15;
+   static readonly BULLET_BLAST_RADIUS_MIN: number = 50;
+   static readonly BULLET_BLAST_RADIUS_MAX: number = 60;
 }

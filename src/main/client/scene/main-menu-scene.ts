@@ -5,16 +5,16 @@ import { ClientGameStateComponent } from '../game-state/client-game-state-compon
 import { Keys } from '../config/client-constants';
 import { StarFieldSprite } from './star-field-sprite';
 import { InputBox } from '../ui/input-box';
-import { ServerConfig } from '../../server/config/server-config';
 import { TextLink } from '../ui/text-link';
 import { ServerButton } from '../ui/server-button';
 import { LoadingSpinner } from '../ui/loading-spinner';
+import { ServerHost } from '../config/common-client-config';
 
 export class MainMenuScene extends Phaser.Scene {
    @Inject
    private gameState: ClientGameStateComponent;
 
-   private selectedServer: ServerConfig = ClientConfig.SERVER_HOSTS[0];
+   private selectedServer: ServerHost = ClientConfig.SERVER_HOSTS[0];
    private serverButtons: ServerButton[];
    private joinGameButton: MenuButton;
    private nameInput: InputBox;
@@ -193,6 +193,6 @@ export class MainMenuScene extends Phaser.Scene {
    }
 
    private startGame(): void {
-      this.gameState.joinGame(this.nameInput.getValue());
+      this.gameState.joinGame(this.nameInput.getValue(), this.selectedServer.url);
    }
 }

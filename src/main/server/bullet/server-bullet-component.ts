@@ -102,7 +102,11 @@ export class ServerBulletComponent {
             x: mapCollision ? mapCollision[0] : playerCollision[0],
             y: mapCollision ? mapCollision[1] : playerCollision[1],
          };
-         const radius = MathUtil.randomFloatFromInterval(20, 60) / ServerConfig.MAP_OUTPUT_SCALE;
+         const radius =
+            MathUtil.randomFloatFromInterval(
+               ServerConfig.BULLET_BLAST_RADIUS_MIN,
+               ServerConfig.BULLET_BLAST_RADIUS_MAX,
+            ) / ServerConfig.MAP_OUTPUT_SCALE;
          this.damageSubject.next({
             position,
             radius,
