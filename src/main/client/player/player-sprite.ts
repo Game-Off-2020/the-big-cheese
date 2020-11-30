@@ -80,7 +80,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          lifespan: 200,
          follow: this,
       });
-      this.dustEmitter.reserve(1000);
+      this.dustEmitter.reserve(20);
       this.dustEmitter.stop();
 
       this.landingDustEmitter = particle.createEmitter({
@@ -91,7 +91,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          gravityY: 0,
          lifespan: 300,
       });
-      this.landingDustEmitter.reserve(1000);
+      this.landingDustEmitter.reserve(20);
       this.landingDustEmitter.stop();
 
       this.spriteSheetConfig = PLAYERS[playerType];
