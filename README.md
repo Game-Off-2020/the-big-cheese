@@ -8,7 +8,9 @@ Moon themed multiplayer destructible terrain shooter for Game Off 2020 on Itch.i
 ---
 
 Live demo: https://game-off-2020.github.io/the-big-cheese/
+
 Itch.io Page: https://dolanmiu.itch.io/the-big-cheese
+
 Information on the Jam: https://itch.io/jam/game-off-2020
 
 ## Technologies used

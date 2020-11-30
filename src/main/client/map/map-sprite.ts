@@ -40,11 +40,11 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
          angle: { min: 0, max: 360 },
          scale: { start: 0, end: 1.2 },
          alpha: { start: 1, end: 0, ease: 'Expo.easeIn' },
-         blendMode: Phaser.BlendModes.SCREEN,
          gravityY: 0,
          lifespan: 200,
+         tint: 0xffffff,
       });
-      this.dustEmitter.reserve(1000);
+      this.dustEmitter.reserve(100);
       this.dustEmitter.stop();
       particle.setDepth(100);
    }
@@ -74,7 +74,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter
          .setScale({ start: 0, end: destruction.radius / 5 })
          .setSpeed({ min: destruction.radius, max: destruction.radius })
-         .explode(5, destruction.position.x, destruction.position.y);
+         .explode(1, destruction.position.x, destruction.position.y);
 
       this.scene.sound
          .add(Keys.MOON_IMPACT, {

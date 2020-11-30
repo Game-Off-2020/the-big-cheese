@@ -112,5 +112,6 @@ export class BootScene extends Scene {
       this.load.image(Keys.EARTH, ClientConfig.ASSET_FOLDER + 'star-field/earth.png');
       this.load.image(Keys.MOON_LOADING, ClientConfig.ASSET_FOLDER + 'ui/moon-loading.png');
       this.load.image(Keys.ROCKET_LOADING, ClientConfig.ASSET_FOLDER + 'ui/rocket-loading.png');
+      this.load.image(Keys.HOW_TO_PLAY_CONTROLS, ClientConfig.ASSET_FOLDER + 'ui/how-to-play-controls.png');
    }
 }
