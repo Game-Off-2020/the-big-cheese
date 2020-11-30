@@ -41,6 +41,7 @@ export class StarFieldSprite extends Phaser.GameObjects.Container {
 
             canvas.width = largestSide * 2;
             canvas.height = largestSide * 2;
+            this.setPosition(options.scene.game.scale.width / 2, options.scene.game.scale.height / 2);
             this.generateStars(texture, canvas, canvas.width, canvas.height);
          },
          this,
