@@ -57,6 +57,7 @@ export enum Keys {
    SCORE_BOARD = 'score-board',
    MOON_LOADING = 'moon-loading',
    ROCKET_LOADING = 'rocket-loading',
+   HOW_TO_PLAY_CONTROLS = 'how-to-play-controls',
 }
 
 export interface PlayerSpriteSheetConfig {

@@ -8,6 +8,7 @@ import { InputBox } from '../ui/input-box';
 import { TextLink } from '../ui/text-link';
 import { ServerButton } from '../ui/server-button';
 import { ServerHost } from '../config/common-client-config';
+import { HowToPlay } from '../ui/how-to-play';
 
 export class MainMenuScene extends Phaser.Scene {
    @Inject
@@ -133,6 +134,33 @@ export class MainMenuScene extends Phaser.Scene {
          },
       });
 
+      const howToPlay = new HowToPlay(this);
+      howToPlay.setVisible(false);
+
+      const howToPlayButton = new MenuButton({
+         scene: this,
+         x: this.game.scale.width / 2,
+         y: this.game.scale.height / 2 + 400,
+         text: 'How To Play',
+         onClick: () => {
+            howToPlay.setVisible(true);
+         },
+         colors: {
+            label: {
+               over: '#FFFFFF',
+               out: '#FFFFFF',
+               down: '#BBBBBB',
+               disabled: '#FFFFFF',
+            },
+            rectangle: {
+               over: 0xffffff,
+               out: 0x4287f5,
+               down: 0x444444,
+               disabled: 0x888888,
+            },
+         },
+      });
+
       this.scale.on(
          'resize',
          (gameSize: Phaser.Structs.Size) => {
@@ -153,6 +181,7 @@ export class MainMenuScene extends Phaser.Scene {
 
             gameOffText.setPosition(gameSize.width - 30, gameSize.height - 30);
             creditsText.setPosition(30, gameSize.height - 30);
+            howToPlayButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 400);
          },
          this,
       );
