@@ -23,7 +23,7 @@ export class ServerPlayerComponent {
    constructor(
       @Inject private readonly store: PlayerStore,
       @Inject private readonly map: ServerMapComponent,
-      @Inject private readonly ammo: ServerCheeseComponent,
+      @Inject private readonly cheese: ServerCheeseComponent,
       @Inject private readonly collisionPhysics: CollisionPhysics,
    ) {
       store.changed$.pipe(filter(() => this.playersCanMove)).subscribe((entity) => {
@@ -48,8 +48,7 @@ export class ServerPlayerComponent {
          type: MathUtil.randomIntFromInterval(0, PLAYERS.length - 1),
          doubleBarrel: false,
       });
-      // Width and height must be switched for some reason
-      this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_HEIGHT, ServerConfig.PLAYER_WIDTH);
+      this.collisionPhysics.add(id, position.x, position.y, ServerConfig.PLAYER_WIDTH, ServerConfig.PLAYER_HEIGHT);
    }
 
    remove(id: string): void {
@@ -165,13 +164,7 @@ export class ServerPlayerComponent {
 
    private handlePlayerPositionChanged(playerId: string, position: Vector): void {
       this.collisionPhysics.updatePosition(playerId, position.x, position.y);
-      this.ammo.pickupInRectangle(
-         playerId,
-         position.x,
-         position.y,
-         ServerConfig.PLAYER_WIDTH,
-         ServerConfig.PLAYER_HEIGHT,
-      );
+      this.cheese.pickupInRadius(playerId, position.x, position.y, ServerConfig.PLAYER_CHEESE_PICKUP_RADIUS);
       if (this.lavaDistance2(position) <= ServerConfig.LAVA_RADIUS * ServerConfig.LAVA_RADIUS * 0.9) {
          this.resetPlayer(playerId);
       }

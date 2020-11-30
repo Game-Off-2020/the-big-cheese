@@ -4,6 +4,7 @@ import { Keys } from '../config/client-constants';
 import { Vector } from '../../shared/bullet/vector-model';
 import { VectorUtil } from '../util/vector-util';
 import { CheeseType } from '../../shared/cheese/cheese-model';
+import { ClientConfig } from '../config/client-config';
 
 export interface CheeseOptions {
    readonly scene: Scene;
@@ -54,6 +55,8 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
 
    constructor(private readonly options: CheeseOptions) {
       super(options.scene, options.position.x, options.position.y);
+      this.x -= this.width / 2;
+      this.y -= this.height / 2;
       this.setScale(CheeseSprite.ICON_SCALE[options.type].scale);
 
       const glowSprite = new Phaser.GameObjects.Sprite(
