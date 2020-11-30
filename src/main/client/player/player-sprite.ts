@@ -224,6 +224,10 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       // this.debugger.update(this);
    }
 
+   getCenterPoint(): Phaser.Math.Vector2 {
+      return new Phaser.Math.Vector2({ x: this.x, y: this.y }).add(VectorUtil.getUpwardVector(this).scale(42));
+   }
+
    private isMoving = false;
 
    private moving(): void {
