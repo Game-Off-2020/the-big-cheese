@@ -16,7 +16,6 @@ export class StarFieldSprite extends Phaser.GameObjects.Container {
       const largestSide = Math.max(options.scene.game.scale.width, options.scene.game.scale.height);
       canvas.width = largestSide * 2;
       canvas.height = largestSide * 2;
-      console.log(largestSide);
 
       const id = shortid.generate();
 
@@ -38,12 +37,15 @@ export class StarFieldSprite extends Phaser.GameObjects.Container {
       options.scene.scale.on(
          'resize',
          (gameSize: Phaser.Structs.Size) => {
-            const largestSide = Math.max(gameSize.width, gameSize.height);
+            setTimeout(() => {
+               const largestSide = Math.max(gameSize.width, gameSize.height);
 
-            canvas.width = largestSide * 2;
-            canvas.height = largestSide * 2;
-            this.setPosition(options.scene.game.scale.width / 2, options.scene.game.scale.height / 2);
-            this.generateStars(texture, canvas, canvas.width, canvas.height, largestSide * 2);
+               canvas.width = largestSide * 2;
+               canvas.height = largestSide * 2;
+               this.setPosition(gameSize.width / 2, gameSize.height / 2);
+               stars.setTexture(id);
+               this.generateStars(texture, canvas, canvas.width, canvas.height, largestSide * 2);
+            }, 200);
          },
          this,
       );
