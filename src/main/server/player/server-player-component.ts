@@ -13,6 +13,8 @@ import { MathUtil } from '../../client/util/math-util';
 import { PLAYERS } from '../../shared/config/shared-constants';
 import { filter } from 'rxjs/operators';
 
+const LAVA_SAFE_ZONE = 2000;
+
 @Singleton
 export class ServerPlayerComponent {
    private readonly dropCheeseSubject = new Subject<DropCheese>();
@@ -172,7 +174,7 @@ export class ServerPlayerComponent {
          ServerConfig.PLAYER_WIDTH,
          ServerConfig.PLAYER_HEIGHT,
       );
-      if (this.lavaDistance2(position) <= ServerConfig.LAVA_RADIUS * ServerConfig.LAVA_RADIUS * 0.9) {
+      if (this.lavaDistance2(position) <= ServerConfig.LAVA_RADIUS * ServerConfig.LAVA_RADIUS - LAVA_SAFE_ZONE) {
          this.resetPlayer(playerId);
       }
    }
