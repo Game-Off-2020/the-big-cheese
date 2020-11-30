@@ -123,7 +123,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
 
    update(): void {
       this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
-
       const direction = VectorUtil.getRelativeMouseDirection(this.options.scene, this).rotate(-this.rotation);
       if (direction.x !== this.lastDirection.x || direction.y !== this.lastDirection.y) {
          this.lastDirection.x = direction.x;

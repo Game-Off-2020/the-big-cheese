@@ -88,7 +88,7 @@ export class ServerPlayerComponent {
    }
 
    raycast(x1: number, y1: number, x2: number, y2: number, exceptId: string): [number, number, string] | null {
-      return this.collisionPhysics.raycast(x1, y1, x2, y2, exceptId);
+      return this.collisionPhysics.raycast(x1, y1, x2, y2, ServerConfig.PLAYER_HITBOX_RADIUS, exceptId);
    }
 
    dealDamage(damage: Damage): void {

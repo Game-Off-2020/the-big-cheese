@@ -71,7 +71,14 @@ export class CollisionPhysics {
       return this.getItemsInRectangle(x, y, w, h).map((item) => item.id);
    }
 
-   raycast(x1: number, y1: number, x2: number, y2: number, exceptId?: string): [number, number, string] | null {
+   raycast(
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+      r: number,
+      exceptId?: string,
+   ): [number, number, string] | null {
       x1 = this.toLocalCoordinate(x1);
       x2 = this.toLocalCoordinate(x2);
       y1 = this.toLocalCoordinate(y1);
@@ -87,20 +94,10 @@ export class CollisionPhysics {
             if (exceptId && item.id === exceptId) continue;
             const itemRectX = item.x;
             const itemRectY = item.y;
-            const itemRectWidth = item.width;
-            const itemRectHeight = item.height;
-            const point = this.raycastLineToRectangle(
-               x1,
-               y1,
-               x2,
-               y2,
-               itemRectX,
-               itemRectY,
-               itemRectWidth,
-               itemRectHeight,
-            );
-            if (point) {
-               return [this.toWorldCoordinate(point.x), this.toWorldCoordinate(point.y), item.id];
+            // const itemRectWidth = item.width;
+            // const itemRectHeight = item.height;
+            if (this.raycastLineToCircle(x1, y1, x2, y2, itemRectX, itemRectY, r)) {
+               return [this.toWorldCoordinate(itemRectX), this.toWorldCoordinate(itemRectY), item.id];
             }
          }
       }
@@ -181,6 +178,31 @@ export class CollisionPhysics {
       if (distX <= w / 2) return true;
       if (distY <= h / 2) return true;
       return Math.pow(distX - w / 2, 2) + Math.pow(distY - h / 2, 2) <= r * r;
+   }
+
+   private raycastLineToCircle(
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+      xc: number,
+      yc: number,
+      rc: number,
+   ): boolean {
+      var ac = [xc - x1, yc - y1];
+      var ab = [x2 - x1, y2 - y1];
+      var ab2 = this.dot(ab, ab);
+      var acab = this.dot(ac, ab);
+      var t = acab / ab2;
+      t = t < 0 ? 0 : t;
+      t = t > 1 ? 1 : t;
+      var h = [ab[0] * t + x1 - xc, ab[1] * t + y1 - yc];
+      var h2 = this.dot(h, h);
+      return h2 <= rc * rc;
+   }
+
+   private dot(v1: number[], v2: number[]): number {
+      return v1[0] * v2[0] + v1[1] * v2[1];
    }
 
    private toLocalCoordinate(worldXY: number): number {
