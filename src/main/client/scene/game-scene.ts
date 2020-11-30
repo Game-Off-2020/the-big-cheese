@@ -53,6 +53,8 @@ export class GameScene extends Scene {
    private readonly createdSubject = new ReplaySubject<boolean>();
    private readonly created$ = this.createdSubject.asObservable();
 
+   private updateMapSprite = false;
+
    constructor() {
       super({
          active: false,
@@ -162,6 +164,9 @@ export class GameScene extends Scene {
       this.cameras.main.setRotation(-this.character.rotation);
       this.character.update();
       this.updateOtherPlayers();
+      if (this.updateMapSprite) {
+         this.mapSprite?.update();
+      }
    }
 
    preload(): void {
@@ -191,7 +196,7 @@ export class GameScene extends Scene {
          });
          this.mapComponent.setMapSprite(this.mapSprite);
       });
-      this.mapComponent.updated$.subscribe(() => this.mapSprite && this.mapSprite.update());
+      this.mapComponent.updated$.subscribe(() => (this.updateMapSprite = true));
       this.mapComponent.reInit$.subscribe(() => this.mapSprite && this.mapSprite.drawMoonTextureOverMask());
    }
 
