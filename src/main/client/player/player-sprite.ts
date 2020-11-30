@@ -6,8 +6,8 @@ import { Vector } from '../../shared/bullet/vector-model';
 import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PlayerType } from '../../shared/player/player-model';
 import { PLAYERS } from '../../shared/config/shared-constants';
-import Vector2 = Phaser.Math.Vector2;
 import { MathUtil } from '../util/math-util';
+import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -121,7 +121,13 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private lastShootTimestamp = 0;
    private lastDirection: Vector = { x: null, y: null };
 
+   private lastTime = 0;
+
    update(): void {
+      const time = Date.now();
+      const delta = Math.max(0, Math.min(100, (time - this.lastTime) / (1000 / 60)));
+      this.lastTime = time;
+
       this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
 
       const direction = VectorUtil.getRelativeMouseDirection(this.options.scene, this).rotate(-this.rotation);
@@ -219,7 +225,7 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          }
       }
 
-      this.updateAmmo();
+      this.updateAmmo(delta);
       this.gun.update();
       // this.debugger.update(this);
    }
@@ -261,8 +267,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       return !this.isInTheAir && Date.now() > this.lastJumpTimestamp + ClientConfig.TIME_BETWEEN_TWO_JUMP_MS;
    }
 
-   private updateAmmo(): void {
-      const newAmmo = Math.min(this.ammo + ClientConfig.AMMO_RESTORE_PER_S / 60, ClientConfig.MAX_AMMO);
+   private updateAmmo(delta: number): void {
+      const newAmmo = Math.min(this.ammo + (ClientConfig.AMMO_RESTORE_PER_S / 60) * delta, ClientConfig.MAX_AMMO);
       if (newAmmo !== this.ammo) {
          this.options.callbacks.onAmmoChanged(newAmmo);
       }
