@@ -5,9 +5,9 @@ import { MapStore } from '../../shared/map/map-store';
 import { Destruction } from '../../shared/map/map-model';
 import { Utils } from '../../shared/util/utils';
 import { Vector } from '../../shared/bullet/vector-model';
-import { PerlinNoise } from './perlin-noise';
 import { ServerConfig } from '../config/server-config';
 import { Subject } from 'rxjs';
+import { MathUtil } from '../../client/util/math-util';
 
 @Singleton
 export class ServerMapComponent extends SharedMapComponent {
@@ -43,40 +43,29 @@ export class ServerMapComponent extends SharedMapComponent {
       this.ctx.beginPath();
       this.ctx.globalCompositeOperation = 'source-over';
       this.ctx.fillStyle = '#ff0000';
-      this.aliasedCircle(this.ctx, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize / 2);
-      this.ctx.fill();
 
-      // Perlin Noise
-      const perlinNoise = new PerlinNoise();
-      const noiseCanvas = perlinNoise.generate(this.canvasSize / 30);
-      const noiseWidth = noiseCanvas.width;
-      const noiseHeight = noiseCanvas.height;
-      const resizedNoiseCanvas = createCanvas(this.canvasSize, this.canvasSize);
-      const resizedNoiseCtx = resizedNoiseCanvas.getContext('2d');
-      resizedNoiseCtx.drawImage(
-         noiseCanvas,
-         0,
-         0,
-         noiseWidth,
-         noiseHeight,
-         0,
-         0,
-         resizedNoiseCanvas.width,
-         resizedNoiseCanvas.height,
-      );
+      const resolution = 200;
+      const cx = this.canvasSize / 2;
+      const cy = this.canvasSize / 2;
+      const outerRadius = this.canvasSize / 2 - 2;
+      const innerRadius = outerRadius - 4;
+      const step = Math.PI / resolution;
+      let rot = (Math.PI / 2) * 3;
+
+      this.ctx.moveTo(cx, cy - outerRadius);
+      for (let i = 0; i < resolution * 2; i++) {
+         const d = MathUtil.randomFloatFromInterval(innerRadius, outerRadius);
+         const x = cx + Math.cos(rot) * d;
+         const y = cy + Math.sin(rot) * d;
+         this.ctx.lineTo(x, y);
+         rot += step;
+      }
+      this.ctx.lineTo(cx, cy - outerRadius);
+      this.ctx.closePath();
+      this.ctx.fill();
 
       // Mask noise canvas
       const targetView = new DataView(this.ctx.getImageData(0, 0, this.canvasSize, this.canvasSize).data.buffer);
-      const maskView = new DataView(resizedNoiseCtx.getImageData(0, 0, this.canvasSize, this.canvasSize).data.buffer);
-
-      const MASK_THRESHOLD = 128; // 0-255
-      for (let i = 0; i < this.canvasSize * this.canvasSize; i++) {
-         const offset = 4 * i;
-         const brightness = (maskView.getUint32(offset) >> 24) & 0xff; // Red channel
-         if (brightness < MASK_THRESHOLD) {
-            targetView.setUint32(offset, 0);
-         }
-      }
 
       // Draw masked moon
       const imageData = this.ctx.createImageData(this.canvasSize, this.canvasSize);
