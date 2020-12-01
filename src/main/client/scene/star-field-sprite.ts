@@ -25,7 +25,7 @@ export class StarFieldSprite extends Phaser.GameObjects.Container {
 
       this.setScale(1 / options.scale, 1 / options.scale);
       const earth = new Phaser.GameObjects.Sprite(options.scene, 300, 300, Keys.EARTH);
-      this.generateStars(texture, canvas, canvas.width, canvas.height);
+      this.generateStars(texture, canvas, canvas.width, canvas.height, largestSide);
 
       this.setScrollFactor(0, 0);
       this.setDepth(-100);
@@ -37,11 +37,15 @@ export class StarFieldSprite extends Phaser.GameObjects.Container {
       options.scene.scale.on(
          'resize',
          (gameSize: Phaser.Structs.Size) => {
-            const largestSide = Math.max(gameSize.width, gameSize.height);
+            setTimeout(() => {
+               const largestSide = Math.max(gameSize.width, gameSize.height);
 
-            canvas.width = largestSide * 2;
-            canvas.height = largestSide * 2;
-            this.generateStars(texture, canvas, canvas.width, canvas.height);
+               canvas.width = largestSide * 2;
+               canvas.height = largestSide * 2;
+               this.setPosition(gameSize.width / 2, gameSize.height / 2);
+               stars.setTexture(id);
+               this.generateStars(texture, canvas, canvas.width, canvas.height, largestSide * 2);
+            }, 200);
          },
          this,
       );
@@ -52,10 +56,11 @@ export class StarFieldSprite extends Phaser.GameObjects.Container {
       canvas: HTMLCanvasElement,
       width: number,
       height: number,
+      largestSide: number,
    ): void {
       texture.clear();
       texture.setSize(width, height);
-      for (let i = 0; i < 2000; i++) {
+      for (let i = 0; i < largestSide * 2; i++) {
          const radius = MathUtil.randomFloatFromInterval(0.2, 2);
          const x = MathUtil.randomIntFromInterval(1, canvas.width);
          const y = MathUtil.randomIntFromInterval(1, canvas.height);

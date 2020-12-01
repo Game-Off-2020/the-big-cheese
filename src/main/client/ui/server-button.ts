@@ -49,7 +49,7 @@ export class ServerButton extends Phaser.GameObjects.Container {
          strokeThickness: 6,
       }).setOrigin(0.5, 0.5);
 
-      const rectangle = new Rectangle(options.scene, 0, 0, BUTTON_SIZE, BUTTON_SIZE);
+      const rectangle = new Rectangle(options.scene, 0, 0, BUTTON_SIZE, BUTTON_SIZE / 2);
 
       this.graphics = options.scene.make.graphics({});
 
@@ -89,7 +89,7 @@ export class ServerButton extends Phaser.GameObjects.Container {
 
       if (this.options.serverConfig === serverConfig) {
          this.graphics.lineStyle(4, 0xffffff, 1);
-         this.graphics.strokeRect(-BUTTON_SIZE / 2, -BUTTON_SIZE / 2, BUTTON_SIZE, BUTTON_SIZE);
+         this.graphics.strokeRect(-BUTTON_SIZE / 2, -BUTTON_SIZE / 4, BUTTON_SIZE, BUTTON_SIZE / 2);
       }
    }
 
