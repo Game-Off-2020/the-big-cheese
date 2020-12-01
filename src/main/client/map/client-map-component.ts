@@ -16,9 +16,6 @@ export class ClientMapComponent extends SharedMapComponent {
    private readonly mapLoadedSubject = new Subject<HTMLCanvasElement>();
    readonly mapLoaded$ = this.mapLoadedSubject.asObservable();
 
-   private readonly updatedSubject = new Subject<void>();
-   readonly updated$ = this.updatedSubject.asObservable();
-
    private readonly reInitSubject = new Subject<void>();
    readonly reInit$ = this.reInitSubject.asObservable();
 
@@ -70,7 +67,6 @@ export class ClientMapComponent extends SharedMapComponent {
       super.drawDestruction(destruction);
       this.handleDestructionEffect(destruction);
       this.destructionSubject.next(destruction);
-      this.updatedSubject.next();
    }
 
    shake(intensity: number): void {

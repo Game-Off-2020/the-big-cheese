@@ -1,10 +1,11 @@
 import * as Phaser from 'phaser';
 
 import { Destruction } from '../../shared/map/map-model';
-import { PLAYER_HEIGHT, PLAYER_WIDTH } from '../player/player-sprite';
 import { Keys } from '../config/client-constants';
+import { MapElemSprite } from './map-elem-sprite';
+import { ClientConfig } from '../config/client-config';
 
-interface MapSpriteOptions {
+export interface MapSpriteOptions {
    readonly scene: Phaser.Scene;
    readonly canvas: HTMLCanvasElement;
 }
@@ -16,21 +17,19 @@ interface Color {
    readonly alpha: number;
 }
 
-export class MapSprite extends Phaser.GameObjects.Sprite {
-   private terrainTexture: Phaser.Textures.CanvasTexture;
+export class MapSprite extends Phaser.GameObjects.Container {
    private readonly radius: number;
    private dustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
    private readonly moonTexture: HTMLImageElement;
 
-   constructor(options: MapSpriteOptions) {
-      const terrainTexture = options.scene.textures.addCanvas(Keys.TERRAIN, options.canvas);
-      super(options.scene, 0, 0, Keys.TERRAIN);
+   private readonly grid: MapElemSprite[] = [];
+   private readonly resolution: number;
 
-      this.terrainTexture = terrainTexture;
+   constructor(options: MapSpriteOptions) {
+      super(options.scene, 0, 0);
       this.radius = options.canvas.width / 2;
       this.moonTexture = options.scene.textures.get(Keys.MOON).getSourceImage() as HTMLImageElement;
       options.scene.add.existing(this);
-      this.drawMoonTextureOverMask();
 
       const particle = options.scene.add.particles(Keys.SMOKE_FIRE);
       this.dustEmitter = particle.createEmitter({
@@ -47,6 +46,28 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       this.dustEmitter.reserve(100);
       this.dustEmitter.stop();
       particle.setDepth(100);
+
+      this.resolution = 1;
+      const size = (2 * this.radius) / this.resolution;
+      for (let i = 0; i < this.resolution * this.resolution; i++) {
+         const canvas = document.createElement('canvas') as HTMLCanvasElement;
+         canvas.width = size;
+         canvas.height = size;
+         const texture = options.scene.textures.addCanvas(Keys.TERRAIN + '_' + i, canvas);
+         const elem = new MapElemSprite({
+            scene: options.scene,
+            x: size * (i % this.resolution),
+            y: size * Math.floor(i / this.resolution),
+            width: size,
+            height: size,
+            texture: Keys.TERRAIN + '_' + i,
+            radius: this.radius,
+            sourceCanvas: options.canvas,
+         });
+         this.grid.push(elem);
+         options.scene.add.existing(elem);
+      }
+      this.drawMoonTextureOverMask();
    }
 
    hitTestTerrain(worldX: number, worldY: number, points: Phaser.Geom.Point[]): boolean {
@@ -54,20 +75,55 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
       const localY = Math.round(worldY + this.radius);
 
       if (localX < 0 || localY < 0 || localX > this.radius * 2 || localY > this.radius * 2) return false;
-
+      /*
+      const x1 = localX;
+      const x2 = localX + PLAYER_WIDTH;
+      const y1 = localY;
+      const y2 = localY + PLAYER_HEIGHT;
+      for (let gridY = Math.floor(y1 / this.resolution); gridY <= Math.floor(y2 / this.resolution); gridY++) {
+         for (let gridX = Math.floor(x1 % this.resolution); gridX <= Math.floor(x2 % this.resolution); gridX++) {
+            this.grid[gridX + this.resolution * gridY].needsUpdate = true;
+         }
+      }
       const data = this.terrainTexture.getData(localX, localY, PLAYER_WIDTH, PLAYER_HEIGHT);
+*/
 
+      const size = (2 * this.radius) / this.resolution;
       for (const point of points) {
-         if (this.testCollisionWithTerrain(point.x, point.y, data)) {
+         // TODO: Check alpha at point
+         const x = Math.floor(point.x + localX);
+         const y = Math.floor(point.y + localY);
+         const gridX = Math.floor(x / size);
+         const gridY = Math.floor(y / size);
+         const elem = this.grid[gridX + gridY * this.resolution];
+         if (elem?.getAlpha(x, y) > 0) {
             return true;
          }
+         //if (this.testCollisionWithTerrain(point.x, point.y, data)) {
+         //   return true;
+         //}
       }
       return false;
    }
 
-   update(): void {
-      this.terrainTexture.update();
-      super.update();
+   updateDestructions(destructions: Destruction[]): void {
+      const size = (2 * ClientConfig.MOON_RADIUS) / this.resolution;
+      destructions.forEach((destruction) => {
+         const x1 = destruction.position.x - destruction.radius;
+         const x2 = destruction.position.x + destruction.radius + this.radius;
+         const y1 = destruction.position.y - destruction.radius + this.radius;
+         const y2 = destruction.position.y + destruction.radius + this.radius;
+         for (let gridY = Math.floor(y1 / size); gridY <= Math.floor(y2 / size); gridY++) {
+            for (let gridX = Math.floor(x1 / size); gridX <= Math.floor(x2 / size); gridX++) {
+               const elem = this.grid[gridX + this.resolution * gridY];
+               if (elem) {
+                  elem.needsUpdate = true;
+               }
+            }
+         }
+      });
+      // TODO: Update elements inside frame
+      this.grid.forEach((elem) => elem.update());
    }
 
    destructionEffect(destruction: Destruction, volume: number): void {
@@ -89,23 +145,6 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
    }
 
    drawMoonTextureOverMask(): void {
-      this.terrainTexture.context.globalCompositeOperation = 'source-in';
-      this.terrainTexture.draw(0, 0, this.moonTexture);
-   }
-
-   private testCollisionWithTerrain(localX: number, localY: number, canvasData: ImageData): boolean {
-      const pixel = this.getPixelColor(localX, localY, canvasData);
-      return pixel && pixel.alpha > 0;
-   }
-
-   private getPixelColor(localX: number, localY: number, canvasData: ImageData): Color {
-      if (localX < 0 || localY < 0 || localX > canvasData.width || localY > canvasData.height) return;
-      const index = (localY * canvasData.width + localX) * 4;
-      return {
-         red: canvasData.data[index],
-         green: canvasData.data[index + 1],
-         blue: canvasData.data[index + 2],
-         alpha: canvasData.data[index + 3],
-      };
+      this.grid.forEach((elem) => elem.drawOver(this.moonTexture));
    }
 }

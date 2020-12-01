@@ -20,6 +20,7 @@ import { Keys } from '../config/client-constants';
 import { ClientCheeseComponent } from '../cheese/client-cheese-component';
 import { CheeseSprite } from './cheese-sprite';
 import { PLAYERS } from '../../shared/config/shared-constants';
+import { Destruction } from '../../shared/map/map-model';
 import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 
 export class GameScene extends Scene {
@@ -53,7 +54,7 @@ export class GameScene extends Scene {
    private readonly createdSubject = new ReplaySubject<boolean>();
    private readonly created$ = this.createdSubject.asObservable();
 
-   private updateMapSprite = false;
+   private destructionsInFrame: Destruction[] = [];
 
    constructor() {
       super({
@@ -164,8 +165,9 @@ export class GameScene extends Scene {
       this.cameras.main.setRotation(-this.character.rotation);
       this.character.update();
       this.updateOtherPlayers();
-      if (this.updateMapSprite) {
-         this.mapSprite?.update();
+      if (this.destructionsInFrame.length && this.mapSprite) {
+         this.mapSprite.updateDestructions(this.destructionsInFrame);
+         this.destructionsInFrame = [];
       }
    }
 
@@ -196,7 +198,7 @@ export class GameScene extends Scene {
          });
          this.mapComponent.setMapSprite(this.mapSprite);
       });
-      this.mapComponent.updated$.subscribe(() => (this.updateMapSprite = true));
+      this.mapComponent.destruction$.subscribe((destruction) => this.destructionsInFrame.push(destruction));
       this.mapComponent.reInit$.subscribe(() => this.mapSprite && this.mapSprite.drawMoonTextureOverMask());
    }
 
