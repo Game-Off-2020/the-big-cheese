@@ -165,7 +165,7 @@ export class GameScene extends Scene {
       this.character.update();
       this.updateOtherPlayers();
       if (this.updateMapSprite) {
-         this.mapSprite?.update();
+         this.mapSprite.update();
       }
    }
 

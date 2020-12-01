@@ -74,7 +74,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
          x: centerPoint.x,
          y: centerPoint.y,
       }).add(
-         VectorUtil.getUpwardVector(this).scale(-ClientConfig.PLAYER_SPRITE_HEIGHT / ClientConfig.MAP_OUTPUT_SCALE),
+         VectorUtil.getUpwardVector(this).scale(-ClientConfig.PLAYER_SPRITE_HEIGHT / 2 / ClientConfig.MAP_OUTPUT_SCALE),
       );
       this.setPosition(bottomPosition.x, bottomPosition.y);
    }
