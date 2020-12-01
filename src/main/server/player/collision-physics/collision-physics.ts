@@ -189,15 +189,15 @@ export class CollisionPhysics {
       yc: number,
       rc: number,
    ): boolean {
-      var ac = [xc - x1, yc - y1];
-      var ab = [x2 - x1, y2 - y1];
-      var ab2 = this.dot(ab, ab);
-      var acab = this.dot(ac, ab);
-      var t = acab / ab2;
+      const ac = [xc - x1, yc - y1];
+      const ab = [x2 - x1, y2 - y1];
+      const ab2 = this.dot(ab, ab);
+      const acab = this.dot(ac, ab);
+      let t = acab / ab2;
       t = t < 0 ? 0 : t;
       t = t > 1 ? 1 : t;
-      var h = [ab[0] * t + x1 - xc, ab[1] * t + y1 - yc];
-      var h2 = this.dot(h, h);
+      const h = [ab[0] * t + x1 - xc, ab[1] * t + y1 - yc];
+      const h2 = this.dot(h, h);
       return h2 <= rc * rc;
    }
 

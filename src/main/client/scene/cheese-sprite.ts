@@ -4,7 +4,6 @@ import { Keys } from '../config/client-constants';
 import { Vector } from '../../shared/bullet/vector-model';
 import { VectorUtil } from '../util/vector-util';
 import { CheeseType } from '../../shared/cheese/cheese-model';
-import { ClientConfig } from '../config/client-config';
 
 export interface CheeseOptions {
    readonly scene: Scene;

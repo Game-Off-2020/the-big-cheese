@@ -6,8 +6,8 @@ import { Vector } from '../../shared/bullet/vector-model';
 import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PlayerType } from '../../shared/player/player-model';
 import { PLAYERS } from '../../shared/config/shared-constants';
-import Vector2 = Phaser.Math.Vector2;
 import { MathUtil } from '../util/math-util';
+import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -140,8 +140,9 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.gun.setPosition(30, -30);
       }
 
-      if (this.prevPosition.x !== this.x || this.prevPosition.y !== this.y) {
-         this.prevPosition.set(this.x, this.y);
+      const position = this.getCenterPoint();
+      if (this.prevPosition.x !== position.x || this.prevPosition.y !== position.y) {
+         this.prevPosition.set(position.x, position.y);
          this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
@@ -224,7 +225,9 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    }
 
    getCenterPoint(): Phaser.Math.Vector2 {
-      return new Phaser.Math.Vector2({ x: this.x, y: this.y }).add(VectorUtil.getUpwardVector(this).scale(48));
+      return new Phaser.Math.Vector2({ x: this.x, y: this.y }).add(
+         VectorUtil.getUpwardVector(this).scale(ClientConfig.PLAYER_SPRITE_HEIGHT / ClientConfig.MAP_OUTPUT_SCALE),
+      );
    }
 
    private isMoving = false;

@@ -10,5 +10,5 @@ export class CommonServerConfig extends SharedConfig {
    static readonly BULLET_BLAST_RADIUS_MIN: number = 50;
    static readonly BULLET_BLAST_RADIUS_MAX: number = 60;
    static readonly PLAYER_CHEESE_PICKUP_RADIUS: number = 20;
-   static readonly PLAYER_HITBOX_RADIUS: number = 10;
+   static readonly PLAYER_HITBOX_RADIUS: number = 20;
 }
