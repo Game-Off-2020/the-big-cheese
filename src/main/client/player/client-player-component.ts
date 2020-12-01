@@ -56,6 +56,10 @@ export class ClientPlayerComponent {
       return this.store.get(this.clientId);
    }
 
+   getClientPlayer(): PlayerSprite {
+      return this.clientPlayer;
+   }
+
    getVolume(position: Vector): number {
       return Math.max(
          0,
