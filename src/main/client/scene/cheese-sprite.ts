@@ -54,6 +54,8 @@ export class CheeseSprite extends Phaser.GameObjects.Container {
 
    constructor(private readonly options: CheeseOptions) {
       super(options.scene, options.position.x, options.position.y);
+      this.x -= this.width / 2;
+      this.y -= this.height / 2;
       this.setScale(CheeseSprite.ICON_SCALE[options.type].scale);
 
       const glowSprite = new Phaser.GameObjects.Sprite(

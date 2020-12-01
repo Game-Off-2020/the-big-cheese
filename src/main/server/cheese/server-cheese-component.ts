@@ -6,8 +6,6 @@ import { Utils } from '../../shared/util/utils';
 import { CheeseType, PickupCheese } from '../../shared/cheese/cheese-model';
 import { Vector } from '../../shared/bullet/vector-model';
 
-const CHEESE_SIZE = 20;
-
 @Singleton
 export class ServerCheeseComponent {
    private readonly pickupSubject = new Subject<PickupCheese>();
@@ -24,7 +22,7 @@ export class ServerCheeseComponent {
          position: { x, y },
          type,
       });
-      this.collisionPhysics.add(id, x, y, CHEESE_SIZE, CHEESE_SIZE);
+      this.collisionPhysics.add(id, x, y, 1, 1);
    }
 
    removeAll(): void {
@@ -33,8 +31,8 @@ export class ServerCheeseComponent {
       }
    }
 
-   pickupInRectangle(playerId: string, x: number, y: number, w: number, h: number): void {
-      this.collisionPhysics.getIdsInRectangle(x, y, w, h).forEach((id) => this.pickup(id, playerId, { x, y }));
+   pickupInRadius(playerId: string, x: number, y: number, radius: number): void {
+      this.collisionPhysics.getIdsInRadius(x, y, radius).forEach((id) => this.pickup(id, playerId, { x, y }));
    }
 
    private pickup(id: string, playerId: string, position: Vector): void {

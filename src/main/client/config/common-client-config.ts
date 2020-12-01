@@ -17,6 +17,7 @@ export class CommonClientConfig extends SharedConfig {
    static readonly MAX_AMMO: number = 10;
    static readonly SCOREBOARD_SIZE: number = 5;
    static readonly MAX_PLAYER_NAME_LENGTH: number = 10;
+   static readonly PLAYER_SPRITE_HEIGHT: number = 97;
    static readonly SERVER_HOSTS: ServerHost[] = [
       {
          url: `https://the-big-cheese-eu.herokuapp.com`,

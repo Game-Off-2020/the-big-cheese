@@ -51,6 +51,7 @@ export enum Keys {
    CHEESE_DOUBLE_EAT_SOUND = 'cheese-double-eat-sound',
    FLARES = 'flares',
    LAVA_SPIT = 'lava-spit',
+   LAVA_SIZZLE = 'lava-sizzle',
    EARTH = 'earth',
    // UI
    LOGO = 'logo',
@@ -58,6 +59,7 @@ export enum Keys {
    MOON_LOADING = 'moon-loading',
    ROCKET_LOADING = 'rocket-loading',
    HOW_TO_PLAY_CONTROLS = 'how-to-play-controls',
+   INDICATOR_ARROW = 'indicator-arrow',
 }
 
 export interface PlayerSpriteSheetConfig {

@@ -85,7 +85,7 @@ export class MainMenuScene extends Phaser.Scene {
                   this.game.scale.width / 2 +
                   buttonWidth * i -
                   ((ClientConfig.SERVER_HOSTS.length - 1) * buttonWidth) / 2,
-               y: this.game.scale.height / 2 + 150,
+               y: this.game.scale.height / 2 + 100,
                text: host.name,
                subText: '', // '0/40',
                serverConfig: ClientConfig.SERVER_HOSTS[i],
@@ -110,7 +110,7 @@ export class MainMenuScene extends Phaser.Scene {
       this.joinGameButton = new MenuButton({
          scene: this,
          x: this.game.scale.width / 2,
-         y: this.game.scale.height / 2 + 300,
+         y: this.game.scale.height / 2 + 200,
          text: 'Join Game',
          onClick: () => {
             if (!this.selectedServer || this.nameInput.getValue().length === 0) {
@@ -140,7 +140,7 @@ export class MainMenuScene extends Phaser.Scene {
       const howToPlayButton = new MenuButton({
          scene: this,
          x: this.game.scale.width / 2,
-         y: this.game.scale.height / 2 + 400,
+         y: this.game.scale.height / 2 + 280,
          text: 'How To Play',
          onClick: () => {
             howToPlay.setVisible(true);
@@ -169,19 +169,19 @@ export class MainMenuScene extends Phaser.Scene {
 
             this.cameras.resize(width, height);
             logo.setPosition(gameSize.width / 2, gameSize.height / 2 - 200);
-            this.joinGameButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 300);
+            this.joinGameButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 200);
             this.nameInput.setPosition(gameSize.width / 2, gameSize.height / 2);
 
             for (let i = 0; i < this.serverButtons.length; i++) {
                this.serverButtons[i].setPosition(
                   gameSize.width / 2 + buttonWidth * i - ((this.serverButtons.length - 1) * buttonWidth) / 2,
-                  gameSize.height / 2 + 150,
+                  gameSize.height / 2 + 100,
                );
             }
 
             gameOffText.setPosition(gameSize.width - 30, gameSize.height - 30);
             creditsText.setPosition(30, gameSize.height - 30);
-            howToPlayButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 400);
+            howToPlayButton.setPosition(gameSize.width / 2, gameSize.height / 2 + 280);
          },
          this,
       );

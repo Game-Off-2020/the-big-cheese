@@ -9,6 +9,9 @@ import { ScoreboardComponent } from '../player/scoreboard/scoreboard-component';
 import { filter } from 'rxjs/operators';
 import { MoonPercentageIndicator } from '../ui/moon-percentage-indicator';
 import { ClientGameStateComponent } from '../game-state/client-game-state-component';
+import { ClientOtherPlayerComponent } from '../player/client-other-player-component';
+import { PlayerStore } from '../../shared/player/player-store';
+import { PlayerPositionIndicatorOverlay } from '../ui/player-position-indicator-overlay';
 
 // https://www.html5gamedevs.com/topic/38009-phaser-3-hud-menu/
 export class HudScene extends Phaser.Scene {
@@ -16,6 +19,7 @@ export class HudScene extends Phaser.Scene {
    private cheeseCounter?: CheeseCounter;
    private ammoCounter?: AmmoCounter;
    private moonPercentageIndicator?: MoonPercentageIndicator;
+   private playerPositionIndicatorOverlay?: PlayerPositionIndicatorOverlay;
 
    @Inject
    private readonly scoreboardComponent: ScoreboardComponent;
@@ -25,6 +29,12 @@ export class HudScene extends Phaser.Scene {
 
    @Inject
    private readonly gameStateComponent: ClientGameStateComponent;
+
+   @Inject
+   private readonly otherPlayersComponent: ClientOtherPlayerComponent;
+
+   @Inject
+   private readonly playerStore: PlayerStore;
 
    constructor() {
       super({
@@ -50,6 +60,17 @@ export class HudScene extends Phaser.Scene {
          }
          this.moonPercentageIndicator = new MoonPercentageIndicator({ scene: this, percentage });
       });
+
+      this.otherPlayersComponent.added$.subscribe((player) => {
+         this.playerStore.onUpdatedId(player.id).subscribe((delta) => {
+            const currentClient = this.playerComponent.getClientPlayer();
+
+            this.playerPositionIndicatorOverlay.showPlayerOnMap(player.id, delta, currentClient);
+         });
+      });
+      this.otherPlayersComponent.removed$.subscribe((id) => {
+         this.playerPositionIndicatorOverlay.removePlayerOnMap(id);
+      });
    }
 
    create(): void {
@@ -61,5 +82,10 @@ export class HudScene extends Phaser.Scene {
       });
 
       this.ammoCounter = new AmmoCounter(this, ClientConfig.MAX_AMMO);
+      this.playerPositionIndicatorOverlay = new PlayerPositionIndicatorOverlay(this);
+   }
+
+   update(): void {
+      this.playerPositionIndicatorOverlay.update(this.playerComponent.getClientPlayer());
    }
 }

@@ -44,7 +44,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
          lifespan: 200,
          tint: 0xffffff,
       });
-      this.dustEmitter.reserve(100);
+      this.dustEmitter.reserve(20);
       this.dustEmitter.stop();
       particle.setDepth(100);
    }
