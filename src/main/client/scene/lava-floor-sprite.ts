@@ -28,36 +28,6 @@ export class LavaFloorSprite extends Phaser.GameObjects.Sprite {
 
       options.scene.add.existing(this);
 
-      const shineParticles = this.scene.add.particles(Keys.FLARES);
-
-      const origin = this.getTopLeft();
-
-      shineParticles.createEmitter({
-         frame: ['yellow'],
-         x: 0,
-         y: 0,
-         lifespan: 1000,
-         scale: { start: 0, end: 0.25, ease: 'Quad.easeOut' },
-         alpha: { start: 1, end: 0, ease: 'Quad.easeIn' },
-         blendMode: 'ADD',
-         emitZone: {
-            type: 'random',
-            source: {
-               getRandomPoint: (vec: Phaser.Math.Vector2) => {
-                  let x;
-                  let y;
-                  let pixel;
-                  do {
-                     x = Phaser.Math.Between(0, this.width - 1);
-                     y = Phaser.Math.Between(0, this.height - 1);
-                     pixel = this.scene.textures.getPixel(x, y, Keys.LAVA);
-                  } while (pixel.alpha < 255);
-                  return vec.setTo(x + origin.x, y + origin.y);
-               },
-            },
-         },
-      });
-
       const particles = this.scene.add.particles(Keys.LAVA_SPIT);
 
       particles.createEmitter({
