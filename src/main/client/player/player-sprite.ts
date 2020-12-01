@@ -225,6 +225,18 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          }
       }
 
+      if (
+         VectorUtil.getDownwardVectorFromCenter(this).length() <=
+         ClientConfig.LAVA_RADIUS - ClientConfig.LAVA_SAFE_ZONE - 11
+      ) {
+         this.scene.sound
+            .add(Keys.LAVA_SIZZLE, {
+               volume: 0.1,
+               detune: 100 * Math.random() * 2,
+            })
+            .play();
+      }
+
       this.updateAmmo(delta);
       this.gun.update();
       // this.debugger.update(this);

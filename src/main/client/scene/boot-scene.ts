@@ -108,6 +108,7 @@ export class BootScene extends Scene {
          ClientConfig.ASSET_FOLDER + 'common/flares.json',
       );
       this.load.image(Keys.LAVA_SPIT, ClientConfig.ASSET_FOLDER + 'lava/lava-spit.png');
+      this.load.audio(Keys.LAVA_SIZZLE, [ClientConfig.ASSET_FOLDER + 'lava/lava-sizzle.ogg']);
       this.load.image(Keys.SCORE_BOARD, ClientConfig.ASSET_FOLDER + 'ui/game-set-score-board.png');
       this.load.image(Keys.EARTH, ClientConfig.ASSET_FOLDER + 'star-field/earth.png');
       this.load.image(Keys.MOON_LOADING, ClientConfig.ASSET_FOLDER + 'ui/moon-loading.png');

@@ -51,6 +51,7 @@ export enum Keys {
    CHEESE_DOUBLE_EAT_SOUND = 'cheese-double-eat-sound',
    FLARES = 'flares',
    LAVA_SPIT = 'lava-spit',
+   LAVA_SIZZLE = 'lava-sizzle',
    EARTH = 'earth',
    // UI
    LOGO = 'logo',
