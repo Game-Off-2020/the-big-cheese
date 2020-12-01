@@ -6,8 +6,8 @@ import { Vector } from '../../shared/bullet/vector-model';
 import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PlayerType } from '../../shared/player/player-model';
 import { PLAYERS } from '../../shared/config/shared-constants';
-import Vector2 = Phaser.Math.Vector2;
 import { MathUtil } from '../util/math-util';
+import Vector2 = Phaser.Math.Vector2;
 
 interface PlayerOptions {
    readonly scene: Phaser.Scene;
@@ -121,9 +121,14 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
    private lastShootTimestamp = 0;
    private lastDirection: Vector = { x: null, y: null };
 
-   update(): void {
-      this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
+   private lastTime = 0;
 
+   update(): void {
+      const time = Date.now();
+      const delta = Math.max(0, Math.min(100, (time - this.lastTime) / (1000 / 60)));
+      this.lastTime = time;
+
+      this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
       const direction = VectorUtil.getRelativeMouseDirection(this.options.scene, this).rotate(-this.rotation);
       if (direction.x !== this.lastDirection.x || direction.y !== this.lastDirection.y) {
          this.lastDirection.x = direction.x;
@@ -141,8 +146,9 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.gun.setPosition(30, -30);
       }
 
-      if (this.prevPosition.x !== this.x || this.prevPosition.y !== this.y) {
-         this.prevPosition.set(this.x, this.y);
+      const position = this.getCenterPoint();
+      if (this.prevPosition.x !== position.x || this.prevPosition.y !== position.y) {
+         this.prevPosition.set(position.x, position.y);
          this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
@@ -219,13 +225,15 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          }
       }
 
-      this.updateAmmo();
+      this.updateAmmo(delta);
       this.gun.update();
       // this.debugger.update(this);
    }
 
    getCenterPoint(): Phaser.Math.Vector2 {
-      return new Phaser.Math.Vector2({ x: this.x, y: this.y }).add(VectorUtil.getUpwardVector(this).scale(48));
+      return new Phaser.Math.Vector2({ x: this.x, y: this.y }).add(
+         VectorUtil.getUpwardVector(this).scale(ClientConfig.PLAYER_SPRITE_HEIGHT / 2 / ClientConfig.MAP_OUTPUT_SCALE),
+      );
    }
 
    private isMoving = false;
@@ -265,8 +273,8 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       return !this.isInTheAir && Date.now() > this.lastJumpTimestamp + ClientConfig.TIME_BETWEEN_TWO_JUMP_MS;
    }
 
-   private updateAmmo(): void {
-      const newAmmo = Math.min(this.ammo + ClientConfig.AMMO_RESTORE_PER_S / 60, ClientConfig.MAX_AMMO);
+   private updateAmmo(delta: number): void {
+      const newAmmo = Math.min(this.ammo + (ClientConfig.AMMO_RESTORE_PER_S / 60) * delta, ClientConfig.MAX_AMMO);
       if (newAmmo !== this.ammo) {
          this.options.callbacks.onAmmoChanged(newAmmo);
       }
