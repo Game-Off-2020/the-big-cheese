@@ -225,6 +225,16 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          }
       }
 
+      // TODO: Need to consolidate the lava radius SAFE_ZONE into a common config
+      if (VectorUtil.getDownwardVectorFromCenter(this).length() < ClientConfig.LAVA_RADIUS - 17) {
+         this.scene.sound
+            .add(Keys.LAVA_SIZZLE, {
+               volume: 0.1,
+               detune: 100 * Math.random() * 2,
+            })
+            .play();
+      }
+
       this.updateAmmo(delta);
       this.gun.update();
       // this.debugger.update(this);
