@@ -129,7 +129,6 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       this.lastTime = time;
 
       this.setRotation(VectorUtil.getFloorVector(this).scale(-1).angle());
-
       const direction = VectorUtil.getRelativeMouseDirection(this.options.scene, this).rotate(-this.rotation);
       if (direction.x !== this.lastDirection.x || direction.y !== this.lastDirection.y) {
          this.lastDirection.x = direction.x;
@@ -147,8 +146,9 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          this.gun.setPosition(30, -30);
       }
 
-      if (this.prevPosition.x !== this.x || this.prevPosition.y !== this.y) {
-         this.prevPosition.set(this.x, this.y);
+      const position = this.getCenterPoint();
+      if (this.prevPosition.x !== position.x || this.prevPosition.y !== position.y) {
+         this.prevPosition.set(position.x, position.y);
          this.options.callbacks.onPositionChanged(this.prevPosition);
       }
 
@@ -228,6 +228,12 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
       this.updateAmmo(delta);
       this.gun.update();
       // this.debugger.update(this);
+   }
+
+   getCenterPoint(): Phaser.Math.Vector2 {
+      return new Phaser.Math.Vector2({ x: this.x, y: this.y }).add(
+         VectorUtil.getUpwardVector(this).scale(ClientConfig.PLAYER_SPRITE_HEIGHT / ClientConfig.MAP_OUTPUT_SCALE),
+      );
    }
 
    private isMoving = false;

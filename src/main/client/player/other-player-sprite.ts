@@ -7,6 +7,7 @@ import { CatmullRomInterpolation } from '../util/catmull-rom-interpolation';
 import { ClientConfig } from '../config/client-config';
 import { Keys, PlayerSpriteSheetConfig } from '../config/client-constants';
 import { PLAYERS } from '../../shared/config/shared-constants';
+import { VectorUtil } from '../util/vector-util';
 
 export interface OtherPlayerOptions {
    readonly scene: Scene;
@@ -68,8 +69,14 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
 
    private updatePosition(): void {
       this.positionInterpolation.step();
-      const position = this.positionInterpolation.get();
-      this.setPosition(position.x, position.y);
+      const centerPoint = this.positionInterpolation.get();
+      const bottomPosition = new Phaser.Math.Vector2({
+         x: centerPoint.x,
+         y: centerPoint.y,
+      }).add(
+         VectorUtil.getUpwardVector(this).scale(-ClientConfig.PLAYER_SPRITE_HEIGHT / ClientConfig.MAP_OUTPUT_SCALE),
+      );
+      this.setPosition(bottomPosition.x, bottomPosition.y);
    }
 
    private updateDirection(): void {
@@ -109,7 +116,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
          lifespan: 200,
          follow: this,
       });
-      this.dustEmitter.reserve(1000);
+      this.dustEmitter.reserve(20);
       this.dustEmitter.stop();
    }
 
