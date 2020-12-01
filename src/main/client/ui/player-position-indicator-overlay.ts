@@ -13,7 +13,7 @@ export class PlayerPositionIndicatorOverlay extends Phaser.GameObjects.Container
    private indicators = new Map<
       string,
       {
-         delta: Player;
+         delta: Partial<Player>;
          readonly indicator: Phaser.GameObjects.Sprite;
       }
    >();
@@ -39,7 +39,7 @@ export class PlayerPositionIndicatorOverlay extends Phaser.GameObjects.Container
       );
    }
 
-   private calculateIndicatorPosition(delta: Player, playerSprite: PlayerSprite): Phaser.Math.Vector2 {
+   private calculateIndicatorPosition(delta: Partial<Player>, playerSprite: PlayerSprite): Phaser.Math.Vector2 {
       const pointVector = this.getDistance(delta.position, playerSprite)
          .rotate(-playerSprite.rotation)
          .scale(ClientConfig.MAP_OUTPUT_SCALE);
@@ -82,7 +82,7 @@ export class PlayerPositionIndicatorOverlay extends Phaser.GameObjects.Container
       }
    }
 
-   showPlayerOnMap(playerId: string, delta: Player, playerSprite: PlayerSprite): void {
+   showPlayerOnMap(playerId: string, delta: Partial<Player>, playerSprite: PlayerSprite): void {
       if (!delta.position) {
          return;
       }

@@ -36,7 +36,6 @@ export class MiniMap extends Phaser.GameObjects.Container {
    }
 
    update(): void {
-      console.log('ipdadf');
       this.terrainTexture.update();
       super.update();
    }
