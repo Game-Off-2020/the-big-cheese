@@ -13,8 +13,6 @@ import { MathUtil } from '../../client/util/math-util';
 import { PLAYERS } from '../../shared/config/shared-constants';
 import { filter } from 'rxjs/operators';
 
-const LAVA_SAFE_ZONE = 2000;
-
 @Singleton
 export class ServerPlayerComponent {
    private readonly dropCheeseSubject = new Subject<DropCheese>();
@@ -167,12 +165,12 @@ export class ServerPlayerComponent {
    private handlePlayerPositionChanged(playerId: string, position: Vector): void {
       this.collisionPhysics.updatePosition(playerId, position.x, position.y);
       this.cheese.pickupInRadius(playerId, position.x, position.y, ServerConfig.PLAYER_CHEESE_PICKUP_RADIUS);
-      if (this.lavaDistance2(position) <= ServerConfig.LAVA_RADIUS * ServerConfig.LAVA_RADIUS - LAVA_SAFE_ZONE) {
+      if (this.lavaDistance2(position) <= ServerConfig.LAVA_RADIUS - ServerConfig.LAVA_SAFE_ZONE) {
          this.resetPlayer(playerId);
       }
    }
 
    private lavaDistance2(position: Vector): number {
-      return position.x * position.x + position.y * position.y;
+      return Math.sqrt(position.x * position.x + position.y * position.y);
    }
 }

@@ -225,8 +225,10 @@ export class PlayerSprite extends Phaser.GameObjects.Container {
          }
       }
 
-      // TODO: Need to consolidate the lava radius SAFE_ZONE into a common config
-      if (VectorUtil.getDownwardVectorFromCenter(this).length() < ClientConfig.LAVA_RADIUS - 17) {
+      if (
+         VectorUtil.getDownwardVectorFromCenter(this).length() <=
+         ClientConfig.LAVA_RADIUS - ClientConfig.LAVA_SAFE_ZONE - 11
+      ) {
          this.scene.sound
             .add(Keys.LAVA_SIZZLE, {
                volume: 0.1,

@@ -12,4 +12,5 @@ export class CommonSharedConfig {
    static readonly MOON_PERCENTAGE_TO_FINISH: number = 0.4;
    static readonly GAME_RESTART_TIME_MS: number = 10000;
    static readonly LAVA_RADIUS: number = 200;
+   static readonly LAVA_SAFE_ZONE: number = 2;
 }
