@@ -21,7 +21,7 @@ export class LavaFloorSprite extends Phaser.GameObjects.Sprite {
       this.radius = canvas.width / 2;
       this.lavaTexture = texture;
       this.lavaTexture.context.beginPath();
-      this.lavaTexture.context.fillStyle = '#ebb134';
+      this.lavaTexture.context.fillStyle = '#7aeb34';
       this.lavaTexture.context.arc(this.radius, this.radius, this.radius, 0, Math.PI * 2, true);
       this.lavaTexture.context.fill();
       this.lavaTexture.refresh();

@@ -109,7 +109,7 @@ export class OtherPlayerSprite extends Phaser.GameObjects.Container {
          lifespan: 200,
          follow: this,
       });
-      this.dustEmitter.reserve(1000);
+      this.dustEmitter.reserve(20);
       this.dustEmitter.stop();
    }
 
